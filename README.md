@@ -4,7 +4,9 @@
 <div align="center">
 
 <img src="docs/assets/banner.svg" alt="Chameleon" width="100%">
+
 <br><br>
+
 [![Version](https://img.shields.io/badge/версия-15.0_BETA-white?style=for-the-badge&labelColor=0b0b0b)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/python-3.10%2B-white?style=for-the-badge&logo=python&logoColor=white&labelColor=0b0b0b)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/платформа-Windows-white?style=for-the-badge&logo=windows&logoColor=white&labelColor=0b0b0b)](#быстрый-старт)
