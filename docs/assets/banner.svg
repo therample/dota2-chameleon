@@ -1,24 +1,57 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="Chameleon">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b1b1b"/><stop offset=".55" stop-color="#0b0b0b"/><stop offset="1" stop-color="#050505"/></linearGradient>
-    <linearGradient id="tx" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#7a7a7a"/></linearGradient>
-    <radialGradient id="glow" cx=".18" cy=".35" r=".6"><stop offset="0" stop-color="#ffffff" stop-opacity=".12"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1b1b"/>
+      <stop offset=".55" stop-color="#0b0b0b"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <linearGradient id="tx" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#7a7a7a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".18" cy=".35" r=".6">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rightGlow" cx=".82" cy=".5" r=".48">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".045"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity=".12" stroke-width=".7"/>
+    </pattern>
+    <filter id="gridBlur" x="-5%" y="-10%" width="110%" height="120%">
+      <feGaussianBlur stdDeviation=".65"/>
+    </filter>
   </defs>
   <rect width="1280" height="320" rx="22" fill="url(#bg)"/>
   <rect width="1280" height="320" rx="22" fill="url(#glow)"/>
+  <rect width="1280" height="320" rx="22" fill="url(#rightGlow)"/>
+  <rect width="1280" height="320" rx="22" fill="url(#grid)" opacity=".4" filter="url(#gridBlur)"/>
   <g opacity=".22" fill="#fff">
-    <circle cx="980" cy="70" r="2"/><circle cx="1060" cy="140" r="1.5"/><circle cx="1130" cy="60" r="2.4"/><circle cx="1190" cy="210" r="1.6"/>
-    <circle cx="900" cy="230" r="1.8"/><circle cx="1010" cy="260" r="2.2"/><circle cx="840" cy="110" r="1.4"/><circle cx="1230" cy="120" r="1.8"/>
+    <circle cx="980" cy="70" r="2"/>
+    <circle cx="1060" cy="140" r="1.5"/>
+    <circle cx="1130" cy="60" r="2.4"/>
+    <circle cx="1190" cy="210" r="1.6"/>
+    <circle cx="900" cy="230" r="1.8"/>
+    <circle cx="1010" cy="260" r="2.2"/>
+    <circle cx="840" cy="110" r="1.4"/>
+    <circle cx="1230" cy="120" r="1.8"/>
   </g>
   <g transform="translate(96 76) scale(7.2)" fill="none" stroke="#fff" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 2.5l8 3.2v5.6c0 5-3.4 8.6-8 10.2-4.6-1.6-8-5.2-8-10.2V5.7z"/><path d="M8.6 12l2.4 2.4 4.4-4.8"/>
+    <path d="M12 2.5l8 3.2v5.6c0 5-3.4 8.6-8 10.2-4.6-1.6-8-5.2-8-10.2V5.7z"/>
+    <path d="M8.6 12l2.4 2.4 4.4-4.8"/>
   </g>
   <text x="318" y="150" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="78" font-weight="900" letter-spacing="10" fill="url(#tx)">CHAMELEON</text>
   <text x="322" y="196" font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="25" font-weight="600" fill="#bdbdbd">Dota 2 cosmetic mod builder &#183; one small VPK &#183; fully reversible</text>
   <g font-family="Inter,Segoe UI,Helvetica,Arial,sans-serif" font-size="15" font-weight="800" fill="#0b0b0b">
-    <rect x="322" y="224" width="112" height="32" rx="16" fill="#fff"/><text x="378" y="245" text-anchor="middle">HEROES</text>
-    <rect x="446" y="224" width="126" height="32" rx="16" fill="#fff"/><text x="509" y="245" text-anchor="middle">CATALOG</text>
-    <rect x="584" y="224" width="132" height="32" rx="16" fill="#fff"/><text x="650" y="245" text-anchor="middle">FAVORITES</text>
-    <rect x="728" y="224" width="112" height="32" rx="16" fill="#fff"/><text x="784" y="245" text-anchor="middle">LAUNCH</text>
+    <rect x="322" y="226" width="128" height="36" rx="18" fill="#fff"/>
+    <text x="386" y="249" text-anchor="middle">HEROES</text>
+    <rect x="468" y="226" width="158" height="36" rx="18" fill="#fff"/>
+    <text x="547" y="249" text-anchor="middle">ITEM CATALOG</text>
+    <rect x="644" y="226" width="164" height="36" rx="18" fill="#fff"/>
+    <text x="726" y="249" text-anchor="middle">OPEN SOURCE</text>
+    <rect x="826" y="226" width="150" height="36" rx="18" fill="#fff"/>
+    <text x="901" y="249" text-anchor="middle">FAST LAUNCH</text>
   </g>
 </svg>
