@@ -1,4 +1,5 @@
 
+
 # Chameleon
 
 <div align="center">
@@ -131,8 +132,13 @@ python -W ignore -m unittest discover -s tests -v
 > **Важное требование:** Наличие соответствующих покрывающих юнит-тестов для нового функционала или багфиксов является обязательным условием для слияния кода (Merge).
 
 ---
+## Благодарности
+
+Большое спасибо:
+[h6rd](https://github.com/h6rd) - за его прекрасные инструменты для работы с VPK
+[S2Viewer](https://github.com/ValveResourceFormat/ValveResourceFormat) - для откладки упаковки VPK
 
 ## Лицензия
 
-Проект распространяется под свободной лицй [GPL 3](LICENSE).   
+Проект распространяется под свободной лицензией [GPL 3](LICENSE).   
 Copyright (c) 2026 therample.
