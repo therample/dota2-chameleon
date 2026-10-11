@@ -136,6 +136,7 @@ python -W ignore -m unittest discover -s tests -v
 
 Большое спасибо:
 [h6rd](https://github.com/h6rd) - за его прекрасные инструменты для работы с VPK
+
 [S2Viewer](https://github.com/ValveResourceFormat/ValveResourceFormat) - для откладки упаковки VPK
 
 ## Лицензия
