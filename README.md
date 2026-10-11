@@ -142,7 +142,7 @@ python -W ignore -m unittest discover -s tests -v
 [Source 2 Viewer]([https://github.com](https://github.com/ValveResourceFormat/ValveResourceFormat))
 Для отладки упаковки VPK
 
----ъ
+---
 ## Лицензия
 
 Проект распространяется под свободной лицензией [GPL 3](LICENSE).   
