@@ -1,0 +1,8 @@
+PySide6>=6.6
+PySide6-Addons>=6.6
+requests>=2.31
+#decode opt
+pillow>=10
+# tests only
+vpk>=1.4
+#if you have a import error please go to issue!
