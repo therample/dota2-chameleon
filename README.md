@@ -6,6 +6,8 @@
 
 <img src="docs/assets/banner.svg" alt="Chameleon" width="100%">
 
+<img src="docs/assets/Screenshot2026-10-23013829.png" alt="preview" width="100%">
+
 <br><br>
 
 [![WebSite](https://img.shields.io/badge/Сайт-white?style=for-the-badge&labelColor=0b0b0b)](https://rample.pythonanywhere.com)
@@ -17,8 +19,6 @@
 [![License](https://img.shields.io/badge/лицензия-GPL_3-white?style=for-the-badge&labelColor=0b0b0b)](LICENSE)
 
 </div>
-
-<img src="docs/assets/Screenshot2026-10-23013829.png" alt="preview" width="100%">
 
 **Chameleon** — это быстрый, локальный скинченджер для Dota 2 с открытым исходным кодом. Он позволяет кастомизировать внешний вид героев, элементы окружения картах, интерфейс и звуковое сопровождение игры без покупки предметов.
 
