@@ -16,7 +16,7 @@
 [![Platform](https://img.shields.io/badge/платформа-Windows-white?style=for-the-badge&logo=windows&logoColor=white&labelColor=0b0b0b)](#установка)
 [![License](https://img.shields.io/badge/лицензия-GPL_3-white?style=for-the-badge&labelColor=0b0b0b)](LICENSE)
 
-<img src="docs/assets/Screenshot 2026-10-23 013829.png" alt="preview" width="100%"?>
+<img src="docs/assets/Screenshot2026-10-23013829.png" alt="preview" width="100%"?>
 
 
 </div>
