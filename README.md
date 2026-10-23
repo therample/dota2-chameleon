@@ -6,13 +6,11 @@
 
 <img src="docs/assets/banner.svg" alt="Chameleon" width="100%">
 
-<br><br>
-
 <p align="center">
   <a href="https://github.com/therample/dota2-chameleon">
     <img src="docs/assets/star.svg"
          alt="Like the project? Star it on GitHub"
-         width="55%">
+         width="85%">
   </a>
 </p>
 
