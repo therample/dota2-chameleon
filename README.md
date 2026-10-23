@@ -13,8 +13,6 @@
 
 <img src="docs/assets/sf.png" alt="preview" width="70%">
 
-> One of the 26000+ items combinations
-
 <p align="center">
   <a href="https://github.com/therample/dota2-chameleon">
     <img src="docs/assets/star.svg"
