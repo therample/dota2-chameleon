@@ -18,7 +18,7 @@
 
 > Ui preview
 
-<img src="docs/assets/sf.png" alt="preview" width="100%">
+<img src="docs/assets/sf.png" alt="preview" width="70%">
 
 > One of the 26000+ items combinations
 
