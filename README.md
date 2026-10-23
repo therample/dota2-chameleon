@@ -6,9 +6,17 @@
 
 <img src="docs/assets/banner.svg" alt="Chameleon" width="100%">
 
-> Ui preview
+<p align="center">
+  <a href="https://github.com/therample/dota2-chameleon">
+    <img src="docs/assets/star.svg"
+         alt="Like the project? Star it on GitHub"
+         width="100%">
+  </a>
+</p>
 
 <img src="docs/assets/Screenshot2026-10-23013829.png" alt="preview" width="100%">
+
+> Ui preview
 
 <br><br>
 
