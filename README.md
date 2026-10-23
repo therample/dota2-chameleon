@@ -6,13 +6,6 @@
 
 <img src="docs/assets/banner.svg" alt="Chameleon" width="100%">
 
-<p align="center">
-  <a href="https://github.com/therample/dota2-chameleon">
-    <img src="docs/assets/star.svg"
-         alt="Like the project? Star it on GitHub"
-         width="85%">
-  </a>
-</p>
 
 <img src="docs/assets/Screenshot2026-10-23013829.png" alt="preview" width="100%">
 
@@ -21,6 +14,15 @@
 <img src="docs/assets/sf.png" alt="preview" width="70%">
 
 > One of the 26000+ items combinations
+
+<p align="center">
+  <a href="https://github.com/therample/dota2-chameleon">
+    <img src="docs/assets/star.svg"
+         alt="Like the project? Star it on GitHub"
+         width="85%">
+  </a>
+</p>
+
 
 [![Сайт](https://img.shields.io/badge/Сайт-rample.pythonanywhere.com-white?style=for-the-badge&labelColor=0b0b0b)](https://rample.pythonanywhere.com)
 [![Версия](https://img.shields.io/badge/версия-15.2_BETA-white?style=for-the-badge&labelColor=0b0b0b)](CHANGELOG.md)
