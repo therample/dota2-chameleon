@@ -1,7 +1,6 @@
 
-https://github.com/therample/dota2-chameleon/blob/main/README.md
 # Chameleon - Dota2 VPK Dota2 Skinchanger with auto parse items
-
+### read more on site
 <div align="center">
 
 <img src="docs/assets/banner.svg" alt="Chameleon" width="100%">
