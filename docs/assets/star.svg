@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="128" viewBox="0 0 840 128" fill="none" role="img" aria-label="Support us with a star on GitHub">
+  <title>Support us with a star on GitHub</title>
+  <style>
+    .bg { fill: #0d1117; rx: 8px; }
+    .text-main { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-weight: 600; font-size: 22px; fill: #ffffff; }
+    .text-sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-weight: 400; font-size: 14px; fill: #8b949e; }
+    .star-icon { fill: #e3b341; animation: pulse 2s infinite; }
+    .btn-bg { fill: #21262d; stroke: #30363d; stroke-width: 1; rx: 6px; }
+    .btn-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-weight: 500; font-size: 14px; fill: #c9d1d9; }
+    .octocat { fill: #ffffff; opacity: 0.15; }
+    .border { stroke: #30363d; stroke-width: 1; rx: 8px; }
+  </style>
+
+  <!-- Фон карточки -->
+  <rect width="840" height="128" class="bg" />
+  <rect width="840" height="128" class="border" fill="none" />
+
+  <!-- Декоративный логотип GitHub на заднем плане справа -->
+  <g transform="translate(680, -20) scale(1.8)" class="octocat">
+    <path d="M64 0C28.65 0 0 28.65 0 64c0 28.28 18.33 52.28 43.77 60.75 3.2.59 4.37-1.39 4.37-3.08 0-1.52-.05-5.55-.08-10.9-17.81 3.87-21.56-8.58-21.56-8.58-2.91-7.39-7.11-9.35-7.11-9.35-5.81-3.97.44-3.89.44-3.89 6.42.45 9.8 6.59 9.8 6.59 5.71 9.78 14.98 6.95 18.63 5.32.58-4.14 2.24-6.96 4.08-8.56-14.22-1.62-29.17-7.11-29.17-31.65 0-7 2.5-12.72 6.6-17.2-.66-1.62-2.86-8.14.63-16.96 0 0 5.39-1.72 17.65 6.59A61.18 61.18 0 0164 28.75c5.43.03 10.9.73 16.03 2.15 12.24-8.31 17.61-6.59 17.61-6.59 3.5 8.82 1.3 15.34.64 16.96 4.12 4.48 6.6 10.2 6.6 17.2 0 24.6-15 29.99-29.24 31.57 2.3 1.98 4.35 5.88 4.35 11.86 0 8.57-.08 15.48-.08 17.58 0 1.7 1.15 3.7 4.39 3.07C109.69 116.25 128 92.25 128 64c0-35.35-28.65-64-64-64z"/>
+  </g>
+
+  <!-- Левая часть: Текст сообщения -->
+  <g transform="translate(40, 0)">
+    <text x="0" y="58" class="text-main">Наслаждаешься проектом? :D</text>
+    <text x="0" y="86" class="text-sub">Оставь нам звезду - очень поможет в разработке!</text>
+  </g>
+
+  <!-- Правая часть: Интерактивная кнопка Star -->
+  <g transform="translate(640, 46)">
+    <!-- Кнопка -->
+    <rect width="160" height="36" class="btn-bg" />
+    
+    <!-- Контент внутри кнопки (Иконка звезды + Текст) -->
+    <g transform="translate(12, 10)">
+
+      <!-- Текст кнопки -->
+      <text x="24" y="13" class="btn-text">Star on GitHub</text>
+    </g>
+  </g>
+</svg>
