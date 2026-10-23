@@ -1,5 +1,6 @@
 
-# Chameleon - Dota2 VPK Dota2 Skinchanger with auto parse items
+# Chameleon
+> Dota2 VPK Skinchanger with auto parse items
 
 <div align="center">
 
