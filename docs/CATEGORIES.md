@@ -1,7 +1,7 @@
 # Catalog categories
 
 Rules live in `database.py::CATEGORY_RULES` and match the prefab-resolved item (prefab tokens, `item_slot`, `item_type_name`).
-##TESTMD
+## TESTMD
 | Category | Rule | Status |
 |---|---|---|
 | weather | prefab/slot `weather` (default item **555**) | confirmed |
