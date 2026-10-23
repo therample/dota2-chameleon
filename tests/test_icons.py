@@ -29,10 +29,23 @@ class IconLookupTest(unittest.TestCase):
         png = src.item_icon("econ/items/ursa/claws/claws")
         self.assertTrue(png.startswith(b"\x89PNG"))
 
-    def test_same_folder_and_name_in_another_root_is_found(self):
+    def test_renamed_file_is_found_inside_the_same_folder(self):
+        tex = build(4, 1, 1, bytes([1, 2, 3, 255]))
+        # the item lists an OLD name; the real file in that folder has a new name
+        src = IconSource([FakeReader({"panorama/images/econ/items/ursa/claws/claws_v2_icon_png.vtex_c": tex})])
+        self.assertIsNotNone(src.item_icon("econ/items/ursa/claws/claws_icon"))
+        # two pictures in the folder: the closest name wins, a very different one is not guessed
+        a, b = build(4, 1, 1, bytes([9, 9, 9, 255])), build(4, 1, 1, bytes([200, 10, 10, 255]))
+        src2 = IconSource([FakeReader({"panorama/images/econ/items/x/set/set_icon_png.vtex_c": a,
+                                       "panorama/images/econ/items/x/set/unrelated_name_png.vtex_c": b})])
+        self.assertIsNotNone(src2.item_icon("econ/items/x/set/set_icon_old"))
+        src3 = IconSource([FakeReader({"panorama/images/econ/items/x/set/zzzz_png.vtex_c": a, "panorama/images/econ/items/x/set/qqqq_png.vtex_c": b})])
+        self.assertIsNone(src3.item_icon("econ/items/x/set/set_icon"))
+
+    def test_a_picture_from_another_folder_is_never_used(self):
         tex = build(4, 1, 1, bytes([1, 2, 3, 255]))
         src = IconSource([FakeReader({"panorama/images/econ/items_v2/claws/claws_png.vtex_c": tex})])
-        self.assertIsNotNone(src.item_icon("econ/items/ursa/claws/claws"))
+        self.assertIsNone(src.item_icon("econ/items/ursa/claws/claws"))
 
     def test_generic_file_names_never_match_an_unrelated_texture(self):
         # a bare name like "icon" used to resolve many different items to ONE wrong (e.g. gold) image

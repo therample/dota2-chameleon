@@ -109,7 +109,7 @@ class QtSmoke(unittest.TestCase):
         self.assertEqual(ids["towers"], 2)
         self.assertEqual(ids["weather"], 2)
         self.assertNotIn("gems", ids)                                          # gems live on the hero page, not in the catalog
-        self.assertEqual([g["id"] for g in cat], ["world", "units", "items", "effects", "interface", "kills", "sound"])
+        self.assertEqual([g["id"] for g in cat], ["world", "units", "items", "effects", "interface", "sound"])
         items = json.loads(self.bridge.get_category_items("towers"))
         self.assertEqual(sorted(i["name"] for i in items), ["crow_towers", "sun_towers"])
         self.assertTrue(self.bridge.toggle_favorite("crow_towers"))

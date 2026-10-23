@@ -49,7 +49,7 @@ class RealUiTest(unittest.TestCase):
             "favorite_names": [], "catalog": J(br.get_catalog()),
             "hero_catalog": {h["name"]: J(br.get_hero_catalog(h["name"])) for h in heroes},
             "category_items": {c["id"]: J(br.get_category_items(c["id"])) for g in J(br.get_catalog()) for c in g["cats"] if c["id"] != "fonts"},
-            "launch": J(br.get_launch_presets()), "bgstate": J(br.get_background_state()), "fonts": J(br.get_fonts()), "featured": J(br.get_featured()), "effect_lib": J(br.get_effect_library()),
+            "launch": J(br.get_launch_presets()), "bgstate": J(br.get_background_state()), "featured": J(br.get_featured()),
             "hero_with_items": tp.HERO,
         }
         fx["all_items"] = {i["name"]: i for lst in fx["category_items"].values() for i in lst}

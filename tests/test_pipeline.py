@@ -682,27 +682,6 @@ class BehaviourTest(unittest.TestCase):
         self.assertTrue(a.commit())
         self.assertEqual(a.gameinfo.signatures.path.read_bytes(), before)
 
-    # ---- fonts: game fonts and your own file ----
-    def test_fonts_game_and_custom_file(self):
-        a = self.ap()
-        fc = a.font_changer
-        self.assertEqual([f["name"] for f in fc.game_fonts()], ["radiance", "reaver"])
-        self.assertTrue(fc.set("panorama/fonts/radiance.ttf", "panorama/fonts/reaver.ttf"))
-        mine = Path(_TMP) / "My Font.ttf"
-        mine.write_bytes(b"\x00\x01\x00\x00" + b"MYFONT" * 20)
-        self.assertTrue(fc.add_custom(str(mine)))
-        self.assertTrue(fc.set("panorama/fonts/reaver.ttf", "file:" + str(mine.resolve())))
-        junk = Path(_TMP) / "junk.ttf"
-        junk.write_bytes(b"this is not a font")
-        self.assertFalse(fc.add_custom(str(junk)))
-        self.assertFalse(fc.set("panorama/fonts/reaver.ttf", "file:" + str(junk)))      # unregistered source refused
-        a.apply_hero_skin(HERO, "cool_head")
-        self.assertTrue(a.commit())
-        pak = self.pak(a)
-        self.assertEqual(pak.get_file("panorama/fonts/radiance.ttf").read(), GAME_FILES["panorama/fonts/reaver.ttf"])
-        self.assertEqual(pak.get_file("panorama/fonts/reaver.ttf").read(), mine.read_bytes())
-        self.assertEqual(a.last_report["fonts"]["replaced"], 2)
-
     # ---- language of item names ----
     def test_item_names_follow_selected_language_with_english_fallback(self):
         self.assertEqual(self.db.items["cool_head"].localized_name, "Cool Head")
@@ -737,7 +716,7 @@ class CategoryTest(unittest.TestCase):
         self.assertEqual(c["towers"], ["crow_towers", "sun_towers"])           # diretowers / radianttowers (the old "towers" bug)
         self.assertEqual(c["cursors"], ["hydra_cursor"])
         self.assertEqual(c["hud"], ["midnight_hud"])
-        self.assertEqual(c["streak"], ["diretide_streak"])
+        self.assertNotIn("streak", c)                                           # kill-streak tab removed
         self.assertIn("odd_announcer", c["announcers"])
         self.assertIn("odd_megakills", c["mega_kills"])
         self.assertEqual(c["weather"], ["rain_weather", "snow_weather"])
@@ -758,7 +737,7 @@ class CategoryTest(unittest.TestCase):
     def test_each_category_replaces_its_default(self):
         a = self.ap()
         for cat, name, default in (("creeps", "bird_creeps", "661"), ("cursors", "hydra_cursor", "202"),
-                                   ("hud", "midnight_hud", "587"), ("streak", "diretide_streak", "14912")):
+                                   ("hud", "midnight_hud", "587")):
             self.assertTrue(a.apply_category(cat, name), cat)
         self.assertTrue(a.commit())
         it = self.items(a)
@@ -767,7 +746,6 @@ class CategoryTest(unittest.TestCase):
         self.assertIn("resource/cursor/workshop/hydra", str(it["202"]))
         self.assertIn("Midnight_Hud", str(it["587"]))                 # the chosen item's data, default identity kept
         self.assertEqual(it["587"]["name"], "Default Hud Skin")
-        self.assertEqual(len(_mods(it["14912"])), 2)
         self.assertTrue(all("error" not in r for r in a.last_report["overrides"]), a.last_report)
 
     def test_announcer_and_megakills_found_even_with_unusual_default_names(self):
@@ -940,49 +918,6 @@ class RobustnessTest(unittest.TestCase):
         self.assertIsNotNone(src.hero_icon("lina"))
         self.assertIsNotNone(src.item_icon("econ/items/x/gold/gold"))  # a real golden item is fine
 
-    # ---- fonts: renamed to the target's family names ----
-    def test_font_replacement_renames_the_font_to_the_target_family(self):
-        from chameleon.extras import read_font_names, patch_font_names
-        target = make_sfnt({1: "Radiance", 4: "Radiance Regular", 6: "Radiance-Regular"}, fs_type=8)
-        mine = make_sfnt({1: "My Font", 4: "My Font Bold", 6: "MyFont-Bold", 2: "Bold"}, fs_type=4)
-        patched = patch_font_names(mine, {1: "Radiance", 4: "Radiance Regular", 6: "Radiance-Regular"})
-        names = read_font_names(patched)
-        self.assertEqual((names[1], names[4], names[6]), ("Radiance", "Radiance Regular", "Radiance-Regular"))
-        self.assertEqual(names[2], "Bold")                               # untouched ids stay
-        self.assertTrue(patched.endswith(b"TAIL-TABLE-DATA!"))            # tables after 'name' were shifted, not corrupted
-        import struct
-        n = struct.unpack_from(">H", patched, 4)[0]
-        tabs = {patched[12 + 16 * i:16 + 16 * i].decode(): struct.unpack_from(">II", patched, 20 + 16 * i) for i in range(n)}
-        off, ln = tabs["tail"]
-        self.assertEqual(patched[off:off + ln], b"TAIL-TABLE-DATA!")
-        o2, _ = tabs["OS/2"]
-        self.assertEqual(struct.unpack_from(">H", patched, o2 + 8)[0], 0)  # fsType cleared
-        self.assertEqual(read_font_names(target)[1], "Radiance")
-
-    def test_font_changer_uses_target_names_end_to_end(self):
-        from chameleon.vpk_io import VPKBuilder
-        from chameleon.extras import read_font_names
-        game = build_fake_dota(Path(_TMP) / "fonts2")
-        files = dict(GAME_FILES)
-        files["panorama/fonts/radiance.ttf"] = make_sfnt({1: "Radiance", 4: "Radiance Regular", 6: "Radiance-Regular"})
-        b = VPKBuilder()
-        for p_, d_ in files.items():
-            b.add_data(d_, p_)
-        b.build_standalone(game / "game" / "dota" / "pak01_dir.vpk")
-        db = SkinDatabase(game)
-        self.assertTrue(db.initialize())
-        a = SkinApplier(game, db, {"pack_resources": True})
-        self.addCleanup(a.restore)
-        mine = Path(_TMP) / "Calibri.ttf"
-        mine.write_bytes(make_sfnt({1: "Calibri", 4: "Calibri", 6: "Calibri"}))
-        self.assertTrue(a.font_changer.add_custom(str(mine)))
-        self.assertTrue(a.font_changer.set("panorama/fonts/radiance.ttf", "file:" + str(mine.resolve())))
-        a.apply_hero_skin(HERO, "cool_head")
-        self.assertTrue(a.commit())
-        import vpk
-        out = vpk.open(str(a.mod_dir / "pak01_dir.vpk")).get_file("panorama/fonts/radiance.ttf").read()
-        self.assertEqual(read_font_names(out)[1], "Radiance")             # the file now answers to the family Panorama asks for
-
     # ---- optimisation: prefab resolution is memoised ----
     def test_prefab_cache_gives_identical_results_and_is_used(self):
         from chameleon.itemdef import resolve_prefabs
@@ -1064,14 +999,17 @@ class V15Test(unittest.TestCase):
         self.assertIn("map_fx_a", c["shaders"])                       # map_effect = screen/map shaders
         self.assertEqual(c["teleport_effects"], ["tele_fx_a"])        # prefab misc, slot teleport_effect
         self.assertEqual(c["blink_effects"], ["blink_fx_a"])
-        self.assertEqual(c["kill_effects"], ["kill_fx_a"])
+        self.assertNotIn("kill_effects", c)                          # the kill-effects tab was removed
+        self.assertNotIn("streak", c)
         self.assertEqual(c["statues"], ["statue_a"])
         self.assertEqual(sorted(c["gems"]), ["ethereal_gem", "prismatic_red", "unrelated_gem", "victory_gem_stats"])
         self.assertIn("epic_pack_x", c["music"])                      # recognised by the music event in its sound modifier
         self.assertNotIn("music_treasure", c["music"])                # a treasure chest / bundle is not a music pack
         self.assertNotIn("music_bundle_x", c["music"])
         groups = {g: cats for g, cats in self.db.CATEGORY_GROUPS}
-        self.assertEqual(groups["effects"], ["head_effects", "teleport_effects", "blink_effects", "death_effects", "kill_effects"])
+        self.assertEqual(groups["effects"], ["head_effects", "teleport_effects", "blink_effects", "death_effects"])
+        self.assertNotIn("kills", groups)
+        self.assertNotIn("fonts", groups["interface"])
 
     def test_gems_are_offered_only_to_the_heroes_they_belong_to(self):
         gems = [g.name for g in self.db.get_hero_gems(HERO)]
@@ -1196,6 +1134,39 @@ class V15Test(unittest.TestCase):
 
 
 
+class V153Test(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from chameleon.vpk_io import VPKBuilder
+        game = build_fake_dota(Path(_TMP) / "v153")
+        files = dict(GAME_FILES)
+        files["soundevents/music/valve_ti7_01/soundevents_music.vsndevts_c"] = b"MUSIC1"
+        files["soundevents/music/valve_ti4_01/soundevents_music.vsndevts_c"] = b"MUSIC2"
+        b = VPKBuilder()
+        for p_, d_ in files.items():
+            b.add_data(d_, p_)
+        b.build_standalone(game / "game" / "dota" / "pak01_dir.vpk")
+        cls.db = SkinDatabase(game)
+        assert cls.db.initialize()
+
+    def test_music_packs_are_found_by_the_music_folders_that_exist_in_the_game(self):
+        self.assertEqual(self.db.music_ids(), {"valve_ti7_01", "valve_ti4_01"})
+        from chameleon.models import SkinItem
+        raw = {"name": "oddly_named_pack", "prefab": "wearable", "item_slot": "weird",
+               "visuals": {"asset_modifier": {"type": "sound", "asset": "x", "modifier": "valve_ti7_01"}}}
+        item = SkinItem(item_id=99999, name="oddly_named_pack", prefab="wearable", rarity="", used_by_hero="", raw_item_data=raw)
+        self.assertEqual(self.db.category_of(item), "music")           # nothing in its name says music
+        raw2 = dict(raw, visuals={"asset_modifier": {"type": "sound", "asset": "x", "modifier": "something_else"}})
+        item2 = SkinItem(item_id=99998, name="not_music", prefab="wearable", rarity="", used_by_hero="", raw_item_data=raw2)
+        self.assertIsNone(self.db.category_of(item2))
+
+    def test_fonts_and_item_effects_are_gone(self):
+        a = SkinApplier(Path(_TMP) / "v153", self.db, {})
+        self.assertFalse(hasattr(a, "font_changer"))
+        self.assertFalse(hasattr(a, "apply_effect"))
+        self.assertFalse(hasattr(self.db, "effect_library"))
+
+
 class V152Test(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -1257,28 +1228,6 @@ class V152Test(unittest.TestCase):
         self.assertIn("persona.vmdl", str(it["1201"]))
         self.assertEqual(it["1201"]["name"], "finch_persona_default")
         self.assertNotIn("persona slot", a.last_report["overrides"][0].get("note", ""))
-
-    # ---- item effects (Frostbloom / unusual-style / gems) on a chosen slot ----
-    def test_effect_library_contains_frostbloom_and_effect_gems_only(self):
-        names = [i.name for i in self.db.effect_library()]
-        self.assertIn("frostbloom_blade", names)
-        self.assertIn("prismatic_red", names)                    # has a particle_create
-        self.assertNotIn("ethereal_gem", names)                  # only a particle swap, nothing to attach
-        self.assertNotIn("victory_gem_stats", names)
-
-    def test_effect_is_attached_to_the_chosen_slot_only(self):
-        a = self.ap()
-        self.assertFalse(a.apply_effect(HERO, "weapon_alt", "cool_head"))          # not an effect
-        self.assertTrue(a.apply_effect(HERO, "weapon_alt", "frostbloom_blade"))
-        self.assertTrue(a.commit())
-        it = self.items(a)
-        self.assertIn("frost_a.vpcf", str(it["1004"]))
-        self.assertIn("frost_b.vpcf", str(it["1004"]))
-        self.assertEqual(it["1004"]["name"], "default_weapon_alt")                  # identity kept
-        self.assertNotIn("frost_a.vpcf", str(it["1002"]))                           # other slots untouched
-        self.assertIn("effect attached", a.last_report["overrides"][0]["note"])
-        a.apply_effect(HERO, "weapon_alt", "prismatic_red")                         # one effect per hero slot
-        self.assertEqual([k for k in a.active_overrides if k.startswith("fx::")], ["fx::%s::weapon_alt" % HERO])
 
 
 class ItemDefUnitTest(unittest.TestCase):
