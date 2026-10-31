@@ -1,11 +1,11 @@
 [project]
 name = "chameleon-dota2"
-version = "15.3.0"
+version = "15.4.0"
 description = "Dota 2 cosmetic mod builder: one small VPK, fully reversible"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-dependencies = ["PySide6>=6.6", "requests>=2.31"]
+dependencies = ["PySide6>=6.6", "requests>=2.31", "pypresence>=4.3"]
 
 [project.optional-dependencies]
 icons = ["pillow>=10"]
