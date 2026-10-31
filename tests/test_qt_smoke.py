@@ -77,9 +77,8 @@ class QtSmoke(unittest.TestCase):
         self.assertEqual(len(cat["arcanas"]), 1)
         self.bridge.apply_skin("heroes", H, "cool_head", "")
         self.bridge.apply_skin("heroes", H, "alt_weapon", "")
-        self.bridge.apply_skin("taunts", H, "funny_taunt", "")
         counts = json.loads(self.bridge.get_applied_counts())
-        self.assertEqual(counts["heroes"][H], 3)
+        self.assertEqual(counts["heroes"][H], 2)
         self.assertEqual(counts["slots"][f"{H}::head"], 1)
         self.assertEqual(counts["slots"][f"{H}::weapon_alt"], 1)
         self.bridge.clear_all_overrides()
@@ -91,8 +90,8 @@ class QtSmoke(unittest.TestCase):
         self.IconManager.set_vpk_readers(self.db.vpk_readers)
         first = self.bridge.get_item_icon("cool_head@@@", "econ/items/sparrow/cool/cool_icon", 64)
         self.assertEqual(first, "")                                     # not cached yet -> async
-        self.assertTrue(self._wait(lambda: "item_cool_head" in got), "icon never arrived")
-        self.assertGreater(len(got["item_cool_head"]), 50)
+        self.assertTrue(self._wait(lambda: "item_2001" in got), "icon never arrived")
+        self.assertGreater(len(got["item_2001"]), 50)
         again = self.bridge.get_item_icon("cool_head@@@", "econ/items/sparrow/cool/cool_icon", 64)
         self.assertTrue(again)                                          # served from cache now
 
@@ -109,7 +108,7 @@ class QtSmoke(unittest.TestCase):
         self.assertEqual(ids["towers"], 2)
         self.assertEqual(ids["weather"], 2)
         self.assertNotIn("gems", ids)                                          # gems live on the hero page, not in the catalog
-        self.assertEqual([g["id"] for g in cat], ["world", "units", "items", "effects", "interface", "sound"])
+        self.assertEqual([g["id"] for g in cat], ["world", "units", "items", "effects", "interface", "kills", "sound"])
         items = json.loads(self.bridge.get_category_items("towers"))
         self.assertEqual(sorted(i["name"] for i in items), ["crow_towers", "sun_towers"])
         self.assertTrue(self.bridge.toggle_favorite("crow_towers"))

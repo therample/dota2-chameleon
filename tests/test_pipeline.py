@@ -147,6 +147,10 @@ def _items_game():
     "3822" { "name" "lut_pack" "item_name" "#DOTA_Item_Lut_Pack" "prefab" "wearable" "item_slot" "special"
              "some_key" "materials/correction/warm_lut.raw" "visuals" { "asset_modifier" { "type" "entity_model" "modifier" "models/x.vmdl" } } }
 
+    "5301" { "name" "stock_head_default" "prefab" "default_item" "item_slot" "head" "model_player" "models/heroes/sparrow/head_stock.vmdl" "used_by_heroes" { "%(h)s" "1" } }
+    "5302" { "name" "paid_head" "item_name" "#DOTA_Item_Paid_Head" "prefab" "wearable" "item_slot" "head" "model_player" "models/items/sparrow/cool/cool_alt.vmdl" "item_rarity" "rare" "used_by_heroes" { "%(h)s" "1" } }
+    "5303" { "name" "courier_glow" "item_name" "#DOTA_Item_Courier_Glow" "prefab" "courier_effect" "item_slot" "courier_effect"
+             "visuals" { "asset_modifier" { "type" "particle_create" "modifier" "particles/econ/couriers/glow.vpcf" } } }
     "4001" { "name" "head_fx_a" "item_name" "#DOTA_Item_HeadFx" "prefab" "head_effect" "item_slot" "head_effect" "used_by_heroes" { "%(h)s" "1" }
              "visuals" { "asset_modifier" { "type" "particle_create" "modifier" "particles/econ/fx/head_a.vpcf" } } }
     "4002" { "name" "courier_fx_a" "item_name" "#DOTA_Item_CourierFx" "prefab" "courier_effect" "item_slot" "courier_effect"
@@ -209,7 +213,7 @@ LOC = ('"lang" { "Language" "English" "Tokens" { "DOTA_Item_Cool_Head" "Cool Hea
        '"DOTA_Item_Funny_Taunt" "Funny Taunt" "DOTA_Item_Alt_Weapon" "Alt Weapon" "DOTA_Item_Head_Acc" "Head Accessory" '
        '"DOTA_Item_Misc" "Misc Thing" "DOTA_Item_Cool_Announcer" "Cool Announcer" "DOTA_Item_Snow_Weather" "Snow" '
        '"DOTA_Item_Rain_Weather" "Rain" "DOTA_Item_Finch_Blade" "Finch Blade" "DOTA_Item_Finch_Taunt" "Finch Taunt" '
-       '"DOTA_Item_Ghost_Effigy" "Ghost Effigy" "DOTA_Item_Stone_Ancient" "Stone Ancient" "DOTA_Item_Ember_Tormentor" "Ember Tormentor" "DOTA_Item_Noir_Filter" "Noir Filter" "DOTA_Item_Lut_Pack" "Lut Pack" "DOTA_Item_HeadFx" "Head Fx" "DOTA_Item_CourierFx" "Courier Fx" "DOTA_Item_DeathFx" "Death Fx" "DOTA_Item_MapFx" "Map Fx" "DOTA_Item_TeleFx" "Tele Fx" "DOTA_Item_BlinkFx" "Blink Fx" "DOTA_Item_KillFx" "Kill Fx" "DOTA_Item_StatueA" "Statue A" "DOTA_Item_PrismaticRed" "Prismatic Red" "DOTA_Item_EtherealGem" "Ethereal Gem" "DOTA_Item_Unrelated" "Unrelated Gem" "DOTA_Item_Victory" "Victory Gem" "DOTA_Item_IceRoshan" "Ice Roshan" "DOTA_Item_GoldCourier" "Gold Courier" "DOTA_Item_EpicPack" "Epic Music Pack" "DOTA_Item_MusicTreasure" "Music Treasure" "DOTA_Item_MusicBundle" "Music Bundle" "DOTA_Item_Frostbloom_Blade" "Frostbloom Blade" "DOTA_Item_Sparrow_Persona" "Sparrow Persona" "DOTA_Item_Finch_Persona" "Finch Persona" "DOTA_Item_Ti9_Pack" "TI9 Pack" "DOTA_Item_Dup" "Dup Item" "DOTA_Item_Odd_Slot" "Odd Slot" "DOTA_Item_Tail" "Tail Thing" "DOTA_Item_Bird_Creeps" "Bird Creeps" "DOTA_Item_Crow_Towers" "Crow Towers" "DOTA_Item_Sun_Towers" "Sun Towers" "DOTA_Item_Hydra_Cursor" "Hydra Cursor" "DOTA_Item_Midnight_Hud" "Midnight HUD" "DOTA_Item_Diretide_Streak" "Diretide Streak" "DOTA_Item_Odd_Announcer" "Odd Announcer" "DOTA_Item_Odd_MegaKills" "Odd Mega-Kills" "DOTA_Item_Styled_Head" "Styled Head" "DOTA_Style_Base" "Classic" "DOTA_Style_Golden" "Golden" } }')
+       '"DOTA_Item_Ghost_Effigy" "Ghost Effigy" "DOTA_Item_Stone_Ancient" "Stone Ancient" "DOTA_Item_Ember_Tormentor" "Ember Tormentor" "DOTA_Item_Noir_Filter" "Noir Filter" "DOTA_Item_Lut_Pack" "Lut Pack" "DOTA_Item_HeadFx" "Head Fx" "DOTA_Item_CourierFx" "Courier Fx" "DOTA_Item_DeathFx" "Death Fx" "DOTA_Item_MapFx" "Map Fx" "DOTA_Item_TeleFx" "Tele Fx" "DOTA_Item_BlinkFx" "Blink Fx" "DOTA_Item_KillFx" "Kill Fx" "DOTA_Item_StatueA" "Statue A" "DOTA_Item_PrismaticRed" "Prismatic Red" "DOTA_Item_EtherealGem" "Ethereal Gem" "DOTA_Item_Unrelated" "Unrelated Gem" "DOTA_Item_Victory" "Victory Gem" "DOTA_Item_IceRoshan" "Ice Roshan" "DOTA_Item_GoldCourier" "Gold Courier" "DOTA_Item_EpicPack" "Epic Music Pack" "DOTA_Item_MusicTreasure" "Music Treasure" "DOTA_Item_MusicBundle" "Music Bundle" "DOTA_Item_Frostbloom_Blade" "Frostbloom Blade" "DOTA_Item_Sparrow_Persona" "Sparrow Persona" "DOTA_Item_Finch_Persona" "Finch Persona" "DOTA_Item_Ti9_Pack" "TI9 Pack" "DOTA_Item_Dup" "Dup Item" "DOTA_Item_Paid_Head" "Paid Head" "DOTA_Item_Courier_Glow" "Courier Glow" "DOTA_Item_Odd_Slot" "Odd Slot" "DOTA_Item_Tail" "Tail Thing" "DOTA_Item_Bird_Creeps" "Bird Creeps" "DOTA_Item_Crow_Towers" "Crow Towers" "DOTA_Item_Sun_Towers" "Sun Towers" "DOTA_Item_Hydra_Cursor" "Hydra Cursor" "DOTA_Item_Midnight_Hud" "Midnight HUD" "DOTA_Item_Diretide_Streak" "Diretide Streak" "DOTA_Item_Odd_Announcer" "Odd Announcer" "DOTA_Item_Odd_MegaKills" "Odd Mega-Kills" "DOTA_Item_Styled_Head" "Styled Head" "DOTA_Style_Base" "Classic" "DOTA_Style_Golden" "Golden" } }')
 LOC_RU = '"lang" { "Language" "Russian" "Tokens" { "DOTA_Item_Cool_Head" "Крутая шапка" } }'
 
 
@@ -247,6 +251,10 @@ GAME_FILES = {
     "models/items/sparrow/cool/cool.vmdl_c": fake_compiled("particles/econ/items/sparrow/cool/cool_ambient.vpcf"),
     "particles/econ/items/sparrow/cool/cool_ambient.vpcf_c": b"PARTICLE_COOL" * 4,
     "particles/econ/items/sparrow/cool/cool_second.vpcf_c": b"PARTICLE_COOL2" * 4,
+    "models/items/sparrow/cool/cool_alt.vmdl_c": b"COOL_ALT_MODEL" * 6,
+    "models/heroes/sparrow/head_stock.vmdl_c": b"STOCK_HEAD" * 6,
+    "models/couriers/gold.vmdl_c": b"GOLD_COURIER" * 4,
+    "models/props_gameplay/donkey.vmdl_c": b"DONKEY" * 4,
     "particles/econ/gems/prismatic_red.vpcf_c": b"GEM_RED" * 4,
     "particles/econ/gems/ethereal.vpcf_c": b"GEM_ETH" * 4,
     "particles/units/heroes/hero_sparrow/arcana_glow.vpcf_c": b"ORIGINAL_GLOW" * 4,
@@ -343,12 +351,12 @@ class PipelineTest(unittest.TestCase):
     def test_04_every_hero_slot_is_kept_and_items_sorted_into_them(self):
         cat = self.db.get_hero_catalog(HERO)
         slots = {s["slot"]: [i.name for i in s["items"]] for s in cat["slots"]}
-        self.assertEqual(slots, {"head": ["cool_head", "styled_head", "dup_name", "dup_name #5203"], "weapon_alt": ["alt_weapon", "frostbloom_blade"],
-                                 "head_accessory": ["head_acc_item"], "misc": ["misc_item"]})
+        self.assertEqual({k: sorted(v) for k, v in slots.items()}, {k: sorted(v) for k, v in {"head": ["cool_head", "styled_head", "paid_head", "dup_name", "dup_name #5203"], "weapon_alt": ["alt_weapon", "frostbloom_blade"],
+                                 "head_accessory": ["head_acc_item"], "misc": ["misc_item"]}.items()})
         order = [s["slot"] for s in cat["slots"]]
         self.assertEqual(order, ["head", "misc", "head_accessory", "weapon_alt"])    # canonical slots first
         self.assertEqual([i.name for i in cat["arcanas"]], ["arcana_weapon"])
-        self.assertEqual([i.name for i in cat["taunts"]], ["funny_taunt"])
+        self.assertEqual(cat["taunts"], [])                                        # taunts are not offered any more
         self.assertNotIn("hud_skin_slot", slots)
         self.assertEqual(self.db.resolve_slot(HERO, "weapon_alt"), "weapon_alt")     # not merged into "weapon"
         self.assertEqual(self.db.resolve_slot(HERO, "shoulder"), "shoulder")          # real loadout slot: accepted, build decides
@@ -366,7 +374,7 @@ class PipelineTest(unittest.TestCase):
         self.assertTrue(A.apply_hero_skin(HERO, "arcana_weapon"))
         self.assertTrue(A.apply_hero_skin(HERO, "cool_head"))
         self.assertTrue(A.apply_hero_skin(HERO, "alt_weapon"))
-        self.assertTrue(A.apply_taunt(HERO, "funny_taunt"))
+        self.assertFalse(hasattr(A, "apply_taunt"))
         self.assertTrue(A.apply_announcer("cool_announcer"))
         self.assertTrue(A.apply_style("arcana_weapon", 1))
         msgs = []
@@ -380,7 +388,9 @@ class PipelineTest(unittest.TestCase):
         # identity of the default item is kept, content comes from the wanted item
         w = items["1001"]
         self.assertEqual((w["name"], w["prefab"], w["item_slot"]), ("default_weapon", "default_item", "weapon"))
-        self.assertEqual(w["model_player"], "models/items/sparrow/arcana/weapon.vmdl")
+        # stock path stays (what the server and a reconnecting client use); the arcana model is written UNDER it
+        self.assertEqual(w["model_player"], "models/heroes/sparrow/weapon.vmdl")
+        self.assertEqual(pak.get_file("models/heroes/sparrow/weapon.vmdl_c").read(), GAME_FILES["models/items/sparrow/arcana/weapon.vmdl_c"])
 
         # every modifier survived (this is the bug that removed ambient effects)
         head_mods = [m["modifier"] for m in _mods(items["1002"])]
@@ -403,7 +413,6 @@ class PipelineTest(unittest.TestCase):
         # other slots land on THEIR default item, extra slots are not merged into "weapon"
         self.assertEqual(items["1004"]["name"], "default_weapon_alt")
         self.assertEqual(items["1003"]["name"], "default_taunt")
-        self.assertIn("funny", str(items["1003"]))
         self.assertNotIn("funny", str(items["1002"]))
 
         # announcer: default entry, replaced by the chosen pack's visuals
@@ -548,21 +557,6 @@ class BehaviourTest(unittest.TestCase):
         self.assertNotIn("error", rep)
 
     # ---- taunts: no default taunt item exists for this hero ----
-    def test_taunt_without_default_taunt_item_rides_on_a_default_item(self):
-        a = self.ap()
-        self.assertTrue(a.apply_taunt(FINCH, "finch_taunt"))
-        self.assertTrue(a.commit())
-        items = _items_of(self.pak(a))
-        carrier = items["1102"]                                                    # carrier order: weapon (none) -> head
-        mods = _mods(carrier)
-        self.assertIn(("activity", "finch_dance"), [(m["type"], m.get("modifier")) for m in mods])
-        self.assertIn("particles/econ/items/finch/taunt_fx.vpcf", [m.get("modifier") for m in mods])
-        self.assertEqual(carrier["name"], "finch_head_default")                     # not turned into a taunt item
-        self.assertNotIn("model_player", carrier)                                   # a taunt must not swap the carrier's model
-        rep = a.last_report["overrides"][0]
-        self.assertNotIn("error", rep)
-        self.assertIn("taunt attached", rep["note"])
-
     # ---- main-menu background (BackgroundChanger approach) ----
     def _layout_cache(self, a):
         from chameleon.extras import BackgroundVPKBuilder
@@ -716,7 +710,7 @@ class CategoryTest(unittest.TestCase):
         self.assertEqual(c["towers"], ["crow_towers", "sun_towers"])           # diretowers / radianttowers (the old "towers" bug)
         self.assertEqual(c["cursors"], ["hydra_cursor"])
         self.assertEqual(c["hud"], ["midnight_hud"])
-        self.assertNotIn("streak", c)                                           # kill-streak tab removed
+        self.assertEqual(c["streak"], ["diretide_streak"])
         self.assertIn("odd_announcer", c["announcers"])
         self.assertIn("odd_megakills", c["mega_kills"])
         self.assertEqual(c["weather"], ["rain_weather", "snow_weather"])
@@ -994,21 +988,20 @@ class V15Test(unittest.TestCase):
     def test_effect_categories_statues_shaders_and_gems_are_mapped(self):
         c = {k: sorted(v) for k, v in self.db.categories.items() if v}
         self.assertEqual(c["head_effects"], ["head_fx_a"])            # hero-bound but still a catalog item
-        self.assertEqual(c["courier_effects"], ["courier_fx_a"])
+        self.assertEqual(sorted(c["courier_effects"]), ["courier_fx_a", "courier_glow"])
         self.assertEqual(c["death_effects"], ["death_fx_a"])
         self.assertIn("map_fx_a", c["shaders"])                       # map_effect = screen/map shaders
         self.assertEqual(c["teleport_effects"], ["tele_fx_a"])        # prefab misc, slot teleport_effect
         self.assertEqual(c["blink_effects"], ["blink_fx_a"])
-        self.assertNotIn("kill_effects", c)                          # the kill-effects tab was removed
-        self.assertNotIn("streak", c)
-        self.assertEqual(c["statues"], ["statue_a"])
+        self.assertEqual(c["kill_effects"], ["kill_fx_a"])
+        self.assertNotIn("statues", c)                                 # heroic statues were removed
         self.assertEqual(sorted(c["gems"]), ["ethereal_gem", "prismatic_red", "unrelated_gem", "victory_gem_stats"])
         self.assertIn("epic_pack_x", c["music"])                      # recognised by the music event in its sound modifier
         self.assertNotIn("music_treasure", c["music"])                # a treasure chest / bundle is not a music pack
         self.assertNotIn("music_bundle_x", c["music"])
         groups = {g: cats for g, cats in self.db.CATEGORY_GROUPS}
-        self.assertEqual(groups["effects"], ["head_effects", "teleport_effects", "blink_effects", "death_effects"])
-        self.assertNotIn("kills", groups)
+        self.assertEqual(groups["effects"], ["head_effects", "teleport_effects", "blink_effects", "death_effects", "kill_effects"])
+        self.assertEqual(groups["kills"], ["streak"])
         self.assertNotIn("fonts", groups["interface"])
 
     def test_gems_are_offered_only_to_the_heroes_they_belong_to(self):
@@ -1059,8 +1052,11 @@ class V15Test(unittest.TestCase):
         self.assertTrue(a.apply_category("couriers", "gold_courier"))
         self.assertTrue(a.commit())
         it = self.items(a)
-        self.assertIn("models/couriers/gold.vmdl", str(it["800"]))
         self.assertEqual(it["800"]["name"], "Default Courier Thing")
+        # the courier model is written under the stock path (works after a reconnect)
+        import vpk
+        pk = vpk.open(str(a.pak_path))
+        self.assertEqual(pk.get_file("models/props_gameplay/donkey.vmdl_c").read(), GAME_FILES["models/couriers/gold.vmdl_c"])
         self.assertNotIn("error", a.last_report["overrides"][0])
 
     # ---- global effects: courier trail swap is written under the old path ----
@@ -1163,8 +1159,6 @@ class V153Test(unittest.TestCase):
     def test_fonts_and_item_effects_are_gone(self):
         a = SkinApplier(Path(_TMP) / "v153", self.db, {})
         self.assertFalse(hasattr(a, "font_changer"))
-        self.assertFalse(hasattr(a, "apply_effect"))
-        self.assertFalse(hasattr(self.db, "effect_library"))
 
 
 class V152Test(unittest.TestCase):
@@ -1228,6 +1222,339 @@ class V152Test(unittest.TestCase):
         self.assertIn("persona.vmdl", str(it["1201"]))
         self.assertEqual(it["1201"]["name"], "finch_persona_default")
         self.assertNotIn("persona slot", a.last_report["overrides"][0].get("note", ""))
+
+
+
+class V154Test(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.game = build_fake_dota(Path(_TMP) / "v154")
+        cls.db = SkinDatabase(cls.game)
+        assert cls.db.initialize()
+
+    def ap(self, **cfg):
+        a = SkinApplier(self.game, self.db, dict({"pack_resources": True}, **cfg))
+        self.addCleanup(a.restore)
+        return a
+
+    def pak(self, a, path=None):
+        import vpk
+        return vpk.open(str(path or a.pak_path))
+
+    # ---- stock paths: models survive a reconnect, and a model-only pick needs no items_game at all ----
+    def test_model_is_written_under_the_stock_path_and_items_game_is_skipped(self):
+        a = self.ap()
+        self.assertTrue(a.apply_hero_skin(HERO, "paid_head"))
+        self.assertTrue(a.commit(), a.last_report)
+        pak = self.pak(a)
+        names = {f for f in pak}
+        self.assertEqual(pak.get_file("models/heroes/sparrow/head_stock.vmdl_c").read(), GAME_FILES["models/items/sparrow/cool/cool_alt.vmdl_c"])
+        self.assertNotIn("models/items/sparrow/cool/cool_alt.vmdl_c", names)          # the paid path is never needed
+        self.assertNotIn("scripts/items/items_game.txt", names)                       # light mod: a few MB instead of a full items_game
+        self.assertEqual(a.last_report["items_game"], "not needed")
+
+    def test_files_only_mode_skips_picks_that_need_item_data(self):
+        a = self.ap(files_only=True)
+        a.apply_hero_skin(HERO, "arcana_weapon")
+        a.apply_hero_skin(HERO, "paid_head")
+        self.assertTrue(a.commit())
+        self.assertNotIn("scripts/items/items_game.txt", {f for f in self.pak(a)})
+        self.assertIn("skipped", a.last_report["items_game"])
+
+    def test_item_without_stock_model_keeps_the_paid_path(self):
+        a = self.ap()
+        a.apply_hero_skin(FINCH, "finch_persona_x")                               # no model_player involved: data path stays
+        self.assertTrue(a.commit())
+        self.assertIn("scripts/items/items_game.txt", {f for f in self.pak(a)})
+
+    # ---- courier effects bind to the courier itself ----
+    def test_courier_effect_is_attached_to_the_courier_item(self):
+        self.assertIn("courier_glow", self.db.categories["courier_effects"])
+        a = self.ap()
+        self.assertTrue(a.apply_category("courier_effects", "courier_glow"))
+        self.assertTrue(a.apply_category("couriers", "gold_courier"))
+        self.assertTrue(a.commit())
+        import chameleon.kv as kvm
+        raw = self.pak(a).get_file("scripts/items/items_game.txt").read().decode()
+        items = kvm.KeyValueParser(raw).parse()["items_game"]["items"]
+        courier = items["800"]
+        self.assertIn("glow.vpcf", str(courier))                                    # effect sits on the courier itself ...
+        self.assertEqual(self.pak(a).get_file("models/props_gameplay/donkey.vmdl_c").read(), GAME_FILES["models/couriers/gold.vmdl_c"])   # ... with the chosen courier skin
+        self.assertEqual(courier["name"], "Default Courier Thing")
+        rep = [r for r in a.last_report["overrides"] if r["item"] == "courier_glow"][0]
+        self.assertIn("like a built-in gem", rep["note"])
+        self.assertFalse([v for v in items.values() if isinstance(v, dict) and v.get("item_slot") == "courier_effect" and v.get("baseitem") == "1"])   # no slot item created
+
+    # ---- install methods ----
+    def test_language_folder_install_uses_its_own_pak_and_no_gameinfo_edit(self):
+        game = build_fake_dota(Path(_TMP) / "lang")
+        lang = game / "game" / "dota_russian"
+        lang.mkdir()
+        valve = lang / "pak01_dir.vpk"
+        valve.write_bytes(b"VALVE-VOICE-PACK")
+        db = SkinDatabase(game)
+        self.assertTrue(db.initialize())
+        a = SkinApplier(game, db, {"pack_resources": True, "install_method": "language", "lang_folder": "russian"})
+        gi_before = a.gameinfo.branch_path.read_bytes()
+        a.apply_hero_skin(HERO, "arcana_weapon")
+        self.assertTrue(a.commit(), a.last_report)
+        self.assertEqual(a.method(), "language")
+        self.assertEqual(valve.read_bytes(), b"VALVE-VOICE-PACK")                  # Valve's pak is never touched
+        self.assertEqual(a.pak_path.name, "pak02_dir.vpk")
+        self.assertTrue(a.pak_path.exists())
+        self.assertEqual(a.gameinfo.branch_path.read_bytes(), gi_before)           # gameinfo untouched
+        self.assertTrue(a.is_active())
+        self.assertTrue(a.commit())                                                # again: same file, no pak03
+        self.assertEqual(sorted(p.name for p in lang.glob("pak*_dir.vpk")), ["pak01_dir.vpk", "pak02_dir.vpk"])
+        a.restore()
+        self.assertFalse((lang / "pak02_dir.vpk").exists())
+        self.assertEqual(valve.read_bytes(), b"VALVE-VOICE-PACK")
+        self.assertFalse(a.is_active())
+
+    def test_language_method_falls_back_to_the_custom_folder_when_the_folder_is_missing(self):
+        a = self.ap(install_method="language", lang_folder="russian")
+        self.assertEqual(a.method(), "custom")
+        a.apply_hero_skin(HERO, "paid_head")
+        self.assertTrue(a.commit())
+        self.assertTrue(a.pak_path.exists())
+
+    def test_custom_folder_name_is_configurable_and_sanitised(self):
+        a = self.ap(custom_folder="my mod/../x")
+        self.assertEqual(a.custom_folder_name(), "mymodx")
+
+    # ---- panorama container ----
+    def test_panorama_source_roundtrip_keeps_other_blocks(self):
+        import struct, zlib
+        from chameleon import panorama as pa
+        text = b'<root><DOTADashboardBackgroundManager id="m" override-background="s2r://panorama/layout/old.vxml_c" /></root>'
+        blocks = [(b"REDI", b"R" * 40), (b"DATA", struct.pack("<IH", zlib.crc32(text) & 0xFFFFFFFF, 0) + text), (b"SrMa", b"S" * 20)]
+        out = bytearray(16 + 12 * len(blocks)); pos = len(out); ent = []
+        for n, b in blocks:
+            pos = (pos + 15) & ~15; ent.append((n, pos, len(b))); out.extend(b"\0" * (pos - len(out))); out.extend(b); pos = len(out)
+        struct.pack_into("<IHHII", out, 0, len(out), 12, 0, 8, len(blocks))
+        for i, (n, o, l) in enumerate(ent):
+            at = 16 + 12 * i; out[at:at + 4] = n; struct.pack_into("<II", out, at + 4, o - (at + 4), l)
+        self.assertIn("old.vxml_c", pa.get_source(bytes(out)))
+        new = pa.set_source(bytes(out), "<root/>")
+        self.assertEqual(pa.get_source(new), "<root/>")
+        self.assertEqual([n for n, _ in pa.read_blocks(new)[1]], [b"REDI", b"DATA", b"SrMa"])
+        self.assertEqual(dict(pa.read_blocks(new)[1])[b"SrMa"], b"S" * 20)
+        with self.assertRaises(pa.PanoramaError):
+            pa.read_blocks(b"short")
+
+    def test_menu_background_native_method(self):
+        import struct, zlib
+        from chameleon import panorama as pa
+        from chameleon.vpk_io import VPKBuilder
+
+        def container(text):
+            blocks = [(b"REDI", b"R" * 40), (b"DATA", struct.pack("<IH", zlib.crc32(text) & 0xFFFFFFFF, 0) + text)]
+            out = bytearray(16 + 12 * len(blocks)); pos = len(out); ent = []
+            for n, b in blocks:
+                pos = (pos + 15) & ~15; ent.append((n, pos, len(b))); out.extend(b"\0" * (pos - len(out))); out.extend(b); pos = len(out)
+            struct.pack_into("<IHHII", out, 0, len(out), 12, 0, 8, len(blocks))
+            for i, (n, o, l) in enumerate(ent):
+                at = 16 + 12 * i; out[at:at + 4] = n; struct.pack_into("<II", out, at + 4, o - (at + 4), l)
+            return bytes(out)
+        game = build_fake_dota(Path(_TMP) / "menu")
+        files = dict(GAME_FILES)
+        files["panorama/layout/dashboard.vxml_c"] = container(b'<root><DOTADashboardBackgroundManager id="m" override-background="s2r://panorama/layout/x.vxml_c" /></root>')
+        files["panorama/styles/dotastyles.vcss_c"] = container(b".a { color: red; }")
+        b = VPKBuilder()
+        for p_, d_ in files.items():
+            b.add_data(d_, p_)
+        b.build_standalone(game / "game" / "dota" / "pak01_dir.vpk")
+        db = SkinDatabase(game)
+        self.assertTrue(db.initialize())
+        a = SkinApplier(game, db, {"pack_resources": True, "bg_method": "menu"})
+        self.addCleanup(a.restore)
+        a.background_builder.convert = lambda src, progress=None: None
+        vid = Path(_TMP) / "m.webm"
+        vid.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 100)
+        a.set_background(str(vid))
+        a.apply_hero_skin(HERO, "paid_head")
+        self.assertTrue(a.commit(), a.last_report)
+        pak = self.pak(a)
+        dash = pa.get_source(pak.get_file("panorama/layout/dashboard.vxml_c").read())
+        self.assertIn('override-background="s2r://panorama/layout/chameleon_background.vxml_c"', dash)
+        lay = pa.get_source(pak.get_file(pa.MENU_LAYOUT).read())
+        self.assertIn(pa.MENU_VIDEO, lay)
+        self.assertTrue(lay.isascii() and " on" not in lay)                         # Panorama refuses non-ASCII text / handlers
+        self.assertEqual(pak.get_file(pa.MENU_VIDEO).read(), vid.read_bytes())
+        self.assertEqual(a.last_report["background"]["error"], "")
+
+    def test_menu_background_reports_a_changed_dota_layout(self):
+        a = self.ap(bg_method="menu")
+        a.background_builder.convert = lambda src, progress=None: None
+        vid = Path(_TMP) / "m2.webm"
+        vid.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 100)
+        a.set_background(str(vid))
+        a.apply_hero_skin(HERO, "paid_head")
+        a.commit()
+        self.assertIn("menu", a.last_report["background"]["error"].lower())        # fake game has no dashboard layout
+
+    def test_video_is_prepared_small_enough_for_the_menu(self):
+        import shutil, subprocess
+        if not shutil.which("ffmpeg"):
+            self.skipTest("ffmpeg not installed")
+        src = Path(_TMP) / "long.mp4"
+        r = subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "testsrc2=size=640x360:rate=25:duration=40", "-c:v", "mpeg4", "-q:v", "2", str(src)], capture_output=True)
+        if r.returncode != 0:
+            self.skipTest("cannot make a test clip")
+        a = self.ap()
+        out = a.background_builder.convert(src)
+        self.assertIsNotNone(out, a.background_builder.last_error)
+        self.assertLessEqual(out.stat().st_size, 14_000_000)
+        dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(out)], capture_output=True, text=True).stdout.strip())
+        self.assertLessEqual(dur, 30.5)                                              # cut to 30 seconds
+
+    # ---- item effects ----
+    def test_effect_library_has_pure_effects_only(self):
+        names = [i.name for i in self.db.effect_library()]
+        self.assertIn("frostbloom_blade", names)
+        self.assertNotIn("sparrow_persona", names)                                  # has a model: not an effect
+        self.assertNotIn("paid_head", names)
+
+    def test_effect_goes_to_the_chosen_slot_only(self):
+        a = self.ap()
+        self.assertFalse(a.apply_effect(HERO, "weapon_alt", "paid_head"))
+        self.assertTrue(a.apply_effect(HERO, "weapon_alt", "frostbloom_blade"))
+        self.assertTrue(a.commit())
+        import chameleon.kv as kvm
+        raw = self.pak(a).get_file("scripts/items/items_game.txt").read().decode()
+        items = kvm.KeyValueParser(raw).parse()["items_game"]["items"]
+        self.assertIn("frost_a.vpcf", str(items["1004"]))
+        self.assertNotIn("frost_a.vpcf", str(items["1002"]))
+
+    # ---- parsing: None values, hero-bound music, siblings, config ----
+    def test_none_strings_never_reach_the_interface(self):
+        from chameleon.bridge import _clean, pretty_name
+        for v in (None, "None", "null", " none "):
+            self.assertEqual(_clean(v), "")
+        self.assertEqual(pretty_name(None), "")
+        self.assertEqual(pretty_name("#DOTA_Item_Crown_Cursor_Pack"), "Crown Cursor Pack")
+
+    def test_music_used_by_all_heroes_is_listed_but_hero_items_are_not(self):
+        raw_all = {"used_by_heroes": {f"npc_dota_hero_h{i}": "1" for i in range(100)}}
+        raw_one = {"used_by_heroes": {HERO: "1"}}
+        self.assertFalse(self.db._is_hero_bound(raw_all))
+        self.assertTrue(self.db._is_hero_bound(raw_one))
+        self.assertFalse(self.db._is_hero_bound({}))
+
+    def test_item_without_picture_borrows_the_picture_of_its_same_name_twin(self):
+        from chameleon.bridge import ChameleonBridge
+        br = ChameleonBridge()
+        br.set_database(self.db)
+        twin = [i for n, i in self.db.items.items() if n.startswith("dup_name")]
+        twin[0].raw_item_data = dict(twin[0].raw_item_data, image_inventory="econ/items/x/dup/dup")
+        twin[1].raw_item_data = dict(twin[1].raw_item_data, image_inventory="")
+        if hasattr(self.db, "_icon_by_name"):
+            del self.db._icon_by_name
+        self.assertEqual(br._item_to_dict(twin[1])["icon_path"], "econ/items/x/dup/dup")
+        self.assertIn("item_id", br._item_to_dict(twin[1]))
+
+    def test_old_settings_are_dropped_from_the_config(self):
+        from chameleon.common import clean_config, DEFAULT_CONFIG
+        cfg = clean_config({"hud_scale": 1.2, "custom_fonts": ["a"], "item_language": "russian", "language": "ru", "applied_sig": "x", "favorites": ["a"]})
+        self.assertEqual(cfg, {"language": "ru", "applied_sig": "x", "favorites": ["a"]})
+        for old in ("hud_scale", "minimap_scale", "show_rarity_colors", "auto_apply_on_select", "custom_fonts", "item_language"):
+            self.assertNotIn(old, DEFAULT_CONFIG)
+
+    def test_arcana_is_decided_by_rarity_or_prefab_only(self):
+        self.assertTrue(self.db.items["arcana_weapon"].is_arcana)
+        self.assertFalse(self.db.items["paid_head"].is_arcana)
+        self.assertFalse(self.db.items["frostbloom_blade"].is_arcana)
+
+    def test_taunts_and_statues_are_gone(self):
+        self.assertEqual(self.db.get_hero_catalog(HERO)["taunts"], [])
+        self.assertNotIn("statues", self.db.categories)
+        self.assertNotIn("heroic_statue", [g["slot"] for g in self.db.get_hero_catalog(HERO)["slots"]])
+
+
+class RPCTest(unittest.TestCase):
+    def make(self, **kw):
+        from chameleon.rpc import DiscordRPC
+        calls = {"connect": 0, "updates": [], "closed": 0}
+
+        class Fake:
+            def __init__(s, cid): calls["cid"] = cid
+            def connect(s): calls["connect"] += 1
+            def update(s, **k): calls["updates"].append(k)
+            def close(s): calls["closed"] += 1
+        return DiscordRPC(presence_cls=Fake, min_interval=0.05, retry_interval=0.1, **kw), calls
+
+    def wait(self, fn, ms=3000):
+        import time
+        t0 = time.time()
+        while time.time() - t0 < ms / 1000:
+            if fn():
+                return True
+            time.sleep(0.02)
+        return fn()
+
+    def test_connects_sends_localised_state_and_stops(self):
+        r, c = self.make()
+        r.configure(True, "ru")
+        r.set_page("heroes")
+        self.assertTrue(self.wait(lambda: c["updates"]))
+        u = c["updates"][-1]
+        self.assertEqual(u["state"], "Выбирает героя")
+        self.assertEqual(u["details"], "Open Source")
+        self.assertEqual(u["large_image"], "icon")
+        self.assertEqual(u["buttons"][0]["url"], "https://github.com/therample/dota2-chameleon")
+        self.assertEqual(c["cid"], "1563628624442298510")
+        r.stop()
+        self.assertGreaterEqual(c["closed"], 1)
+
+    def test_latest_state_wins_and_hero_name_is_used(self):
+        r, c = self.make()
+        r.configure(True, "en")
+        r.set_page("home")
+        self.assertTrue(self.wait(lambda: c["updates"]))
+        r.set_page("hero", "Axe")
+        r.set_page("settings")
+        r.set_page("hero", "Sniper")
+        self.assertTrue(self.wait(lambda: c["updates"][-1]["state"] == "Choosing skins for Sniper"))
+        self.assertNotIn("Choosing skins for Axe", [u["state"] for u in c["updates"]])
+        r.stop()
+
+    def test_disabled_never_connects_and_failures_are_silent(self):
+        r, c = self.make()
+        r.configure(False)
+        r.set_page("home")
+        import time; time.sleep(0.2)
+        self.assertEqual(c["connect"], 0)
+        r.stop()
+        from chameleon.rpc import DiscordRPC
+
+        class Broken:
+            def __init__(s, cid): pass
+            def connect(s): raise RuntimeError("Discord is closed")
+        r2 = DiscordRPC(presence_cls=Broken, min_interval=0.05, retry_interval=0.1)
+        r2.configure(True)
+        r2.set_page("home")
+        time.sleep(0.4)                                                              # no exception, thread alive, retrying
+        self.assertTrue(r2._thread.is_alive())
+        r2.stop()
+
+    def test_missing_pypresence_is_harmless(self):
+        from chameleon.rpc import DiscordRPC
+        import builtins
+        real = builtins.__import__
+        def fake(name, *a, **k):
+            if name == "pypresence":
+                raise ImportError(name)
+            return real(name, *a, **k)
+        builtins.__import__ = fake
+        try:
+            r = DiscordRPC(min_interval=0.05, retry_interval=0.1)
+            r.configure(True)
+            r.set_page("home")
+            import time; time.sleep(0.3)
+        finally:
+            builtins.__import__ = real
+        self.assertTrue(r._thread.is_alive())
+        r.stop()
 
 
 class ItemDefUnitTest(unittest.TestCase):
