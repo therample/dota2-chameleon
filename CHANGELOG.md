@@ -1,5 +1,33 @@
 # Changelog
 
+## 15.4
+
+### New
+- **Install into the language folder** (default): the mod goes to `game/dota_<language>/pakNN_dir.vpk` next to Dota's own language files
+  (never over Valve's `pak01_dir.vpk`), no gameinfo edit, no signature line. Launch adds the matching `-language` option. The old
+  custom folder is still available (Settings → *Where the mod is installed*; its folder name is configurable).
+- **Menu background, native method**: Dota's own dashboard layout is read from your game and pointed at a layout of ours that plays the
+  video; nothing is downloaded and it follows Dota updates. The video is prepared at about 12 MB and at most 30 seconds (bigger files
+  give a black menu).
+- **Keep models after reconnect**: chosen models are written under the game's own file names (stock paths) instead of pointing the item
+  data at a path that is not loaded after a reconnect. A model-only pick needs no `items_game` at all, so the mod is a few MB, not tens.
+- **Experimental: files only** switch – the mod is built from file swaps only.
+- **Item effects** (hero page): ready-made pure effects that exist in the game (Frostbloom, glows, smoke, lava, sands …) on any slot.
+- **Courier effects** are attached to the courier itself (like a built-in gem). Kill effects and kill-streak effects are back.
+- **Discord status** (optional, `pypresence`): shows what you do in Chameleon; switch in Settings.
+- Interface look updated (Manrope / Unbounded, compact loading screen, new sidebar tooltips).
+
+### Fixed
+- Music: most packs are listed for all heroes in the game data and were wrongly treated as hero items; now all are shown.
+- Items parsed as arcana only because of their effects; arcana is now decided by rarity / prefab only.
+- Items listed twice by the game: the copy without a picture uses the picture of its twin. Icons are keyed by item id, so long names and
+  names with `'` no longer break them. `None` values never reach the interface.
+- Gems: Prismatic / Ethereal / Kinetic / Unusual gems are offered for Terrorblade, Techies and other arcanas even without effect data.
+- Old settings (fonts, HUD scale, item language …) are removed from the config file.
+
+### Removed
+- Taunts (they only play when a taunt is already equipped) and heroic statues.
+
 ## 15.3
 
 ### Removed
