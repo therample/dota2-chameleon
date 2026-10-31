@@ -1,5 +1,6 @@
 from .common import *
 import hashlib
+import struct
 from .itemdef import add_particle_modifier, copy_particle_modifiers, resolve_prefabs, flatten_style
 from .kv import kv_base
 from .itemdef import is_modifier_key
@@ -156,42 +157,107 @@ class BackgroundVPKBuilder:
     def is_image(self, f: Path) -> bool:
         return f.suffix.lower() in self.IMAGE_EXTS
 
+    TARGET_BYTES = 12_000_000      # Dota shows a BLACK menu for a very big video: aim at 12 MB, never above 14 MB
+    MAX_OUT = 14_000_000
+    MAX_SECONDS = 30.0
+
+    def _duration(self, src: Path) -> float:
+        ffprobe = shutil.which("ffprobe")
+        try:
+            if ffprobe:
+                r = subprocess.run([ffprobe, "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(src)],
+                                   capture_output=True, text=True, timeout=60, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+                return float(r.stdout.strip().splitlines()[0])
+            r = subprocess.run([self.ffmpeg_path(), "-i", str(src)], capture_output=True, text=True, timeout=60,
+                               creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            m = re.search(r"Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)", r.stderr)
+            if m:
+                return int(m.group(1)) * 3600 + int(m.group(2)) * 60 + float(m.group(3))
+        except Exception:
+            pass
+        return self.MAX_SECONDS
+
     def convert(self, src: Path, progress=None) -> Optional[Path]:
         """
-        Normalise to what Panorama plays: VP9 in WebM, yuv420p, no audio, even size, <= 1080p, <= 30 fps (the command
-        dota2-minify uses, plus the size/fps limits). A STILL IMAGE becomes a short looping VP9 clip, so a static
-        background shows exactly like a picture.
+        Prepare for Panorama: VP9 in WebM, yuv420p, no audio, even size, <= 1080p, <= 30 fps, at most 30 seconds and a file of about
+        12 MB (a bigger one gives a black menu). A still picture becomes a short looping clip.
         """
         ff = self.ffmpeg_path()
         if not ff:
             return None
         st = src.stat()
         img = self.is_image(src)
-        key = hashlib.sha1(f"v3|{img}|{src.resolve()}|{st.st_size}|{int(st.st_mtime)}".encode()).hexdigest()[:16]
+        key = hashlib.sha1(f"v4|{img}|{src.resolve()}|{st.st_size}|{int(st.st_mtime)}".encode()).hexdigest()[:16]
         out = self.cache / "converted" / f"{key}.webm"
-        if out.exists() and out.stat().st_size > 1024:
+        if out.exists() and 1024 < out.stat().st_size <= self.MAX_OUT:
             return out
         out.parent.mkdir(parents=True, exist_ok=True)
         if progress:
-            progress("Converting the picture to a looping background clip..." if img else "Converting the background video (VP9, no audio)...")
-        if img:
-            cmd = [ff, "-y", "-loop", "1", "-framerate", "5", "-t", "4", "-i", str(src), "-vf", self.SCALE + ",format=yuv420p",
-                   "-c:v", "libvpx-vp9", "-pix_fmt", "yuv420p", "-b:v", "0", "-crf", "30", "-deadline", "good", "-cpu-used", "4",
-                   "-an", str(out)]
-        else:
-            cmd = [ff, "-y", "-i", str(src), "-vf", self.SCALE + ",fps=30,format=yuv420p", "-c:v", "libvpx-vp9", "-pix_fmt", "yuv420p",
-                   "-b:v", "0", "-crf", "34", "-deadline", "realtime", "-cpu-used", "5", "-threads", "0", "-an", str(out)]
+            progress("Preparing the picture for the menu..." if img else "Preparing the video for the menu (VP9, about 12 MB)...")
         flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        dur = 4.0 if img else max(1.0, min(self.MAX_SECONDS, self._duration(src)))
+        bitrate = max(250_000, min(4_000_000, int(self.TARGET_BYTES * 8 / dur)))
+        for attempt in range(4):
+            if img:
+                cmd = [ff, "-y", "-loop", "1", "-framerate", "5", "-t", "4", "-i", str(src), "-vf", self.SCALE + ",format=yuv420p",
+                       "-c:v", "libvpx-vp9", "-pix_fmt", "yuv420p", "-b:v", "0", "-crf", str(30 + attempt * 5), "-deadline", "good",
+                       "-cpu-used", "4", "-an", str(out)]
+            else:
+                cmd = [ff, "-y", "-i", str(src), "-t", f"{dur:.2f}", "-vf", self.SCALE + ",fps=30,format=yuv420p", "-c:v", "libvpx-vp9",
+                       "-pix_fmt", "yuv420p", "-b:v", str(bitrate), "-maxrate", str(int(bitrate * 1.25)), "-bufsize", str(bitrate * 2),
+                       "-deadline", "realtime", "-cpu-used", "5", "-row-mt", "1", "-threads", "0", "-an", str(out)]
+            try:
+                r = subprocess.run(cmd, capture_output=True, timeout=1800, creationflags=flags)
+            except (OSError, subprocess.TimeoutExpired) as ex:
+                self.last_error = f"ffmpeg failed: {ex}"
+                return None
+            if r.returncode != 0 or not out.exists() or out.stat().st_size < 1024:
+                out.unlink(missing_ok=True)
+                self.last_error = "ffmpeg could not convert this file"
+                return None
+            if out.stat().st_size <= self.MAX_OUT:
+                return out
+            bitrate = int(bitrate * 0.65)                    # still too big: encode again with a lower bitrate
+        out.unlink(missing_ok=True)
+        self.last_error = "The video stays above 14 MB even after compression - use a shorter one."
+        return None
+
+    def _game_file(self, path: str) -> Optional[bytes]:
+        for r in self.vpk_readers:
+            if path in r.files:
+                return r.extract_to_bytes(path)
+        return None
+
+    def _add_menu(self, builder: 'VPKBuilder', video: bytes) -> int:
+        """
+        Native method: Valve's own dashboard layout is read from the game, its background manager is pointed at a layout of ours
+        that plays the video full screen, and everything is written back as Panorama resources. Nothing is downloaded.
+        """
+        from . import panorama as pa
+        dash = self._game_file("panorama/layout/dashboard.vxml_c")
+        tpl_css = self._game_file("panorama/styles/dotastyles.vcss_c")
+        if not dash or not tpl_css:
+            self.last_error = "The game's menu files were not found (dashboard layout)."
+            return 0
         try:
-            r = subprocess.run(cmd, capture_output=True, timeout=1800, creationflags=flags)
-        except (OSError, subprocess.TimeoutExpired) as ex:
-            self.last_error = f"ffmpeg failed: {ex}"
-            return None
-        if r.returncode != 0 or not out.exists() or out.stat().st_size < 1024:
-            out.unlink(missing_ok=True)
-            self.last_error = "ffmpeg could not convert this file"
-            return None
-        return out
+            src = pa.get_source(dash)
+            pat = re.compile(r'(<DOTADashboardBackgroundManager\b[^>]*\boverride-background=")[^"]*(")')
+            if len(pat.findall(src)) != 1:
+                self.last_error = "This Dota version changed the menu background layout - use the other method for now."
+                return 0
+            patched = pat.sub(lambda m: m.group(1) + "s2r://" + pa.MENU_LAYOUT + m.group(2), src)
+            files = {"panorama/layout/dashboard.vxml_c": pa.set_source(dash, patched),
+                     pa.MENU_LAYOUT: pa.set_source(dash, pa.LAYOUT_XML),
+                     pa.MENU_STYLE: pa.set_source(tpl_css, pa.STYLE_CSS)}
+        except (pa.PanoramaError, UnicodeDecodeError, struct.error) as ex:
+            self.last_error = f"Could not read the game's menu layout ({ex})."
+            return 0
+        for path, data in files.items():
+            builder.add_data(data, path)
+            self.last_replaced.append(path)
+        builder.add_data(video, pa.MENU_VIDEO)
+        self.last_replaced.append(pa.MENU_VIDEO)
+        return len(self.last_replaced)
 
     # ---- the game's own menu background videos (used by the "files" method)
     def all_videos(self) -> List[str]:
@@ -237,8 +303,8 @@ class BackgroundVPKBuilder:
                 self.last_error = ("This WebM is not VP9 (Panorama shows a black screen for other codecs). "
                                    "Install ffmpeg so Chameleon can convert it, or re-encode it as VP9, yuv420p, no audio.")
                 return None
-        if f.stat().st_size > self.MAX_BYTES:
-            self.last_error = "Converted background video is larger than 200 MB - use a shorter / lower resolution video."
+        if f.stat().st_size > self.MAX_OUT:
+            self.last_error = "The video is bigger than 14 MB: Dota shows a black menu for such files. Install ffmpeg (it shrinks the video itself) or use a smaller file."
             return None
         return f.read_bytes()
 
@@ -253,6 +319,8 @@ class BackgroundVPKBuilder:
         data = self._read_video(progress)
         if data is None:
             return 0
+        if method == "menu":
+            return self._add_menu(builder, data)
         if method == "files":
             targets = self.targets()
             if not targets:

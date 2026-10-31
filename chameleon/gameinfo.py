@@ -98,7 +98,8 @@ class GameInfoManager:
     BRANCH = "gameinfo_branchspecific.gi"
     MAIN = "gameinfo.gi"
 
-    def __init__(self, dota_path: Path, sign: bool = True):
+    def __init__(self, dota_path: Path, sign: bool = True, folder: str = MOD_FOLDER_NAME):
+        self.folder = folder
         self.sign = sign
         self.dota_path = Path(dota_path)
         self.signatures = SignatureManager(self.dota_path, BACKUP_DIR)
@@ -136,7 +137,7 @@ class GameInfoManager:
             return False
         self.backup()
         current = strip_patch(self._read(self.branch_path))
-        block = with_mod_folder(search_paths_block(self._read(self.main_path)), MOD_FOLDER_NAME)
+        block = with_mod_folder(search_paths_block(self._read(self.main_path)), self.folder)
         self._write(self.branch_path, patched_branch(current, block))
         if self.sign:
             self.signatures.patch(self.branch_path.read_bytes())      # keep the client's integrity check consistent

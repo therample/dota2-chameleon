@@ -27,6 +27,7 @@ class ChameleonWindow(QMainWindow):
         self.database = None; self.applier = None
         self.bridge = ChameleonBridge(); self.bridge.set_window(self)
         self.bridge.config = self.config
+        self.bridge.rpc.configure(self.config.get('discord_rpc', True), self.config.get('language', 'en'))
         IconManager._hub()                       # QObjects for icons must be created in the GUI thread
         IconManager.configure(self.config.get('icon_source', 'auto'), self.config.get('icon_fix_cast', True))
         self.bridge._connect_icons()
@@ -40,14 +41,14 @@ class ChameleonWindow(QMainWindow):
     def load_config(self):
         cfg = DEFAULT_CONFIG.copy()
         if CONFIG_FILE.exists():
-            try: cfg.update(json.loads(CONFIG_FILE.read_text(encoding="utf-8")))
+            try: cfg.update(clean_config(json.loads(CONFIG_FILE.read_text(encoding="utf-8"))))
             except Exception: pass
         return cfg
     def _on_db_loaded(self, ok):
         if ok and self.database:
             IconManager.set_vpk_readers(self.database.vpk_readers)
     def save_config(self):
-        CONFIG_FILE.write_text(json.dumps(self.config, indent=2), encoding="utf-8")
+        CONFIG_FILE.write_text(json.dumps(clean_config(self.config), indent=2), encoding="utf-8")
     def setup_ui(self):
         central = QWidget(); self.setCentralWidget(central)
         central.setObjectName("centralWidget")
@@ -92,6 +93,7 @@ class ChameleonWindow(QMainWindow):
     def closeEvent(self, event):
         if self.config.get("auto_restore_on_exit", True) and self.applier: self.applier.restore()
         IconManager.stop_worker()
+        self.bridge.rpc.stop()
         self.save_config(); event.accept()
 
 

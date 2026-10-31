@@ -18,16 +18,25 @@ from .icons import *
 
 def pretty_name(raw: str) -> str:
     """Readable name from a localized text or an internal token like '#DOTA_Item_Crown_Cursor' / 'crown_cursor_pack'."""
-    s = str(raw or "").strip().lstrip("#")
+    s = _clean(raw).lstrip("#")
     if " " in s and not s.isupper():
         return s
     for pre in ("DOTA_Item_", "DOTA_Wearable_", "dota_item_", "item_"):
         if s.startswith(pre):
             s = s[len(pre):]
-    return s.replace("_", " ").strip().title() or str(raw)
+    return s.replace("_", " ").strip().title()
 
 
 from .iconsrc import choose_icon_path
+
+
+from .rpc import DiscordRPC
+
+
+def _clean(v) -> str:
+    """Never show None / 'None' / 'null' in the interface."""
+    s = "" if v is None else str(v).strip()
+    return "" if s.lower() in ("none", "null", "nil") else s
 
 
 class ChameleonBridge(QObject):
@@ -40,6 +49,7 @@ class ChameleonBridge(QObject):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.rpc = DiscordRPC()
         self.window = None
         self.database = None
         self.applier = None
@@ -103,6 +113,23 @@ class ChameleonBridge(QObject):
             return "[]"
 
     @Slot(result=str)
+    def get_lang_folders(self):
+        """Language folders of the game (game/dota_<name> with a pak01_dir.vpk): the places Dota reads extra paks from."""
+        out = []
+        try:
+            g = Path(self.config.get("dota_path", "")) / "game"
+            out = sorted(d.name[5:] for d in g.glob("dota_*") if d.is_dir() and (d / "pak01_dir.vpk").exists())
+        except OSError:
+            pass
+        return json.dumps(out or ["russian"])
+
+    @Slot(result=str)
+    def get_effect_library(self):
+        if not self.database:
+            return "[]"
+        return json.dumps([self._item_to_dict(i) for i in self.database.effect_library()])
+
+    @Slot(result=str)
     def get_favorites(self):
         out = []
         for n in (self.config.get("favorites", []) or []):
@@ -160,6 +187,10 @@ class ChameleonBridge(QObject):
     def get_launch_presets(self):
         allp, sel = self._launch_state()
         return json.dumps({"presets": allp, "selected": sel, "flags": self.LAUNCH_FLAGS})
+
+    @Slot(str, str)
+    def rpc_state(self, page, detail):
+        self.rpc.set_page(page, detail)
 
     @Slot(str, str)
     def save_launch_preset(self, name, params):
@@ -270,7 +301,7 @@ class ChameleonBridge(QObject):
                       for g in cat["slots"]],
             "arcanas": [self._item_to_dict(i) for i in cat["arcanas"]],
             "personas": [self._item_to_dict(i) for i in cat["personas"]],
-            "taunts": [self._item_to_dict(i) for i in cat["taunts"]],
+            "taunts": [],
             "gems": [self._item_to_dict(i) for i in cat.get("gems", [])],
         })
 
@@ -285,9 +316,9 @@ class ChameleonBridge(QObject):
                 if parts[0] in ("hero", "bugged") and len(parts) >= 3:
                     per_hero[parts[1]] = per_hero.get(parts[1], 0) + 1
                     per_slot[f"{parts[1]}::{parts[2]}"] = per_slot.get(f"{parts[1]}::{parts[2]}", 0) + 1
-                elif parts[0] == "taunt" and len(parts) >= 2:
+                elif parts[0] == "fx" and len(parts) >= 3:
                     per_hero[parts[1]] = per_hero.get(parts[1], 0) + 1
-                    per_slot[f"{parts[1]}::taunt"] = 1
+                    per_slot[f"{parts[1]}::fx"] = per_slot.get(f"{parts[1]}::fx", 0) + 1
                 elif parts[0] == "gem" and len(parts) >= 2:
                     per_hero[parts[1]] = per_hero.get(parts[1], 0) + 1
                     per_slot[f"{parts[1]}::gem"] = 1
@@ -309,7 +340,7 @@ class ChameleonBridge(QObject):
         bg = self.applier.background_builder
         return json.dumps({"path": bg.background_path, "layout_installed": bg.layout_installed(), "target": bg.VIDEO_TARGET,
                            "ffmpeg": bool(bg.ffmpeg_path()), "image": bool(bg.background_path and bg.is_image(Path(bg.background_path))),
-                           "method": self.config.get("bg_method", "layout")})
+                           "method": self.config.get("bg_method", "menu")})
 
     @Slot(result=bool)
     def install_background_layout(self):
@@ -376,13 +407,13 @@ class ChameleonBridge(QObject):
         if not self.database or not self._db_ready:
             return json.dumps({"status": "loading", "items": 0, "heroes": 0, "vpk": False, "dota_path": self.config.get("dota_path", "")})
         gi = GameInfoManager(Path(self.config.get("dota_path", "")))
-        return json.dumps({"status": "ready", "items": len(self.database.items), "heroes": len(self.database.heroes), "vpk": gi.is_injected() if self.config.get("dota_path") else False, "dota_path": self.config.get("dota_path", ""), "stale": self._is_stale(gi)})
+        return json.dumps({"status": "ready", "items": len(self.database.items), "heroes": len(self.database.heroes), "vpk": (self.applier.is_active() if self.applier else gi.is_injected()) if self.config.get("dota_path") else False, "dota_path": self.config.get("dota_path", ""), "stale": self._is_stale(gi)})
 
     def _is_stale(self, gi) -> bool:
         """The mod is registered but Dota was updated since the last Apply -> it must be applied again."""
         try:
             last = self.config.get("applied_sig", "")
-            return bool(gi.is_injected() and last and self.database and last != self.database._game_signature())
+            return bool((self.applier.is_active() if self.applier else gi.is_injected()) and last and self.database and last != self.database._game_signature())
         except Exception:
             return False
 
@@ -407,7 +438,8 @@ class ChameleonBridge(QObject):
     @Slot(str, str, int, result=str)
     def get_item_icon(self, combined_name, icon_path, size):
         item_name = combined_name.split("@@@")[0]
-        key, b64 = IconManager.request("item", item_name, icon_path, size)
+        it = self.database.items.get(item_name) if self.database else None
+        key, b64 = IconManager.request("item", item_name, _clean(icon_path), size, f"item_{it.item_id}" if it else None)
         return b64
 
     @Slot(str, str, str, str)
@@ -417,10 +449,10 @@ class ChameleonBridge(QObject):
         ok = True
         if category in ("hero", "heroes"):
             ok = self.applier.apply_hero_skin(hero, item_name, slot)
-        elif category == "taunts":
-            ok = self.applier.apply_taunt(hero, item_name)
         elif category == "gems":
             ok = self.applier.apply_gem(hero, item_name)
+        elif category == "fx":
+            ok = self.applier.apply_effect(hero, slot, item_name)
         elif category == "bugged":
             ok = self.applier.apply_bugged_item(hero, item_name)
         else:
@@ -494,7 +526,7 @@ class ChameleonBridge(QObject):
             parts = key.split("::")
             if item_name not in db.items:
                 continue
-            if parts[0] in ("hero", "bugged", "taunt", "cat"):          # current key format: restore as saved
+            if parts[0] in ("hero", "bugged", "cat", "fx", "gem"):          # current key format: restore as saved
                 ap.active_overrides[key] = item_name
             elif parts[0] == "hero":
                 ap.apply_hero_skin(parts[1], item_name)
@@ -568,12 +600,16 @@ class ChameleonBridge(QObject):
                    "particle_swap": {"off", "hero", "all"},
                    "icon_field": {"inventory", "auto", "preview"}, "icon_source": {"auto", "game", "cdn"},
                    "icon_fix_cast": {"true", "false"}, "default_mode": {"auto", "replace", "create"},
-                   "bg_method": {"layout", "files"}, "effect_mode": {"slot", "hero", "both"}, "ui_density": {"s", "m", "l"}}
+                   "bg_method": {"menu", "layout", "files"}, "lang_folder": None, "custom_folder": None, "install_method": {"language", "custom"}, "files_only": {"true", "false"}, "discord_rpc": {"true", "false"}, "stock_models": {"true", "false"}, "effect_mode": {"slot", "hero", "both"}, "ui_density": {"s", "m", "l"}}
         if key not in allowed or (allowed[key] is not None and value not in allowed[key]):
             return
         if key == "item_language" and not re.fullmatch(r"[a-z_]{3,20}", value or ""):
             return
-        self.config[key] = (value == "true") if key in ("patch_hero_model", "patch_signatures", "icon_fix_cast") else value
+        self.config[key] = (value == "true") if key in ("patch_hero_model", "patch_signatures", "icon_fix_cast", "discord_rpc", "stock_models", "files_only") else value
+        if key == "discord_rpc":
+            self.rpc.configure(self.config.get("discord_rpc", True), self.config.get("language", "en"))
+        if key == "language":
+            self.rpc.lang = value if value in ("en", "ru") else "en"
         if key in ("icon_source", "icon_fix_cast"):
             IconManager.configure(self.config.get("icon_source", "auto"), self.config.get("icon_fix_cast", True))
         if key == "patch_signatures" and self.applier:
@@ -666,6 +702,16 @@ class ChameleonBridge(QObject):
         if self.window:
             self.window.close()
 
+    def _icon_path(self, item: SkinItem) -> str:
+        raw = item.raw_item_data or {}
+        mode = self.config.get("icon_field", "inventory")
+        p = _clean(choose_icon_path(raw, mode, item.icon_path if mode == "auto" else ""))
+        if not p and mode == "inventory":                  # no own icon at all: use any other picture of the item
+            p = _clean(choose_icon_path(raw, "auto", item.icon_path))
+        if not p and self.database:                        # the game lists some items twice, one copy without a picture
+            p = _clean(self.database.sibling_icon(item))
+        return p
+
     def _item_to_dict(self, item: SkinItem) -> dict:
         display_name = pretty_name(item.localized_name if item.localized_name and not item.localized_name.startswith("#") else item.name)
         for prefix in ["Item ", "Default "]:
@@ -704,7 +750,7 @@ class ChameleonBridge(QObject):
             "display_name": display_name, 
             "localized_name": item.localized_name if item.localized_name != item.name else "",
             "raw_token": raw_token,
-            "rarity": item.rarity, "icon_path": choose_icon_path(item.raw_item_data or {}, self.config.get("icon_field", "inventory"), item.icon_path if self.config.get("icon_field") == "auto" else ""), "is_arcana": item.is_arcana, "is_persona": item.is_persona, "is_immortal": item.is_immortal, "is_bugged": item.is_bugged, "is_gem": item.is_gem, "item_slot": item.item_slot, "item_type": getattr(item, 'item_type', ''), "gem_type": item.gem_type, "meta": " · ".join(meta[:4]), "used_by_hero": item.used_by_hero, "ability_overrides": [{"ability_id": ao.ability_id, "icon": ao.icon} for ao in item.ability_overrides], "styles": [{"id": s.style_id, "name": s.name} for s in item.styles], "slots": getattr(item, 'slots', [item.item_slot] if item.item_slot else [])
+            "item_id": item.item_id, "rarity": _clean(item.rarity), "icon_path": self._icon_path(item), "is_arcana": item.is_arcana, "is_persona": item.is_persona, "is_immortal": item.is_immortal, "is_bugged": item.is_bugged, "is_gem": item.is_gem, "item_slot": item.item_slot, "item_type": getattr(item, 'item_type', ''), "gem_type": item.gem_type, "meta": " · ".join(meta[:4]), "used_by_hero": item.used_by_hero, "ability_overrides": [{"ability_id": ao.ability_id, "icon": ao.icon} for ao in item.ability_overrides], "styles": [{"id": s.style_id, "name": s.name} for s in item.styles], "slots": getattr(item, 'slots', [item.item_slot] if item.item_slot else [])
         }
 
 # ==============================================================================

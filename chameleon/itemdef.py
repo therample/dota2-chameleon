@@ -194,7 +194,7 @@ COSMETIC_TOKENS = {"weapon", "offhand", "head", "shoulder", "shoulders", "back",
 # words that mark a slot as something other than a hero loadout slot
 NOT_LOADOUT_TOKENS = ("hud", "cursor", "courier", "ward", "announcer", "music", "weather", "terrain", "tower", "loading",
                       "emoticon", "taunt", "persona", "ability_effects", "bundle", "kill", "streak", "effigy", "shader",
-                      "versus", "river", "roshan", "tormentor", "creep", "ancient", "emblem", "high_five", "highfive")
+                      "versus", "river", "roshan", "tormentor", "creep", "ancient", "emblem", "high_five", "highfive", "statue")
 
 
 def looks_like_loadout_slot(slot: str) -> bool:

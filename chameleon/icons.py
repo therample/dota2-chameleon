@@ -232,7 +232,7 @@ class IconManager:
             cls.hub.worker.wait(2000)
 
     @classmethod
-    def request(cls, kind: str, name: str, icon_path: str = "", size: int = 128) -> Tuple[str, str]:
+    def request(cls, kind: str, name: str, icon_path: str = "", size: int = 128, key: Optional[str] = None) -> Tuple[str, str]:
         """Returns (cache_key, base64 or ''). When '' is returned the icon arrives later via icon_ready."""
         hub = cls._hub()
         if kind == "hero":
@@ -240,7 +240,7 @@ class IconManager:
             key = f"hero_{short}"
             task = ("hero", key, short, "", hub.cast)
         else:
-            key = "item_" + re.sub(r"[^a-zA-Z0-9_]", "_", name)
+            key = key or ("item_" + re.sub(r"[^a-zA-Z0-9_]", "_", name))
             task = ("item", key, icon_path or "", name, hub.cast)
         pm = hub.cache.get(key) or hub.from_disk(key)
         if pm is not None:

@@ -29,7 +29,7 @@ if sys.platform == "win32":
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 APP_NAME = "Chameleon"
-APP_VERSION = "15.3"
+APP_VERSION = "15.4"
 
 CONFIG_DIR = Path(os.environ.get("CHAMELEON_HOME") or (Path.home() / ".chameleon"))
 CONFIG_FILE = CONFIG_DIR / "config.json"
@@ -46,15 +46,22 @@ for d in [CONFIG_DIR, PRESETS_DIR, BACKUP_DIR, CACHE_DIR, DATA_DIR, ICONS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 DEFAULT_CONFIG = {
-    "dota_path": "", "steam_path": "", "auto_restore_on_exit": True,
-    "hud_scale": 1.0, "minimap_scale": 1.0, "pack_resources": True,
-    "river_color": "", "background_path": "", "show_rarity_colors": True,
-    "launch_parameters": "-novid -high", "auto_apply_on_select": False,
-    "pack_mode": "minimal", "patch_hero_model": True,
-    "language": "en", "item_language": "english",
-    "favorites": [], "launch_presets": [], "launch_preset": "Default", "particle_swap": "hero", "patch_signatures": True, "custom_fonts": [],
-    "icon_field": "inventory", "icon_source": "auto", "icon_fix_cast": True, "default_mode": "auto", "effect_mode": "slot", "bg_method": "layout", "ui_density": "m"
+    "dota_path": "", "steam_path": "", "language": "en",
+    "auto_restore_on_exit": True, "pack_resources": True, "pack_mode": "minimal",
+    "patch_hero_model": True, "patch_signatures": True, "stock_models": True,
+    "particle_swap": "hero", "default_mode": "auto", "effect_mode": "slot",
+    "icon_field": "inventory", "icon_source": "auto", "icon_fix_cast": True,
+    "bg_method": "menu", "install_method": "language", "lang_folder": "russian", "custom_folder": "dota_chameleon", "files_only": False, "ui_density": "m", "discord_rpc": True,
+    "launch_parameters": "-novid", "launch_preset": "Default", "launch_presets": [], "favorites": [],
 }
+# keys that are written at run time and must survive a save
+RUNTIME_KEYS = {"applied_sig", "river_color", "background_path"}
+
+
+def clean_config(cfg: dict) -> dict:
+    """Drop settings of removed features (fonts, HUD scale, item language ...) so old config files stay tidy."""
+    allowed = set(DEFAULT_CONFIG) | RUNTIME_KEYS
+    return {k: v for k, v in (cfg or {}).items() if k in allowed}
 
 RIVER_COLORS = {
     "default": "", "blue": "0.2 0.4 0.8", "red": "0.8 0.2 0.2", "green": "0.2 0.8 0.3",

@@ -680,9 +680,7 @@ class SkinDatabase:
                                 override.particles.append(ve_particle); particle_paths.append(ve_particle)
 
             # items_game stores the rarity as the bare key ("arcana"), the localized token is "rarity_arcana"
-            is_arcana = (prefab_lower == "arcana" or item_type == "arcana" or
-                         rarity_lower.replace("rarity_", "") == "arcana" or
-                         "selfglow" in rarity_lower)
+            is_arcana = (prefab_lower == "arcana" or rarity_lower.replace("rarity_", "") == "arcana")
             is_persona = (prefab_lower == "persona" or item_type == "persona" or self._persona_like(item_data, prefab_lower, item_slot))
             is_immortal = "immortal" in rarity_lower
             
@@ -839,10 +837,11 @@ class SkinDatabase:
     # prints every prefab/slot/type name found in the data so a rule can be added without guessing.
     CATEGORY_GROUPS = [
         ("world", ["weather", "terrain", "shaders"]),
-        ("units", ["towers", "creeps", "ancients", "roshan", "tormentor", "statues"]),
+        ("units", ["towers", "creeps", "ancients", "roshan", "tormentor"]),
         ("items", ["wards", "couriers", "courier_effects", "emblems"]),
-        ("effects", ["head_effects", "teleport_effects", "blink_effects", "death_effects"]),
+        ("effects", ["head_effects", "teleport_effects", "blink_effects", "death_effects", "kill_effects"]),
         ("interface", ["hud", "cursors", "loadings", "versus"]),
+        ("kills", ["streak"]),
         ("sound", ["music", "mega_kills", "announcers"]),
     ]
     # categories whose items may carry used_by_heroes and still belong in the (hero-less) catalog
@@ -854,10 +853,11 @@ class SkinDatabase:
         ("head_effects", "any", "has", ("head_effect", "headeffect")),
         ("courier_effects", "any", "has", ("courier_effect", "couriereffect")),
         ("death_effects", "any", "has", ("death_effect", "deatheffect")),
+        ("kill_effects", "any", "has", ("kill_effect", "killeffect")),
+        ("streak", "any", "has", ("streak_effect", "killstreak", "kill_streak")),
         ("shaders", "any", "has", ("map_effect", "mapeffect")),
         ("teleport_effects", "any", "has", ("teleport_effect", "teleporteffect")),
         ("blink_effects", "any", "has", ("blink_effect", "blinkeffect")),
-        ("statues", "any", "eq", ("heroic_statue",)),
         ("gems", "prefab", "eq", ("socket_gem",)),
         ("weather", "any", "eq", ("weather",)),
         ("terrain", "any", "eq", ("terrain", "landscape")),
@@ -893,6 +893,11 @@ class SkinDatabase:
     EXT_HINTS = [("shaders", (".vpost",))]
     # any string inside the item (not just modifiers) that points at post-processing / colour-correction data
     PATH_HINTS = [("shaders", (".vpost", "/correction/", "color_correction", "/postprocessing/", "colorcorrection"))]
+
+    @staticmethod
+    def _is_hero_bound(raw: dict) -> bool:
+        ub = raw.get("used_by_heroes")
+        return isinstance(ub, dict) and 0 < len(ub) <= 5
 
     @staticmethod
     def _persona_like(raw: dict, prefab: str, slot: str) -> bool:
@@ -960,7 +965,7 @@ class SkinDatabase:
             strings = [v.lower() for v in self._all_strings(raw)]
             if any(t in sv for sv in strings for t in toks):
                 return cat
-        if not raw.get("used_by_heroes"):
+        if not self._is_hero_bound(raw):
             # music packs whose prefab/slot say nothing: look at EVERY string of the item (icon path "econ/music/...",
             # name token, sound event). Treasure chests / bundles were already excluded above.
             low = [v.lower() for v in self._all_strings(raw)]
@@ -1004,7 +1009,7 @@ class SkinDatabase:
                 continue                                   # defaults are override TARGETS, never choices
             cat = self.category_of(item)
             if cat:
-                hero_bound = bool(raw.get("used_by_heroes")) and cat not in self.HERO_AGNOSTIC
+                hero_bound = self._is_hero_bound(raw) and cat not in self.HERO_AGNOSTIC
                 if not hero_bound:
                     self.categories[cat][name] = item
                 continue
@@ -1025,6 +1030,11 @@ class SkinDatabase:
         vis = (item.raw_item_data or {}).get("visuals", {})
         return isinstance(vis, dict) and any(is_modifier_key(k) and isinstance(v, dict) for k, v in vis.items())
 
+    @staticmethod
+    def _colour_gem(g: SkinItem) -> bool:
+        hay = f"{g.name} {g.localized_name} {(g.raw_item_data or {}).get('item_type_name', '')}".lower()
+        return any(w in hay for w in ("prismatic", "ethereal", "kinetic", "unusual"))
+
     def _gem_heroes(self, gem: SkinItem) -> Set[str]:
         raw = gem.raw_item_data or {}
         heroes: Set[str] = set()
@@ -1040,9 +1050,28 @@ class SkinDatabase:
                 heroes.add(h)
         return heroes
 
+    def effect_library(self) -> List[SkinItem]:
+        """
+        Pure effects that exist in the game (Frostbloom, glows, smoke, lava, sands ...): items whose data is only particle effects -
+        no model, no animation. Real items are not offered here. They can be put on any slot of a hero.
+        """
+        out: Dict[str, SkinItem] = {}
+        for it in self.items.values():
+            raw = it.raw_item_data or {}
+            if str(raw.get("baseitem", "")) == "1" or self.is_system_item(it, strict=False):
+                continue
+            vis = raw.get("visuals", {})
+            if not isinstance(vis, dict):
+                continue
+            types = {str(v.get("type", "")).lower() for k, v in vis.items() if is_modifier_key(k) and isinstance(v, dict)}
+            if "particle_create" not in types or raw.get("model_player") or (types - {"particle_create", "particle", "particle_snapshot"}):
+                continue
+            out[it.name] = it
+        return sorted(out.values(), key=lambda g: g.localized_name or g.name)
+
     def effect_gems(self) -> List[SkinItem]:
         """All gems that actually change something (stat-only gems have no modifiers and are never offered)."""
-        return sorted((g for g in self.categories.get("gems", {}).values() if self._has_effect(g)),
+        return sorted((g for g in self.categories.get("gems", {}).values() if self._has_effect(g) or self._colour_gem(g)),
                       key=lambda g: g.localized_name or g.name)
 
     def get_hero_gems(self, hero_name: str) -> List[SkinItem]:
@@ -1060,6 +1089,17 @@ class SkinDatabase:
         hero = self.heroes.get(hero_name) or {}
         has_arcana = any((self.items.get(n) and self.items[n].is_arcana) for n in hero.get("items", []))
         return list(gems.values()) if has_arcana else []
+
+    def sibling_icon(self, item: SkinItem) -> str:
+        """Icon of another item with the same name (the game lists some items twice, one copy without a picture)."""
+        if not hasattr(self, "_icon_by_name"):
+            idx: Dict[str, str] = {}
+            for it in self.items.values():
+                p = str((it.raw_item_data or {}).get("image_inventory") or "")
+                if p and p != "None":
+                    idx.setdefault(re.sub(r" #\d+$", "", it.name), p)
+            self._icon_by_name = idx
+        return self._icon_by_name.get(re.sub(r" #\d+$", "", item.name), "")
 
     def category_items(self, cat: str) -> Dict[str, SkinItem]:
         if cat == "taunts":
@@ -1159,7 +1199,7 @@ class SkinDatabase:
             prefab = item.prefab.lower().strip()
             slot = (item.item_slot or "").strip()
             if item.item_type == "taunt" or slot == "taunt" or prefab == "taunt":
-                out["taunts"].append(item)
+                continue                       # taunts only play when one is already equipped: not offered
             elif item.is_persona:
                 out["personas"].append(item)
             elif item.is_arcana:

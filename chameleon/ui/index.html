@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- шрифты с сайта-->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chameleon</title>
@@ -307,622 +305,37 @@ select.sm{padding:6px 10px;font-size:11px}
 .tlogo path,.logo svg path{stroke-dasharray:70;stroke-dashoffset:70;animation:draw 1.2s cubic-bezier(.65,0,.35,1) .25s forwards}
 .tlogo,.logo svg{animation:logoGlow 3.4s ease-in-out 1.6s infinite}
 .logo:hover svg,.tlogo:hover{animation:wiggle .6s ease}
-
-/* ===== Minimal Chameleon loading screen ===== */
-
-#loading {
-    background: linear-gradient(180deg, #0b0b0b 0%, #070707 100%);
-    transition: opacity .45s ease;
-}
-
-/* Компактный логотип без колец */
-.lshield {
-    position: relative;
-    width: 66px;
-    height: 66px;
-    display: grid;
-    place-items: center;
-    border-radius: 18px;
-    background: #101010;
-    border: 1px solid #242424;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, .25);
-}
-
-/* Полностью убираем декоративные кольца */
-.lshield::before,
-.lshield::after {
-    display: none;
-    content: none;
-}
-
-/* Чёткая статичная иконка */
-.lshield svg {
-    width: 32px;
-    height: 32px;
-    fill: none;
-    stroke: #f5f5f5;
-    stroke-width: 1.6;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    animation: none;
-    filter: none;
-}
-
-.lshield svg path,
-.lshield svg path + path {
-    stroke-dasharray: none;
-    stroke-dashoffset: 0;
-    animation: none;
-}
-
-/* Название приложения */
-.lname {
-    margin-top: 23px;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 5px;
-    color: #f2f2f2;
-    background: none;
-    -webkit-background-clip: initial;
-    background-clip: initial;
-    -webkit-text-fill-color: #f2f2f2;
-    opacity: 1;
-    filter: none;
-    animation: fadeIn .5s ease .08s both;
-}
-
-/* Тонкий прогресс-бар */
-.lbarw {
-    width: min(280px, 78%);
-    margin-top: 30px;
-    opacity: 1;
-    animation: fadeIn .5s ease .16s both;
-}
-
-.lbar {
-    height: 2px;
-    background: #222;
-    border-radius: 2px;
-    overflow: hidden;
-}
-
-.lbar i {
-    height: 100%;
-    background: #e8e8e8;
-    border-radius: 2px;
-    box-shadow: none;
-    transition: width .3s ease;
-}
-
-.lrow {
-    margin-top: 10px;
-    font-size: 10px;
-    font-weight: 600;
-    color: #666;
-}
-
-.lrow #lpct {
-    color: #e8e8e8;
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
-}
-
-/* ===== CHAMELEON — refined loading ===== */
-
-body {
-    font-family: 'Manrope', 'Segoe UI', sans-serif;
-}
-
-/* Брендинг приложения */
-.title,
-.lname {
-    font-family: 'Unbounded', 'Manrope', sans-serif;
-}
-
-/* Компактный экран загрузки */
-#loading {
-    background:
-        radial-gradient(
-            ellipse at 50% 42%,
-            rgba(255, 255, 255, .035),
-            transparent 45%
-        ),
-        #080808;
-    justify-content: center;
-    padding: 0 20px 16px;
-    gap: 0;
-    transition: opacity .45s ease;
-}
-
-/* Анимации появления */
-@keyframes markEnter {
-    0% {
-        opacity: 0;
-        transform: translateY(12px) scale(.88);
-    }
-    70% {
-        opacity: 1;
-        transform: translateY(-2px) scale(1.025);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-@keyframes glyphEnter {
-    from {
-        opacity: 0;
-        transform: scale(.82);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes nameEnter {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-        letter-spacing: 5px;
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-        letter-spacing: 2px;
-    }
-}
-
-@keyframes progressEnter {
-    from {
-        opacity: 0;
-        transform: translateY(7px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes progressShine {
-    from { transform: translateX(-150%); }
-    to   { transform: translateX(350%); }
-}
-
-/* Минималистичный знак */
-.lshield {
-    position: relative;
-    width: 60px;
-    height: 60px;
-    display: grid;
-    place-items: center;
-    border-radius: 16px;
-    background: #111;
-    border: 1px solid #272727;
-    box-shadow:
-        0 8px 28px rgba(0, 0, 0, .32),
-        inset 0 1px 0 rgba(255, 255, 255, .035);
-    opacity: 0;
-    animation: markEnter .68s cubic-bezier(.2, .8, .2, 1) .05s forwards;
-}
-
-.lshield::before,
-.lshield::after {
-    display: none !important;
-    content: none !important;
-}
-
-.lshield svg {
-    width: 30px;
-    height: 30px;
-    fill: none;
-    stroke: #f2f2f2;
-    stroke-width: 1.7;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    filter: none;
-    opacity: 0;
-    animation: glyphEnter .42s ease .22s forwards;
-}
-
-.lshield svg path,
-.lshield svg path + path {
-    stroke-dasharray: none;
-    stroke-dashoffset: 0;
-    animation: none;
-}
-
-/* Название — плотное и выразительное */
-.lname {
-    margin-top: 19px;
-    font-size: 18px;
-    line-height: 1.5;
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: #f4f4f4;
-    background: none;
-    -webkit-background-clip: initial;
-    background-clip: initial;
-    -webkit-text-fill-color: #f4f4f4;
-    opacity: 0;
-    animation: nameEnter .55s cubic-bezier(.22, 1, .36, 1) .22s both;
-}
-
-/* Полоса загрузки */
-.lbarw {
-    width: min(250px, 76vw);
-    margin-top: 23px;
-    opacity: 0;
-    animation: progressEnter .45s ease .38s both;
-}
-
-.lbar {
-    position: relative;
-    height: 3px;
-    background: #202020;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.lbar i {
-    display: block;
-    position: relative;
-    height: 100%;
-    width: 0;
-    border-radius: inherit;
-    background: linear-gradient(90deg, #999, #fff);
-    box-shadow: none;
-    transition: width .35s cubic-bezier(.22, 1, .36, 1);
-    overflow: hidden;
-}
-
-/* Тонкий блик внутри прогресса */
-.lbar i::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 30%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, .85),
-        transparent
-    );
-    animation: progressShine 1.3s ease-in-out .5s infinite;
-}
-
-.lrow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 9px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 400;
-    color: #707070;
-}
-
-.lrow #lpct {
-    font-family: 'JetBrains Mono', monospace;
-    color: #ededed;
-    font-size: 10px;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-}
-
-/* Состояние ошибки */
-#loading.fail .lrow {
-    color: #ff4757;
-}
-
-/* Адаптация к небольшому окну */
-@media (max-width: 480px) {
-    .lshield {
-        width: 54px;
-        height: 54px;
-        border-radius: 14px;
-    }
-
-    .lshield svg {
-        width: 27px;
-        height: 27px;
-    }
-
-    .lname {
-        margin-top: 16px;
-        font-size: 15px;
-        letter-spacing: 1.5px;
-    }
-
-    .lbarw {
-        margin-top: 20px;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    /* Отключаем плавный скролл на всем сайте */
-    html {
-        scroll-behavior: auto !important;
-    }
-
-    /* Применяем ко всем элементам, их ::before и ::after */
-    *,
-    *::before,
-    *::after {
-        /* Длительность 0.01ms делает анимацию мгновенной для глаза, */
-        /* но сохраняет срабатывание JS-событий (animationend / transitionend) */
-        animation-duration: 0.01ms !important;
-        animation-delay: 0s !important;
-        transition-duration: 0.01ms !important;
-        transition-delay: 0s !important;
-        
-        /* Заставляем анимацию проигрываться только 1 раз, чтобы не вешать браузер */
-        animation-iteration-count: 1 !important;
-    }
-}
-
-.lshield svg {
-  width: 29px !important;
-  height: 29px !important;
-  fill: none !important;
-  stroke: #f2f2f2 !important;
-  stroke-width: 1.8 !important;
-  stroke-linecap: round !important;
-  stroke-linejoin: round !important;
-  filter: none !important;
-  opacity: 0;
-  animation: glyphEnter .38s ease .18s forwards !important;
-}
-
-.lshield svg path, .lshield svg path + path {
-  stroke-dasharray: none !important;
-  stroke-dashoffset: 0 !important;
-  animation: none !important;
-}
-
-.lname {
-  margin-top: 18px !important;
-  font-size: 17px !important;
-  line-height: 1.5;
-  font-weight: 700 !important;
-  letter-spacing: 1.6px !important;
-  color: #f1f1f1 !important;
-  background: none !important;
-  -webkit-background-clip: initial !important;
-  background-clip: initial !important;
-  -webkit-text-fill-color: #f1f1f1 !important;
-  opacity: 0;
-  animation: nameEnter .52s cubic-bezier(.22,1,.36,1) .16s both !important;
-}
-
-@keyframes nameEnter {
-  from { opacity: 0; transform: translateY(7px); letter-spacing: 4px; }
-  to { opacity: 1; transform: translateY(0); letter-spacing: 1.6px; }
-}
-
-.lbarw {
-  width: min(250px, 76vw) !important;
-  margin-top: 23px !important;
-  opacity: 0;
-  animation: progressEnter .42s ease .28s both !important;
-}
-
-.lbar {
-  height: 3px !important;
-  background: #232323 !important;
-  border-radius: 99px !important;
-}
-
-.lbar i {
-  background: #ededed !important;
-  border-radius: 99px !important;
-  box-shadow: none !important;
-}
-
-.lbar i::after {
-  opacity: .5;
-}
-
-.lrow, .lrow #lpct {
-  font-family: 'Manrope', 'Segoe UI', sans-serif !important;
-  font-size: 10px !important;
-  letter-spacing: .1px;
-}
-
-.lrow { color: #777 !important; }
-.lrow #lpct { color: #eee !important; font-weight: 700 !important; }
-
-.lp code, code, .tm, #povtm {
-  font-family: 'Manrope', 'Segoe UI', sans-serif !important;
-}
-
-#pov {
-  border-radius: 15px;
-  background: linear-gradient(180deg, #191919, #101010);
-  border-color: #363636;
-}
-
-#pov svg.ring .fg {
-  filter: none;
-}
-
-.toast {
-  border-radius: 10px;
-  box-shadow: 0 8px 22px rgba(0,0,0,.35);
-  font-family: 'Manrope', 'Segoe UI', sans-serif;
-}
-
-@media (max-width: 720px) {
-  .page { padding: 12px; }
-  .hero-banner { padding: 16px; }
-  .hero-banner h1 { font-size: 19px; }
-  .stats { gap: 7px; }
-  .stat { padding: 9px; gap: 8px; }
-  .stat .n { font-size: 17px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  #loading *, #loading *::before, #loading *::after,
-  .card, .hcard, .fcard, .btn {
-    animation-duration: .01ms !important;
-    animation-delay: 0ms !important;
-    transition-duration: .01ms !important;
-  }
-}
-
-.hero-banner h1 {
-    font-family: 'Unbounded', sans-serif;
-}
-
-/* ===== CHAMELEON — premium sidebar tooltips ===== */
-
-.nav .tip {
-    position: absolute;
-    left: calc(100% + 13px);
-    top: 50%;
-    z-index: 100;
-
-    display: flex;
-    align-items: center;
-
-    min-height: 36px;
-    padding: 0 14px 0 17px;
-
-    background: linear-gradient(180deg, #1c1c1c 0%, #101010 100%);
-    border: 1px solid #353535;
-    border-radius: 10px;
-
-    color: #f4f4f4;
-    font-family: 'Manrope', 'Segoe UI', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: .25px;
-    white-space: nowrap;
-
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-
-    transform: translate(8px, -50%) scale(.96);
-    transform-origin: left center;
-
-    box-shadow:
-        0 10px 28px rgba(0, 0, 0, .5),
-        inset 0 1px 0 rgba(255, 255, 255, .035);
-
-    transition:
-        opacity .18s ease,
-        transform .26s cubic-bezier(.22, 1, .36, 1),
-        visibility 0s linear .26s;
-}
-
-/* Стрелка, направленная на иконку */
-.nav .tip::before {
-    content: "";
-    position: absolute;
-    left: -5px;
-    top: 50%;
-
-    width: 8px;
-    height: 8px;
-
-    background: #171717;
-    border-left: 1px solid #353535;
-    border-bottom: 1px solid #353535;
-
-    transform: translateY(-50%) rotate(45deg);
-    border-radius: 1px;
-}
-
-/* Тонкий фирменный акцент */
-.nav .tip::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 9px;
-    bottom: 9px;
-
-    width: 2px;
-    border-radius: 2px;
-    background: linear-gradient(180deg, #fff, #777);
-    box-shadow: 0 0 8px rgba(255, 255, 255, .15);
-}
-
-/* Появление при наведении */
-.nav:hover .tip,
-.nav:focus-visible .tip {
-    opacity: 1;
-    visibility: visible;
-
-    transform: translate(0, -50%) scale(1);
-
-    transition:
-        opacity .18s ease,
-        transform .26s cubic-bezier(.22, 1, .36, 1),
-        visibility 0s;
-}
-
-/* Подсказка активной вкладки */
-.nav.on .tip {
-    border-color: #454545;
-}
-
-/* Немного выразительнее при наведении на активную иконку */
-.nav.on:hover .tip {
-    background: linear-gradient(180deg, #242424 0%, #141414 100%);
-    border-color: #555;
-}
-
-/* Поддержка пользователей, отключивших анимации */
-@media (prefers-reduced-motion: reduce) {
-    .nav .tip {
-        transition: none !important;
-    }
-}
-/* ---- Улучшенный тултип сайдбара ---- */
-.nav .tip {
-    position: absolute;
-    left: 54px;
-    top: 50%;
-    transform: translate(-10px, -50%) scale(0.94);
-    background: #161616;
-    color: var(--text, #f5f5f5);
-    border: 1px solid var(--border3, #2c2c2c);
-    padding: 6px 12px;
-    border-radius: 9px;
-    font-family: 'Manrope', 'Segoe UI', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.22s var(--ease, cubic-bezier(.22,1,.36,1)), transform 0.22s var(--ease, cubic-bezier(.22,1,.36,1));
-    z-index: 100;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-
-.nav .tip::before {
-    content: "";
-    position: absolute;
-    left: -4px;
-    top: 50%;
-    width: 8px;
-    height: 8px;
-    background: #161616;
-    border-left: 1px solid var(--border3, #2c2c2c);
-    border-bottom: 1px solid var(--border3, #2c2c2c);
-    transform: translateY(-50%) rotate(45deg);
-    border-radius: 2px;
-}
-
-.nav:hover .tip {
-    opacity: 1;
-    transform: translate(0, -50%) scale(1);
-}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}}
+
+/* ===== look: Manrope / Unbounded, compact loading screen, premium tooltips ===== */
+body{font-family:'Manrope','Segoe UI',system-ui,sans-serif}
+.title,.lname,.hero-banner h1{font-family:'Unbounded','Manrope',sans-serif}
+.lp code,code,.tm,#povtm{font-family:'Manrope','Segoe UI',sans-serif}
+@keyframes markEnter{0%{opacity:0;transform:translateY(12px) scale(.88)}70%{opacity:1;transform:translateY(-2px) scale(1.025)}100%{opacity:1;transform:none}}
+@keyframes glyphEnter{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
+@keyframes nameEnter{from{opacity:0;transform:translateY(7px);letter-spacing:4px}to{opacity:1;transform:none;letter-spacing:1.6px}}
+@keyframes progressEnter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@keyframes progressShine{from{transform:translateX(-150%)}to{transform:translateX(350%)}}
+#loading{background:radial-gradient(ellipse at 50% 42%,rgba(255,255,255,.035),transparent 45%),#080808;padding:0 20px 16px;transition:opacity .45s ease}
+.lshield{width:60px;height:60px;border-radius:16px;background:#111;border:1px solid #272727;box-shadow:0 8px 28px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.035);opacity:0;animation:markEnter .68s cubic-bezier(.2,.8,.2,1) .05s forwards}
+.lshield::before,.lshield::after{display:none!important;content:none!important}
+.lshield svg{width:29px!important;height:29px!important;fill:none!important;stroke:#f2f2f2!important;stroke-width:1.8!important;filter:none!important;opacity:0;animation:glyphEnter .38s ease .18s forwards!important}
+.lshield svg path,.lshield svg path+path{stroke-dasharray:none!important;stroke-dashoffset:0!important;animation:none!important}
+.lname{margin-top:18px!important;font-size:17px!important;font-weight:700!important;letter-spacing:1.6px!important;background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;-webkit-text-fill-color:#f1f1f1!important;color:#f1f1f1!important;opacity:0;animation:nameEnter .52s cubic-bezier(.22,1,.36,1) .16s both!important}
+.lbarw{width:min(250px,76vw)!important;margin-top:23px!important;opacity:0;animation:progressEnter .42s ease .28s both!important}
+.lbar{height:3px!important;background:#232323!important;border-radius:99px!important}
+.lbar i{background:linear-gradient(90deg,#999,#fff)!important;border-radius:99px!important;box-shadow:none!important;position:relative;overflow:hidden}
+.lbar i::after{content:"";position:absolute;top:0;bottom:0;left:0;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent);opacity:.5;animation:progressShine 1.3s ease-in-out .5s infinite}
+.lrow,.lrow #lpct{font-family:'Manrope','Segoe UI',sans-serif!important;font-size:10px!important}
+.lrow{color:#777!important}.lrow #lpct{color:#eee!important;font-weight:700!important}
+#pov{border-radius:15px;background:linear-gradient(180deg,#191919,#101010);border-color:#363636}
+#pov svg.ring .fg{filter:none}
+.toast{border-radius:10px;box-shadow:0 8px 22px rgba(0,0,0,.35)}
+.nav .tip{left:calc(100% + 13px);min-height:36px;padding:0 14px 0 17px;display:flex;align-items:center;background:linear-gradient(180deg,#1c1c1c,#101010);border:1px solid #353535;border-radius:10px;color:#f4f4f4;font-size:11px;font-weight:800;letter-spacing:.25px;opacity:0;visibility:hidden;transform:translate(8px,-50%) scale(.96);transform-origin:left center;box-shadow:0 10px 28px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.035);transition:opacity .18s ease,transform .26s cubic-bezier(.22,1,.36,1),visibility 0s linear .26s}
+.nav .tip::before{left:-5px;width:8px;height:8px;background:#171717;border-left:1px solid #353535;border-bottom:1px solid #353535;border-radius:1px}
+.nav .tip::after{content:"";position:absolute;left:0;top:9px;bottom:9px;width:2px;border-radius:2px;background:linear-gradient(180deg,#fff,#777)}
+.nav:hover .tip{opacity:1;visibility:visible;transform:translate(0,-50%) scale(1);transition:opacity .18s ease,transform .26s cubic-bezier(.22,1,.36,1),visibility 0s}
+@media (max-width:720px){.page{padding:12px}.hero-banner{padding:16px}.hero-banner h1{font-size:19px}.stats{gap:7px}.stat{padding:9px;gap:8px}.stat .n{font-size:17px}}
 </style>
 </head>
 <body>
@@ -931,7 +344,7 @@ body {
 <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 11l8.5-7 8.5 7"/><path d="M5.5 9.8V20h13V9.8"/><path d="M10 20v-5.5h4V20"/></symbol>
 <symbol id="i-heroes" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.8 3.6-6 7-6s6.2 2.2 7 6"/></symbol>
 <symbol id="i-extras" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></symbol>
-<symbol id="i-world" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-2.5 2.2-4 5.1-4 8.5s1.5 6.3 4 8.5M12 3.5c2.5 2.2 4 5.1 4 8.5s-1.5 6.3-4 8.5"/></symbol>
+<symbol id="i-world" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/></symbol>
 <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol>
 <symbol id="i-queue" viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><path d="M4 6.5h.01M4 12h.01M4 17.5h.01" stroke-width="2.6"/></symbol>
 <symbol id="i-rocket" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M10.3 8.6l5.2 3.4-5.2 3.4z"/></symbol>
@@ -994,7 +407,7 @@ body {
 "use strict";
 /* ================= translations ================= */
 const TR={
- en:{effBoth:'Both',effHero:'On hero items',effSlot:'In the equipped slot',effModeD:'In the equipped slot: shows in the Dota loadout (recommended). On hero items: also works for matches with other players but may look attached to the item. Both does both.',effMode:'Emblems and effects on heroes',cclear:'Clear cache',stepOf:'Step {n} of {m}',restore:'Restore',launch:'Launch',apply:'Apply',ready:'Ready',modOn:'mod active',modOff:'mod not applied',
+ en:{rpcD:'Shows what you are doing in Chameleon in your Discord profile (needs Discord running).',rpcTitle:'Discord status',filesOnlyD:'Builds the mod from file swaps only (no item data), like many other tools. Picks that need item data are skipped.',filesOnly:'Experimental: files only',stockModelsD:'Writes chosen models under the game\'s own file names, so they still show after you rejoin a match. Also keeps the mod small.',stockModels:'Keep models after reconnect',langFolderD:'Which Dota language folder to use. Launch adds the matching -language option; if you start Dota yourself add it in Steam launch options.',langFolder:'Language folder',instCustom:'Custom folder (old way)',instLang:'Language folder',instMethodD:'Language folder (recommended): the mod goes next to Dota\'s language files and Dota is started with the matching language. Custom folder: the older way with an own folder.',instMethod:'Where the mod is installed',bgMenu:'Native menu (recommended)',streak:'Kill streak effects',fxSlot:'Slot',fxHint:'Put a ready-made effect from the game (Frostbloom, glows, smoke, lava, sands …) on any slot of this hero. Choose the slot first, then the effect.',fxTab:'Item effects',effBoth:'Both',effHero:'On hero items',effSlot:'In the equipped slot',effModeD:'In the equipped slot: shows in the Dota loadout (recommended). On hero items: also works for matches with other players but may look attached to the item. Both does both.',effMode:'Emblems and effects on heroes',cclear:'Clear cache',stepOf:'Step {n} of {m}',restore:'Restore',launch:'Launch',apply:'Apply',ready:'Ready',modOn:'mod active',modOff:'mod not applied',
   home:'Home',heroes:'Heroes',extras:'Catalog',favs:'Favorites',launchp:'Launch',world:'World',selected:'Selected',presets:'Presets',settings:'Settings',
   loading:'Loading…',working:'Working…',search:'Search…',heroSearch:'Search this hero…',searchHeroes:'Search heroes…  ( / )',
   homeTitle:'Your Dota 2 wardrobe',homeSub:'Choose skins for heroes, towers, couriers, weather and more. Everything goes into one small file and can be removed at any time.',
@@ -1014,7 +427,7 @@ const TR={
   worldSub:'River colour and your own picture or video for the main menu.',river:'River',riverSub:'Uses the river looks that already exist in the game. Pick one, then press Apply.',def:'Default',
   bg:'Main menu background',bgHint:'Choose a video (.mp4 .webm .mov .gif) or a picture (.png .jpg). Chameleon prepares it for Dota automatically — this needs the free program ffmpeg. Without it only ready .webm videos work, and a wrong format shows a black screen.',
   bgPick:'Choose video or picture',bgNeeds:'Menu files',bgInstalled:'installed',bgMissing:'not downloaded yet',bgInstall:'Download menu files',
-  bgFfOk:'ffmpeg is installed',bgFfNo:'ffmpeg is not installed. It is a free tool that converts your file. Get it at ffmpeg.org',bgMethod:'How to change it',bgMethodD:'Standard: adds its own menu files. Replace game video: swaps the videos Dota already has — try this if you get a black screen.',bgLayout:'Standard',bgFiles:'Replace game video',
+  bgFfOk:'ffmpeg is installed',bgFfNo:'ffmpeg is not installed. It is a free tool that converts your file. Get it at ffmpeg.org',bgMethod:'How to change it',bgMethodD:'Native menu uses Dota\'s own menu layout, needs no downloads and follows Dota updates. The other two are older ways — try them if you get a black screen.',bgLayout:'Standard',bgFiles:'Replace game video',
   
   selectedSub:'Everything below goes into the mod when you press Apply.',clearAll:'Clear all',nothingSel:'Nothing selected yet.',riverColour:'river colour',background:'background',
   presetsSub:'Save the current selection and load it later.',presetName:'Preset name',saveCurrent:'Save current',load:'Load',noPresets:'No presets yet.',presetLoaded:'Preset loaded',
@@ -1039,7 +452,7 @@ const TR={
   stScan:'Prepare',stBuild:'Rewrite',stResources:'Resources',stExtras:'Extras',stWrite:'Write',stRegister:'Register',
   taunt:'taunt',gem:'gem',
   ld_tag:'Dota 2 cosmetic mod builder',ld_start:'Starting…',ld_files:'Opening game files',ld_loc:'Reading names',ld_items:'Reading items',ld_heroes:'Reading heroes',ld_cats:'Sorting',ld_cache:'Saving',ld_done:'Ready',ld_fail:'Could not read the game. Check the Dota 2 folder in Settings.'},
- ru:{effBoth:'Оба',effHero:'На предметах героев',effSlot:'В слоте экипировки',effModeD:'В слоте экипировки: видно в экипировке Dota (рекомендуется). На предметах героев: работает и в матчах с другими игроками, но может выглядеть привязанным к предмету. Оба — и то и другое.',effMode:'Эмблемы и эффекты на героях',cclear:'Очистить кэш',stepOf:'Шаг {n} из {m}',restore:'Сброс',launch:'Запуск',apply:'Применить',ready:'Готово',modOn:'мод активен',modOff:'мод не применён',
+ ru:{rpcD:'Показывает в профиле Discord, что ты делаешь в Chameleon (нужен запущенный Discord).',rpcTitle:'Статус в Discord',filesOnlyD:'Собирает мод только заменой файлов (без данных предметов), как многие другие инструменты. Выборы, которым нужны данные предметов, пропускаются.',filesOnly:'Экспериментально: только файлы',stockModelsD:'Записывает выбранные модели под родными именами файлов игры, поэтому они остаются после перезахода в матч. Заодно мод меньше весит.',stockModels:'Сохранять модели после перезахода',langFolderD:'Какую языковую папку Dota использовать. «Запуск» сам добавляет нужный параметр -language; если запускаешь Dota сам, добавь его в параметры запуска Steam.',langFolder:'Папка языка',instCustom:'Своя папка (старый способ)',instLang:'Папка языка',instMethodD:'Папка языка (рекомендуется): мод кладётся рядом с языковыми файлами Dota, а Dota запускается с нужным языком. Своя папка: старый способ с отдельной папкой.',instMethod:'Куда ставить мод',bgMenu:'Родное меню (рекомендуется)',streak:'Эффекты серий убийств',fxSlot:'Слот',fxHint:'Поставь готовый эффект из игры (Frostbloom, свечения, дым, лава, пески …) на любой слот этого героя. Сначала слот, затем эффект.',fxTab:'Эффекты предметов',effBoth:'Оба',effHero:'На предметах героев',effSlot:'В слоте экипировки',effModeD:'В слоте экипировки: видно в экипировке Dota (рекомендуется). На предметах героев: работает и в матчах с другими игроками, но может выглядеть привязанным к предмету. Оба — и то и другое.',effMode:'Эмблемы и эффекты на героях',cclear:'Очистить кэш',stepOf:'Шаг {n} из {m}',restore:'Сброс',launch:'Запуск',apply:'Применить',ready:'Готово',modOn:'мод активен',modOff:'мод не применён',
   home:'Главная',heroes:'Герои',extras:'Каталог',favs:'Избранное',launchp:'Запуск',world:'Мир',selected:'Выбрано',presets:'Пресеты',settings:'Настройки',
   loading:'Загрузка…',working:'Работаю…',search:'Поиск…',heroSearch:'Поиск по герою…',searchHeroes:'Поиск героев…  ( / )',
   homeTitle:'Твой гардероб Dota 2',homeSub:'Выбирай скины героев, башен, курьеров, погоду и многое другое. Всё записывается в один небольшой файл и в любой момент убирается.',
@@ -1059,7 +472,7 @@ const TR={
   worldSub:'Цвет реки и своя картинка или видео для главного меню.',river:'Река',riverSub:'Используются варианты реки, которые уже есть в игре. Выбери и нажми «Применить».',def:'По умолчанию',
   bg:'Фон главного меню',bgHint:'Выбери видео (.mp4 .webm .mov .gif) или картинку (.png .jpg). Chameleon сам подготовит её для Dota — для этого нужна бесплатная программа ffmpeg. Без неё работают только готовые .webm, а неподходящий формат даёт чёрный экран.',
   bgPick:'Выбрать видео или картинку',bgNeeds:'Файлы меню',bgInstalled:'установлены',bgMissing:'ещё не скачаны',bgInstall:'Скачать файлы меню',
-  bgFfOk:'ffmpeg установлен',bgFfNo:'ffmpeg не установлен. Это бесплатная программа, которая подготавливает файл. Скачай на ffmpeg.org',bgMethod:'Как менять',bgMethodD:'Обычный: добавляет свои файлы меню. Замена видео игры: подменяет видео, которые уже есть в Dota — попробуй, если виден чёрный экран.',bgLayout:'Обычный',bgFiles:'Замена видео игры',
+  bgFfOk:'ffmpeg установлен',bgFfNo:'ffmpeg не установлен. Это бесплатная программа, которая подготавливает файл. Скачай на ffmpeg.org',bgMethod:'Как менять',bgMethodD:'Родное меню использует собственную раскладку Dota, ничего не качает и следует за обновлениями. Остальные два — старые способы, пробуй при чёрном экране.',bgLayout:'Обычный',bgFiles:'Замена видео игры',
   
   selectedSub:'Всё ниже попадёт в мод после нажатия «Применить».',clearAll:'Очистить всё',nothingSel:'Пока ничего не выбрано.',riverColour:'цвет реки',background:'фон',
   presetsSub:'Сохрани текущий выбор и загрузи позже.',presetName:'Название пресета',saveCurrent:'Сохранить текущий',load:'Загрузить',noPresets:'Пресетов пока нет.',presetLoaded:'Пресет загружен',
@@ -1091,7 +504,7 @@ const applyStatic=()=>document.querySelectorAll('[data-t]').forEach(e=>{e.textCo
 
 /* ================= state & helpers ================= */
 let cham=null;
-const S={heroes:[],cur:null,catalog:null,group:'cosmetics',slot:'all',active:{},counts:{heroes:{},slots:{}},page:'home',grp:'world',cat:'weather',cats:[],catItems:[],
+const S={fxlib:[],fxLoaded:false,fxSlot:'',heroes:[],cur:null,catalog:null,group:'cosmetics',slot:'all',active:{},counts:{heroes:{},slots:{}},page:'home',grp:'world',cat:'weather',cats:[],catItems:[],
   reg:{},regCat:{},icons:{},hq:'',hs:'',eq:'',favs:{},featured:[],ready:false,cfg:{},sort:'az',selOnly:false,dens:'m',itemTotal:0,rt:0,t0:0,pending:0};
 const NAV=[['home','i-home'],['heroes','i-heroes'],['extras','i-extras'],['world','i-world'],['favs','i-star'],['sp'],['queue','i-queue'],['launch','i-rocket'],['presets','i-preset'],['settings','i-settings']];
 const NAVT={home:'home',heroes:'heroes',extras:'extras',world:'world',favs:'favs',queue:'selected',launch:'launchp',presets:'presets',settings:'settings'};
@@ -1113,7 +526,7 @@ let io=null;
 function ph(kind,it,cls,over){
   let key,data;
   if(kind==='hero'){key='hero_'+it.name.replace('npc_dota_hero_','');data=' data-kind="hero" data-n="'+esc(it.name)+'"'}
-  else{key='item_'+String(it.name).replace(/[^a-zA-Z0-9_]/g,'_');data=' data-kind="item" data-n="'+esc(it.name)+'" data-path="'+esc(it.icon_path||'')+'"'}
+  else{key='item_'+(it.item_id!=null?it.item_id:String(it.name).replace(/[^a-zA-Z0-9_]/g,'_'));data=' data-kind="item" data-n="'+esc(it.name)+'" data-path="'+esc(it.icon_path||'')+'"'}
   const c=S.icons[key];
   return '<div class="ph'+(c?' loaded':'')+' '+(cls||'')+'"><span class="ini">'+esc(initials(it.display_name||it.name))+'</span><img data-ik="'+esc(key)+'"'+data+(c?' src="data:image/png;base64,'+c+'"':'')+' alt="">'+(over||'')+'</div>';
 }
@@ -1141,8 +554,9 @@ function buildNav(){
   $('nav').innerHTML=h;
 }
 function retitle(){document.querySelectorAll('.tip[data-tt]').forEach(e=>{e.textContent=t(e.getAttribute('data-tt'))});applyStatic();modPill()}
+function rpcPage(p,d){try{cham.rpc_state(p,d||'')}catch(e){}}
 function go(p,opts){
-  opts=opts||{};const prev=S.page;S.page=p;S.rt++;
+  opts=opts||{};const prev=S.page;S.page=p;S.rt++;rpcPage(p);
   document.querySelectorAll('.page').forEach(e=>e.classList.remove('on','fwd','back'));
   const el=$('p-'+p);el.classList.add('on');
   if(prev!==p&&!opts.still)el.classList.add(ORDER.indexOf(p)>ORDER.indexOf(prev)?'fwd':'back');
@@ -1162,11 +576,13 @@ function refresh(cb){
     if(cb)cb();
   });
 }
+const fxSel=(name,ctx)=>{const h=String(ctx).split(':')[1];return ((S.active.overrides||{})['fx::'+h+'::'+S.fxSlot])===name};
+const selFor=(name,ctx)=>String(ctx).indexOf('fx:')===0?fxSel(name,ctx):isSel(name);
 const isSel=name=>{const o=(S.active.overrides||{});for(const k in o)if(o[k]===name)return true;return false};
 const keysFor=name=>{const o=(S.active.overrides||{}),out=[];for(const k in o)if(o[k]===name)out.push(k);return out};
 function patchSelection(){
   document.querySelectorAll('.card[data-n]').forEach(c=>{
-    const n=c.getAttribute('data-n'),on=isSel(n);
+    const n=c.getAttribute('data-n'),on=selFor(n,c.getAttribute('data-ctx')||'');
     if(c.classList.contains('sel')!==on)c.classList.toggle('sel',on);
     const cur=(S.active.styles||{})[n];
     c.querySelectorAll('.styles .chip').forEach((ch,ix)=>{const id=ch.getAttribute('data-s');const act=on&&(cur!=null?String(cur)===String(id):ix===0);ch.classList.toggle('on',act)});
@@ -1196,7 +612,7 @@ function afterChange(){refresh(()=>{patchSelection();patchCounts()})}
 /* ================= cards / grids ================= */
 const rc=it=>{let r=String(it.rarity||'').replace('rarity_','').toLowerCase();if(it.is_arcana)r='arcana';return 'var('+(RAR[r]||'--r-common')+')'};
 function card(it,ctx,i){
-  S.reg[it.name]=it;const sel=isSel(it.name);
+  S.reg[it.name]=it;const sel=selFor(it.name,ctx);
   const tag=it.is_arcana?'<span class="tag arc">'+esc(t('arcana').toUpperCase())+'</span>':(it.is_persona?'<span class="tag">'+esc(t('persona').toUpperCase())+'</span>':'');
   let styles='';
   if(it.styles&&it.styles.length>1){
@@ -1236,6 +652,8 @@ function setDens(d){S.dens=d;document.querySelectorAll('.igrid').forEach(g=>{g.c
   const s=$('densSeg');if(s)s.querySelectorAll('.s').forEach(x=>x.classList.toggle('on',x.getAttribute('data-v')===d));cham.set_option('ui_density',d)}
 const ripple=(e,el)=>{const r=el.getBoundingClientRect(),s=document.createElement('span');s.className='rip';s.style.left=(e.clientX-r.left)+'px';s.style.top=(e.clientY-r.top)+'px';el.appendChild(s);setTimeout(()=>s.remove(),650)};
 function pick(name,ctx){
+  const p0=ctx.split(':');
+  if(p0[0]==='fx'){const key='fx::'+p0[1]+'::'+S.fxSlot;if((S.active.overrides||{})[key]===name)cham.remove_override(key);else cham.apply_skin('fx',p0[1],name,S.fxSlot);setTimeout(afterChange,70);return}
   if(isSel(name)){keysFor(name).forEach(k=>cham.remove_override(k));setTimeout(afterChange,70);return}
   const p=ctx.split(':'),kind=p[0];
   if(kind==='hero')cham.apply_skin('heroes',p[1],name,'');
@@ -1286,7 +704,8 @@ function drawHeroGrid(){
 function openHero(n){
   if(S.page!=='heroes'){S.page='heroes';document.querySelectorAll('.page').forEach(e=>e.classList.remove('on'));$('p-heroes').classList.add('on');document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('on',b.getAttribute('data-go')==='heroes'))}
   S.cur=n;S.slot='all';S.hs='';S.catalog=null;S.rt++;renderHero({});
-  cham.get_hero_catalog(n).then(s=>{
+  rpcPage('hero',(S.heroes.filter(x=>x.name===n)[0]||{}).display_name||'');
+  (S.fxLoaded?Promise.resolve():cham.get_effect_library().then(r=>{S.fxlib=J(r)||[];S.fxLoaded=true})).then(()=>cham.get_hero_catalog(n)).then(s=>{
     if(S.cur!==n)return;
     S.catalog=J(s)||{slots:[],arcanas:[],personas:[],taunts:[],gems:[]};if(!S.catalog.gems)S.catalog.gems=[];
     const c=S.catalog;S.group=c.slots.length?'cosmetics':(c.arcanas.length?'arcanas':(c.personas.length?'personas':(c.taunts.length?'taunts':(c.gems.length?'gems':'cosmetics'))));
@@ -1304,13 +723,14 @@ function renderHero(o){
   let h='<div class="dhead"><button class="btn" data-act="back">'+ic('i-back','sm')+esc(t('heroes'))+'</button>'+ph('hero',hd)+'<div><h1>'+esc(hd.display_name)+'</h1><div class="meta"><span class="mods" id="modsBadge" style="'+(total?'':'display:none')+'">'+(total?esc(t('modsApplied',{n:total})):'')+'</span></div></div></div>';
   if(!c){$('p-heroes').innerHTML=h+'<div class="empty">'+esc(t('loading'))+'</div>';lazy($('p-heroes'));return}
   let nc=0;c.slots.forEach(g=>{nc+=g.items.length});
-  const groups=[['cosmetics','cosmetics',nc],['arcanas','arcana',c.arcanas.length],['personas','persona',c.personas.length],['taunts','taunts',c.taunts.length],['gems','gems',c.gems.length]].filter(g=>g[2]>0);
+  const groups=[['cosmetics','cosmetics',nc],['arcanas','arcana',c.arcanas.length],['personas','persona',c.personas.length],['taunts','taunts',c.taunts.length],['gems','gems',c.gems.length],['fx','fxTab',S.fxlib.length]].filter(g=>g[2]>0);
   if(!groups.length){$('p-heroes').innerHTML=h+'<div class="empty">'+esc(t('nothingHero'))+'</div>';return}
   if(!groups.some(g=>g[0]===S.group))S.group=groups[0][0];
   h+='<div class="seg">'+groups.map(g=>'<div class="s'+(S.group===g[0]?' on':'')+'" data-act="group" data-v="'+g[0]+'">'+esc(t(g[1]))+'<span class="n">'+g[2]+'</span></div>').join('')+'</div>';
   h+='<div class="tbar"><input class="search" id="hs" data-inp="hs" placeholder="'+esc(t('heroSearch'))+'" value="'+esc(S.hs)+'" style="min-width:210px">'+toolbar()+'</div>';
   if(S.group==='cosmetics')h+='<div class="chips" id="slotchips" style="margin:0 0 2px">'+slotChips()+'</div>';
   if(S.group==='gems')h+='<div class="sub" style="margin:4px 0 0">'+esc(t('gemHint'))+'</div>';
+  if(S.group==='fx'){if(!c.slots.some(g=>g.slot===S.fxSlot))S.fxSlot=(c.slots[0]||{}).slot||'';h+='<div class="row" style="margin:6px 0 4px"><span class="sub" style="margin:0">'+esc(t('fxSlot'))+'</span><select class="sm" data-act="fxslot">'+c.slots.map(g=>'<option value="'+esc(g.slot)+'"'+(g.slot===S.fxSlot?' selected':'')+'>'+esc(g.title)+'</option>').join('')+'</select></div><div class="sub" style="margin:0 0 4px">'+esc(t('fxHint'))+'</div>'}
   h+='<div id="hbody"></div>';
   const pg=$('p-heroes');pg.innerHTML=h;lazy(pg);drawHeroBody();
 }
@@ -1325,8 +745,8 @@ function drawHeroBody(){
       fillGrid($('gs'+gi),list,ctx);
     });
   }else{
-    const src=c[S.group]||[],list=prepare(src,S.hs);
-    const cx=S.group==='taunts'?'taunt:'+S.cur:(S.group==='gems'?'gem:'+S.cur:ctx);
+    const src=S.group==='fx'?S.fxlib:(c[S.group]||[]),list=prepare(src,S.hs);
+    const cx=S.group==='gems'?'gem:'+S.cur:(S.group==='fx'?'fx:'+S.cur:ctx);
     if(list.length){any=true;body.insertAdjacentHTML('beforeend','<div class="igrid d-'+S.dens+'" id="gs0" style="margin-top:10px"></div>');fillGrid($('gs0'),list,cx)}
   }
   if(!any)body.innerHTML='<div class="empty">'+esc(t('noItems'))+'</div>';
@@ -1376,13 +796,13 @@ function renderWorld(){
    +'<div class="panel"><h3>'+esc(t('river'))+'</h3><div class="sub" style="margin-top:-4px">'+esc(t('riverSub'))+'</div><div class="chips" id="riv"></div></div>'
    +'<div class="panel"><h3>'+esc(t('bg'))+'</h3><div class="sub" style="margin-top:-4px">'+esc(t('bgHint'))+'</div>'
    +'<div class="frow"><div><div class="l" id="bgcur">'+esc(bgLabel())+'</div><div class="d" id="bgff"></div></div><div class="row"><button class="btn" data-act="bgbrowse">'+ic('i-folder','sm')+esc(t('bgPick'))+'</button><button class="btn dng" data-act="bgreset">'+ic('i-trash','sm')+'</button></div></div>'
-   +'<div class="frow"><div><div class="l">'+esc(t('bgMethod'))+'</div><div class="d">'+esc(t('bgMethodD'))+'</div></div><select data-act="bgmethod" id="bgm"><option value="layout">'+esc(t('bgLayout'))+'</option><option value="files">'+esc(t('bgFiles'))+'</option></select></div>'
+   +'<div class="frow"><div><div class="l">'+esc(t('bgMethod'))+'</div><div class="d">'+esc(t('bgMethodD'))+'</div></div><select data-act="bgmethod" id="bgm"><option value="menu">'+esc(t('bgMenu'))+'</option><option value="layout">'+esc(t('bgLayout'))+'</option><option value="files">'+esc(t('bgFiles'))+'</option></select></div>'
    +'<div class="frow" id="bglayrow"><div><div class="l">'+esc(t('bgNeeds'))+'</div><div class="d" id="bgstate">…</div></div><button class="btn" data-act="bginstall" id="bginst" style="display:none">'+ic('i-apply','sm')+esc(t('bgInstall'))+'</button></div></div></div>';
   cham.get_river_colors().then(s=>{const l=J(s)||[],cur=S.active.river_color||'default',el=$('riv');if(!el)return;
     el.innerHTML=l.map(c=>'<span class="chip'+((cur||'default')===c?' on':'')+'" data-act="river" data-v="'+esc(c)+'">'+esc(riverLabel(c))+'</span>').join('')});
   cham.get_background_state().then(s=>{const d=J(s)||{},el=$('bgstate');if(!el)return;
     el.textContent=d.layout_installed?t('bgInstalled'):t('bgMissing');$('bginst').style.display=d.layout_installed?'none':'inline-flex';
-    $('bgff').textContent=d.ffmpeg?t('bgFfOk'):t('bgFfNo');$('bgm').value=d.method||'layout';$('bglayrow').style.display=(d.method||'layout')==='layout'?'flex':'none'});
+    $('bgff').textContent=d.ffmpeg?t('bgFfOk'):t('bgFfNo');$('bgm').value=d.method||'menu';$('bglayrow').style.display=(d.method||'menu')==='layout'?'flex':'none'});
 }
 
 /* ================= selected ================= */
@@ -1390,6 +810,7 @@ function label(k){const p=k.split('::');
   if(p[0]==='cat')return t(p[1])+' · '+(p[2]||'').replace(/_/g,' ');
   if(p[0]==='hero')return p[1].replace('npc_dota_hero_','').replace(/_/g,' ')+' · '+(p[2]||'').replace(/_/g,' ');
   if(p[0]==='taunt')return p[1].replace('npc_dota_hero_','').replace(/_/g,' ')+' · '+t('taunt');
+  if(p[0]==='fx')return p[1].replace('npc_dota_hero_','').replace(/_/g,' ')+' · '+(p[2]||'').replace(/_/g,' ')+' · '+t('fxTab');
   if(p[0]==='gem')return p[1].replace('npc_dota_hero_','').replace(/_/g,' ')+' · '+t('gem');
   return k.replace(/_/g,' ')}
 function renderQueue(){
@@ -1429,8 +850,8 @@ const sw=(id,on)=>'<div class="sw'+(on?' on':'')+'" data-act="sw" data-id="'+id+
 const sel3=(act,cur,opts)=>'<select data-act="'+act+'">'+opts.map(o=>'<option value="'+o[0]+'"'+(o[0]===cur?' selected':'')+'>'+esc(t(o[1]))+'</option>').join('')+'</select>';
 const LNAME={english:'English',russian:'Русский',schinese:'简体中文',tchinese:'繁體中文',german:'Deutsch',french:'Français',spanish:'Español',latam:'Español (LatAm)',brazilian:'Português (BR)',portuguese:'Português',polish:'Polski',turkish:'Türkçe',ukrainian:'Українська',koreana:'한국어',japanese:'日本語',italian:'Italiano',thai:'ไทย',czech:'Čeština',dutch:'Nederlands',swedish:'Svenska',hungarian:'Magyar',romanian:'Română'};
 function renderSettings(){
-  Promise.all([cham.get_config(),cham.get_cache_size(),cham.get_build_report(),cham.get_item_languages(),cham.get_icon_stats()]).then(r=>{
-    const c=J(r[0])||{},cs=J(r[1])||{},rep=J(r[2])||{},langs=J(r[3])||[],ist=J(r[4])||{};
+  Promise.all([cham.get_config(),cham.get_cache_size(),cham.get_build_report(),cham.get_item_languages(),cham.get_icon_stats(),cham.get_lang_folders()]).then(r=>{
+    const c=J(r[0])||{},cs=J(r[1])||{},rep=J(r[2])||{},langs=J(r[3])||[],ist=J(r[4])||{},lf=J(r[5])||['russian'];
     let rh='';
     (rep.overrides||[]).forEach(o=>{
       const m=Object.keys(o.modifiers||{}).map(k=>k+' ×'+o.modifiers[k]).join(', ');
@@ -1457,6 +878,11 @@ function renderSettings(){
       +fr('sigTitle','sigD',sw('sig',c.patch_signatures!==false))
       +fr('swap','swapD',sel3('swap',c.particle_swap||'hero',[['hero','swapHero'],['all','swapAll'],['off','swapOff']]))
       +fr('defMode','defModeD',sel3('defmode',c.default_mode||'auto',[['auto','defAuto'],['replace','defReplace'],['create','defCreate']]))
+      +fr('instMethod','instMethodD',sel3('instmethod',c.install_method||'language',[['language','instLang'],['custom','instCustom']]))
+      +fr('langFolder','langFolderD','<select data-act="langfolder">'+lf.map(x=>'<option value="'+esc(x)+'"'+(x===(c.lang_folder||'russian')?' selected':'')+'>'+esc(x)+'</option>').join('')+'</select>')
+      +fr('stockModels','stockModelsD',sw('stock',c.stock_models!==false))
+      +fr('filesOnly','filesOnlyD',sw('fonly',!!c.files_only))
+      +fr('rpcTitle','rpcD',sw('rpc',c.discord_rpc!==false))
       +fr('effMode','effModeD',sel3('effmode',c.effect_mode||'slot',[['slot','effSlot'],['hero','effHero'],['both','effBoth']]))
       +fr('heroModel','heroModelD',sw('hmodel',c.patch_hero_model!==false))+'</div>'
     +'<div class="panel"><h3>'+esc(t('report'))+'</h3>'+(rh||'<div class="d" style="color:var(--muted2)">'+esc(t('noReport'))+'</div>')+'</div>'
@@ -1534,7 +960,7 @@ document.addEventListener('click',e=>{
     case 'pdel':cham.delete_preset(n);setTimeout(renderPresets,200);break;
     case 'restore':cham.restore_all();setTimeout(()=>refresh(()=>{go(S.page,{still:true});modPill()}),300);break;
     case 'launch':cham.launch_dota();break;
-    case 'apply':$('applyBtn').disabled=true;onProgress(2,'scan',t('working'));cham.apply_all();break;
+    case 'apply':rpcPage('apply');$('applyBtn').disabled=true;onProgress(2,'scan',t('working'));cham.apply_all();break;
     case 'dpath':cham.browse_dota_path().then(p=>{if(p)$('dp').textContent=p});break;
     case 'cclear':cham.clear_cache();setTimeout(renderSettings,300);break;
     case 'icclear':cham.clear_icon_cache().then(()=>{resetIcons();toast(t('icCleared'),'ok');renderSettings()});break;
@@ -1546,6 +972,9 @@ document.addEventListener('click',e=>{
       else if(id==='pack')cham.save_hud_settings(1,1,on,true);
       else if(id==='hmodel')cham.set_option('patch_hero_model',on?'true':'false');
       else if(id==='sig')cham.set_option('patch_signatures',on?'true':'false');
+      else if(id==='stock')cham.set_option('stock_models',on?'true':'false');
+      else if(id==='fonly')cham.set_option('files_only',on?'true':'false');
+      else if(id==='rpc')cham.set_option('discord_rpc',on?'true':'false');
       else if(id==='iccast'){cham.set_option('icon_fix_cast',on?'true':'false');resetIcons()}
     }break;
   }
@@ -1557,6 +986,9 @@ document.addEventListener('change',e=>{
   else if(a==='swap')cham.set_option('particle_swap',el.value);
   else if(a==='defmode')cham.set_option('default_mode',el.value);
   else if(a==='effmode')cham.set_option('effect_mode',el.value);
+  else if(a==='fxslot'){S.fxSlot=el.value;patchSelection()}
+  else if(a==='instmethod')cham.set_option('install_method',el.value);
+  else if(a==='langfolder')cham.set_option('lang_folder',el.value);
   else if(a==='bgmethod'){cham.set_option('bg_method',el.value);$('bglayrow').style.display=el.value==='layout'?'flex':'none'}
   else if(a==='icfield'){cham.set_option('icon_field',el.value);resetIcons();S.catItems=[];S.catalog=null;S.featured=[];toast(t('icCleared'),'ok')}
   else if(a==='icsource'){cham.set_option('icon_source',el.value);resetIcons()}
@@ -1645,11 +1077,11 @@ new QWebChannel(qt.webChannelTransport,ch=>{
     else if(/^(Done|Selected|Settings saved|Restored|Launching|Style)/.test(m))toast(m,'ok');
     if(!S.ready)loadStatus(m);
   });
-  cham.applyResult.connect(ok=>{$('applyBtn').disabled=false;povFinish(ok);toast(ok?t('applied'):t('applyFail'),ok?'ok':'err');modPill();if(S.page==='settings')renderSettings()});
+  cham.applyResult.connect(ok=>{rpcPage(S.page);$('applyBtn').disabled=false;povFinish(ok);toast(ok?t('applied'):t('applyFail'),ok?'ok':'err');modPill();if(S.page==='settings')renderSettings()});
   cham.dbLoaded.connect(ok=>{if(ok){L.target=Math.max(L.target,96);setTimeout(onReady,180)}else{loadFinish(false)}});
   cham.iconReady.connect(onIconReady);
   cham.progressChanged.connect(onProgress);
-  $('ver').textContent='v15.3';
+  $('ver').textContent='v15.4';
   (function poll(){cham.get_status().then(s=>{const st=J(s)||{};if(st.status==='ready')onReady();else setTimeout(poll,500)})})();
 });
 </script>
