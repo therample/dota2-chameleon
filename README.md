@@ -143,6 +143,11 @@ python -W ignore -m unittest discover -s tests -v
 [Dota2 Mod Manager](https://github.com/dota2modmanager/dota2-mod-manager) · [dota2-minify](https://github.com/Egezenn/dota2-minify) · [h6rd](https://github.com/h6rd) (VPKTool, VPCF-Editor, Patcher, BackgroundChanger) · [ValvePython/vpk](https://github.com/ValvePython/vpk) · [ValveResourceFormat](https://github.com/ValveResourceFormat/ValveResourceFormat)
 
 
+## Безопасность, подробнее об антивирусах и их действиях с нашим .exe
+
+[Notice about antivirus](/ANTIVIRUS_notice_en.md)
+[Памятка о антивирусе](/ANTIVIRUS_notice_ru.md)
+
 ## Лицензия
 
 Проект распространяется под свободной лицензией [GPL 3](LICENSE).   
