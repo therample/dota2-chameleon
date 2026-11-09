@@ -1,25 +1,27 @@
-
 # Chameleon
+
 > Dota2 VPK Skinchanger with fast auto parse items
 
 <div align="center">
 
-<img src="docs/assets/banner.svg" alt="Chameleon" width="100%">
+<img src="docs/assets/banner.svg" alt="Chameleon Banner" width="100%">
 
+<br><br>
 
-<img src="docs/assets/Screenshot2026-10-23013829.png" alt="preview" width="100%">
+<img src="docs/assets/Screenshot2026-10-23013829.png" alt="Chameleon Interface Preview" width="100%">
 
-> Ui preview
+<p><b>UI preview</b></p>
 
-<img src="docs/assets/sf.png" alt="preview" width="70%">
+<br>
 
-<p align="center">
-  <a href="https://github.com/therample/dota2-chameleon">
-    <img src="docs/assets/star.svg"
-         alt="Like the project? Star it on GitHub"
-         width="85%">
-  </a>
-</p>
+<img src="docs/assets/sf.png" alt="Shadow Fiend Model Preview" width="70%">
+
+<br><br><br>
+
+<a href="https://github.com/therample/dota2-chameleon">
+  <img src="docs/assets/star.svg" alt="Like the project? Star it on GitHub" width="85%">
+</a>
+
 
 
 [![Сайт](https://img.shields.io/badge/Сайт-rample.pythonanywhere.com-white?style=for-the-badge&labelColor=0b0b0b)](https://rample.pythonanywhere.com)
