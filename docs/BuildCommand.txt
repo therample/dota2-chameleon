@@ -1,3 +1,3 @@
-pyinstaller --clean --noconfirm --onefile --console --hide-console hide-early --noupx --icon=changer.ico --name=rample --add-data "chameleon\ui;chameleon\ui" run.py 
+pyinstaller --clean --noconfirm --onefile --console --hide-console hide-early --noupx --icon=changer.ico --name=ChameleonV0.00 --add-data "chameleon\ui;chameleon\ui" run.py 
 
 TEST command. Can changed.
