@@ -22,7 +22,7 @@ F.category_items.music = BIG;
 F.catalog.forEach(g => g.cats.forEach(c => { if (c.id === 'music') c.count = BIG.length; }));
 const active = JSON.parse(JSON.stringify(F.active));
 const bridge = {
-  statusChanged: sig(), dbLoaded: sig(), applyResult: sig(), iconReady: sig(), launchResult: sig(), progressChanged: sig(),
+  statusChanged: sig(), updateChecked: sig(), dbLoaded: sig(), applyResult: sig(), iconReady: sig(), launchResult: sig(), progressChanged: sig(),
   get_config: () => P(JSON.stringify(F.config)), get_status: () => P(JSON.stringify(F.status)),
   get_heroes: () => P(JSON.stringify(F.heroes)), get_active_overrides: () => P(JSON.stringify(active)),
   get_favorite_names: () => P(JSON.stringify([...favs])), get_applied_counts: () => P(JSON.stringify(F.counts)),
@@ -33,8 +33,8 @@ const bridge = {
   toggle_favorite: n => { const on = !favs.has(n); on ? favs.add(n) : favs.delete(n); return P(on); },
   get_launch_presets: () => P(JSON.stringify(F.launch)), get_cache_size: () => P('{"formatted":"1 MB"}'),
   get_build_report: () => P('{}'), get_item_languages: () => P('["english","russian"]'), get_presets: () => P('[]'),
-  get_river_colors: () => P('["default","blood","slime"]'), get_background_state: () => P(JSON.stringify(F.bgstate)),
-  get_featured: () => P(JSON.stringify(F.featured)), get_effect_library: () => P(JSON.stringify(F.effect_lib)), get_lang_folders: () => P('["russian","english"]'), rpc_state: (p, d) => { calls.push(['rpc_state', p, d]); return P(true); },  get_fonts: () => P(JSON.stringify(F.fonts)),
+  get_river_colors: () => P('["default","blood","slime"]'), get_background_state: () => P(JSON.stringify({ path: '', ffmpeg: true, blur: 4, dim: 20 })),
+  get_featured: () => P(JSON.stringify(F.featured)), get_effect_library: () => P(JSON.stringify(F.effect_lib)), get_lang_folders: () => P('["russian","koreana"]'), get_mod_enabled: () => P(true), set_mod_enabled: () => P(true), check_update: () => P(true), get_preview: (n) => P(n === 'big_3' ? JSON.stringify({ mime: 'audio/mpeg', b64: 'AAAA' }) : ''), set_background_look: (b, d) => { calls.push(['set_background_look', b, d]); return P(true); }, rpc_state: (p, d) => { calls.push(['rpc_state', p, d]); return P(true); },  get_fonts: () => P(JSON.stringify(F.fonts)),
   get_icon_stats: () => P('{"from_vpk":1,"from_cdn":0,"from_disk":0,"missing":0}'),
   get_hero_icon: () => P(''), get_item_icon: (n) => P(n === 'big_3' ? 'iVBORw0KGgo=' : ''),
   install_background_layout: () => P(true), browse_font: () => P(false), clear_icon_cache: () => P(3),
@@ -150,12 +150,12 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
 
   // ---------- catalog ----------
   click(d.querySelector('[data-go="extras"]')); await sleep(400);
-  ok(q('.gtab').length === 7, `catalog shows 7 groups (got ${q('.gtab').length})`);
-  ok(!!d.querySelector('.gtab[data-v="kills"]'), 'the Kill streak tab is back');
+  ok(q('.gtab').length === 6, `catalog shows 6 groups (got ${q('.gtab').length})`);
+  ok(!d.querySelector('.gtab[data-v="kills"]'), 'the empty Kill effects tab is gone (streak effects live in Effects)');
   ok(!!d.querySelector('.gtab[data-v="effects"]'), 'catalog has the Effects group');
   const allCats = [];
-  for (const gid of ['world', 'units', 'items', 'effects', 'interface', 'kills', 'sound']) { click(d.querySelector('.gtab[data-v="' + gid + '"]')); await sleep(120); q('#catchips .chip').forEach(c => allCats.push(c.getAttribute('data-v'))); }
-  ['head_effects', 'teleport_effects', 'blink_effects', 'death_effects', 'kill_effects', 'courier_effects', 'shaders', 'emblems', 'streak'].forEach(c => ok(allCats.includes(c), 'catalog has category ' + c));
+  for (const gid of ['world', 'units', 'items', 'effects', 'interface', 'sound']) { click(d.querySelector('.gtab[data-v="' + gid + '"]')); await sleep(120); q('#catchips .chip').forEach(c => allCats.push(c.getAttribute('data-v'))); }
+  ['head_effects', 'teleport_effects', 'blink_effects', 'death_effects', 'kill_effects', 'courier_effects', 'shaders', 'emblems', 'streak', 'multikill_banners'].forEach(c => ok(allCats.includes(c), 'catalog has category ' + c));
   ok(!allCats.includes('river') && !allCats.includes('gems') && !allCats.includes('fonts') && !allCats.includes('statues'), 'catalog has no river / gems / fonts / statues category');
 
   // chunked rendering of a 420-card category
@@ -173,6 +173,7 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
   const firstRarity = d.querySelector('#cgrid .card .m');
   ok(firstRarity && /mythical/.test(firstRarity.textContent), 'sorting by rarity puts rare items first');
   ok(await waitFor(() => d.querySelector('#cgrid img[data-ik="item_3"]') && d.querySelector('#cgrid img[data-ik="item_3"]').getAttribute('src'), 2000), 'an icon returned by the bridge is shown on its card');
+  ok(q('#cgrid .play').length > 0, 'music cards have a listen button');
   const star = d.querySelector('#cgrid .star');
   click(star); await sleep(120);
   ok(star.classList.contains('on'), 'star toggles on');
@@ -184,8 +185,11 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
   // ---------- world ----------
   click(d.querySelector('[data-go="world"]')); await sleep(300);
   ok(q('#riv .chip').length >= 2, 'world page lists river options from the game');
-  ok(!!d.querySelector('[data-act="bgbrowse"]') && !!d.getElementById('bgm') && d.getElementById('bgm').options.length === 3 && !d.querySelector('[data-act="bguse"]'), 'world page: own background + method select, no built-in video list');
+  ok(!!d.querySelector('[data-act="bgbrowse"]') && !!d.getElementById('bgblur') && !!d.getElementById('bgdim'), 'world page: own background with blur and darkening sliders');
   ok(/ffmpeg/i.test(d.getElementById('bgff').textContent), 'world page tells whether ffmpeg is available');
+  ok(d.getElementById('bgblur').value === '4' && d.getElementById('bgdim').value === '20', 'blur and darkening show the saved values');
+  { const bl = d.getElementById('bgblur'); bl.value = '9'; bl.dispatchEvent(new w.Event('input', { bubbles: true })); await sleep(320); }
+  ok(calls.some(c => c[0] === 'set_background_look' && c[1] === 9 && c[2] === 20), 'moving the blur slider is saved with the darkening value');
 
   // ---------- launch + settings ----------
   click(d.querySelector('[data-go="launch"]')); await sleep(250);
@@ -195,6 +199,7 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
   ok(!/HUD scale|Масштаб HUD/.test(st), 'no HUD scale controls in settings');
   ok(!!d.querySelector('[data-id="sig"]') && !!d.querySelector('[data-act="defmode"]') && !!d.querySelector('[data-act="swap"]') && !!d.querySelector('[data-act="effmode"]'), 'settings: signatures switch, special-items mode, effects mode, particle-swap mode');
   ok(!d.querySelector('[data-act="itemlang"]'), 'the item-names language setting is gone');
+  ok(!!d.querySelector('[data-id="upd"]') && !!d.querySelector('[data-id="webic"]'), 'settings: update check and web item pictures switches');
   ok(!!d.querySelector('[data-act="instmethod"]') && !!d.querySelector('[data-act="langfolder"]') && !!d.querySelector('[data-id="fonly"]') && !!d.querySelector('[data-id="rpc"]') && !!d.querySelector('[data-id="stock"]'), 'settings: install method, language folder, experimental files-only, Discord status, stock models');
   change(d.querySelector('[data-act="instmethod"]'), 'custom'); await sleep(60); click(d.querySelector('[data-id="rpc"]')); await sleep(60);
   ok(calls.some(c => c[0] === 'set_option' && c[1] === 'install_method' && c[2] === 'custom') && calls.some(c => c[0] === 'set_option' && c[1] === 'discord_rpc'), 'install method and Discord switch reach the backend');

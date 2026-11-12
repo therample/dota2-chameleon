@@ -34,6 +34,11 @@ def _items_game():
     H = HERO
     return """"items_game"
 {
+  "attribute_controlled_attached_particles"
+  {
+    "5" { "system" "frostbloom" "resource" "particles/econ/seasonal/frostbloom.vpcf" }
+    "6" { "system" "snowdrift" "resource" "particles/econ/seasonal/snowdrift.vpcf" }
+  }
   "prefabs"
   {
     "default_item" { "item_class" "wearable" "baseitem" "1" }
@@ -58,7 +63,7 @@ def _items_game():
                "asset_modifier" { "type" "particle_create" "modifier" "particles/econ/items/sparrow/cool/cool_ambient.vpcf" }
                "asset_modifier" { "type" "particle_create" "modifier" "particles/econ/items/sparrow/cool/cool_second.vpcf" }
              } }
-    "2002" { "name" "arcana_weapon" "item_name" "#DOTA_Item_Arcana_Weapon" "prefab" "arcana" "item_slot" "weapon" "model_player" "models/items/sparrow/arcana/weapon.vmdl"
+    "2002" { "name" "arcana_weapon" "item_name" "#DOTA_Item_Arcana_Weapon" "prefab" "arcana" "item_slot" "weapon" "image_inventory" "econ/items/sparrow/arcana/arcana_icon" "model_player" "models/items/sparrow/arcana/weapon.vmdl"
              "used_by_heroes" { "%(h)s" "1" }
              "visuals" {
                "asset_modifier" { "type" "entity_model" "asset" "%(h)s" "modifier" "models/heroes/sparrow/sparrow_arcana.vmdl" }
@@ -213,7 +218,7 @@ LOC = ('"lang" { "Language" "English" "Tokens" { "DOTA_Item_Cool_Head" "Cool Hea
        '"DOTA_Item_Funny_Taunt" "Funny Taunt" "DOTA_Item_Alt_Weapon" "Alt Weapon" "DOTA_Item_Head_Acc" "Head Accessory" '
        '"DOTA_Item_Misc" "Misc Thing" "DOTA_Item_Cool_Announcer" "Cool Announcer" "DOTA_Item_Snow_Weather" "Snow" '
        '"DOTA_Item_Rain_Weather" "Rain" "DOTA_Item_Finch_Blade" "Finch Blade" "DOTA_Item_Finch_Taunt" "Finch Taunt" '
-       '"DOTA_Item_Ghost_Effigy" "Ghost Effigy" "DOTA_Item_Stone_Ancient" "Stone Ancient" "DOTA_Item_Ember_Tormentor" "Ember Tormentor" "DOTA_Item_Noir_Filter" "Noir Filter" "DOTA_Item_Lut_Pack" "Lut Pack" "DOTA_Item_HeadFx" "Head Fx" "DOTA_Item_CourierFx" "Courier Fx" "DOTA_Item_DeathFx" "Death Fx" "DOTA_Item_MapFx" "Map Fx" "DOTA_Item_TeleFx" "Tele Fx" "DOTA_Item_BlinkFx" "Blink Fx" "DOTA_Item_KillFx" "Kill Fx" "DOTA_Item_StatueA" "Statue A" "DOTA_Item_PrismaticRed" "Prismatic Red" "DOTA_Item_EtherealGem" "Ethereal Gem" "DOTA_Item_Unrelated" "Unrelated Gem" "DOTA_Item_Victory" "Victory Gem" "DOTA_Item_IceRoshan" "Ice Roshan" "DOTA_Item_GoldCourier" "Gold Courier" "DOTA_Item_EpicPack" "Epic Music Pack" "DOTA_Item_MusicTreasure" "Music Treasure" "DOTA_Item_MusicBundle" "Music Bundle" "DOTA_Item_Frostbloom_Blade" "Frostbloom Blade" "DOTA_Item_Sparrow_Persona" "Sparrow Persona" "DOTA_Item_Finch_Persona" "Finch Persona" "DOTA_Item_Ti9_Pack" "TI9 Pack" "DOTA_Item_Dup" "Dup Item" "DOTA_Item_Paid_Head" "Paid Head" "DOTA_Item_Courier_Glow" "Courier Glow" "DOTA_Item_Odd_Slot" "Odd Slot" "DOTA_Item_Tail" "Tail Thing" "DOTA_Item_Bird_Creeps" "Bird Creeps" "DOTA_Item_Crow_Towers" "Crow Towers" "DOTA_Item_Sun_Towers" "Sun Towers" "DOTA_Item_Hydra_Cursor" "Hydra Cursor" "DOTA_Item_Midnight_Hud" "Midnight HUD" "DOTA_Item_Diretide_Streak" "Diretide Streak" "DOTA_Item_Odd_Announcer" "Odd Announcer" "DOTA_Item_Odd_MegaKills" "Odd Mega-Kills" "DOTA_Item_Styled_Head" "Styled Head" "DOTA_Style_Base" "Classic" "DOTA_Style_Golden" "Golden" } }')
+       '"DOTA_Item_Ghost_Effigy" "Ghost Effigy" "DOTA_Item_Stone_Ancient" "Stone Ancient" "DOTA_Item_Ember_Tormentor" "Ember Tormentor" "DOTA_Item_Noir_Filter" "Noir Filter" "DOTA_Item_Lut_Pack" "Lut Pack" "DOTA_Item_HeadFx" "Head Fx" "DOTA_Item_CourierFx" "Courier Fx" "DOTA_Item_DeathFx" "Death Fx" "DOTA_Item_MapFx" "Map Fx" "DOTA_Item_TeleFx" "Tele Fx" "DOTA_Item_BlinkFx" "Blink Fx" "DOTA_Item_KillFx" "Kill Fx" "DOTA_Item_StatueA" "Statue A" "DOTA_Item_PrismaticRed" "Prismatic Red" "DOTA_Item_EtherealGem" "Ethereal Gem" "DOTA_Item_Unrelated" "Unrelated Gem" "DOTA_Item_Victory" "Victory Gem" "DOTA_Item_IceRoshan" "Ice Roshan" "DOTA_Item_GoldCourier" "Gold Courier" "DOTA_Item_EpicPack" "Epic Music Pack" "DOTA_Item_MusicTreasure" "Music Treasure" "DOTA_Item_MusicBundle" "Music Bundle" "DOTA_Item_Frostbloom_Blade" "Frostbloom Blade" "DOTA_Item_Sparrow_Persona" "Sparrow Persona" "DOTA_Item_Finch_Persona" "Finch Persona" "DOTA_Item_Ti9_Pack" "TI9 Pack" "DOTA_Item_Dup" "Dup Item" "DOTA_Item_Paid_Head" "Paid Head" "DOTA_Item_Courier_Glow" "Courier Glow" "Attrib_Particle5" "Frostbloom" "Attrib_Particle6" "Snowdrift" "DOTA_Item_Odd_Slot" "Odd Slot" "DOTA_Item_Tail" "Tail Thing" "DOTA_Item_Bird_Creeps" "Bird Creeps" "DOTA_Item_Crow_Towers" "Crow Towers" "DOTA_Item_Sun_Towers" "Sun Towers" "DOTA_Item_Hydra_Cursor" "Hydra Cursor" "DOTA_Item_Midnight_Hud" "Midnight HUD" "DOTA_Item_Diretide_Streak" "Diretide Streak" "DOTA_Item_Odd_Announcer" "Odd Announcer" "DOTA_Item_Odd_MegaKills" "Odd Mega-Kills" "DOTA_Item_Styled_Head" "Styled Head" "DOTA_Style_Base" "Classic" "DOTA_Style_Golden" "Golden" } }')
 LOC_RU = '"lang" { "Language" "Russian" "Tokens" { "DOTA_Item_Cool_Head" "Крутая шапка" } }'
 
 
@@ -255,6 +260,7 @@ GAME_FILES = {
     "models/heroes/sparrow/head_stock.vmdl_c": b"STOCK_HEAD" * 6,
     "models/couriers/gold.vmdl_c": b"GOLD_COURIER" * 4,
     "models/props_gameplay/donkey.vmdl_c": b"DONKEY" * 4,
+    "particles/econ/seasonal/new_bloom/seasonal_ambient_gold_drop.vpcf_c": b"GOLD_DROP" * 4,
     "particles/econ/gems/prismatic_red.vpcf_c": b"GEM_RED" * 4,
     "particles/econ/gems/ethereal.vpcf_c": b"GEM_ETH" * 4,
     "particles/units/heroes/hero_sparrow/arcana_glow.vpcf_c": b"ORIGINAL_GLOW" * 4,
@@ -570,67 +576,7 @@ class BehaviourTest(unittest.TestCase):
     def _no_ffmpeg(self, a):
         a.background_builder.convert = lambda src, progress=None: None
 
-    def test_background_without_ffmpeg_accepts_only_vp9_webm(self):
-        a = self.ap()
-        self._layout_cache(a)
-        self._no_ffmpeg(a)
-        vp9 = Path(_TMP) / "vp9.webm"
-        vp9.write_bytes(b"\x1a\x45\xdf\xa3" + b"\x00" * 40 + b"V_VP9" + b"MINE" * 32)
-        a.set_background(str(vp9))
-        a.apply_hero_skin(HERO, "cool_head")
-        self.assertTrue(a.commit())
-        pak = self.pak(a)
-        self.assertEqual(pak.get_file("panorama/videos/zxc/zxc.webm").read(), vp9.read_bytes())
-        for f in a.background_builder.LAYOUT_FILES:
-            self.assertIn(f, {x for x in pak})
-        self.assertEqual(len(a.last_report["background"]["replaced"]), len(a.background_builder.LAYOUT_FILES) + 1)
-        # VP8 / H.264 / not-a-webm / still image are refused with an explanation (they show a BLACK screen in Panorama)
-        for name, data, needle in (("vp8.webm", b"\x1a\x45\xdf\xa3" + b"V_VP8" + b"X" * 40, "not VP9"),
-                                   ("fake.webm", b"not a webm at all", "not a valid WebM"),
-                                   ("clip.mp4", b"\x00\x00\x00\x18ftypmp42" + b"X" * 40, "ffmpeg is not installed"),
-                                   ("pic.png", b"\x89PNG....", "not installed")):
-            f = Path(_TMP) / name
-            f.write_bytes(data)
-            a.set_background(str(f))
-            a.commit()
-            self.assertIn(needle, a.last_report["background"]["error"], name)
-            self.assertEqual(a.last_report["background"]["replaced"], [], name)
 
-    def test_background_is_converted_with_real_ffmpeg_to_vp9_yuv420p_without_audio(self):
-        import shutil, subprocess
-        if not shutil.which("ffmpeg"):
-            self.skipTest("ffmpeg not installed")
-        src = Path(_TMP) / "clip.mp4"
-        r = subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "testsrc=size=96x64:rate=10:duration=1",
-                            "-f", "lavfi", "-i", "sine=duration=1", "-c:v", "mpeg4", "-c:a", "aac", "-shortest", str(src)],
-                           capture_output=True)
-        if r.returncode != 0:
-            self.skipTest("this ffmpeg cannot make a test clip")
-        a = self.ap()
-        self._layout_cache(a)
-        a.set_background(str(src))
-        a.apply_hero_skin(HERO, "cool_head")
-        self.assertTrue(a.commit(), a.last_report)
-        data = self.pak(a).get_file("panorama/videos/zxc/zxc.webm").read()
-        self.assertEqual(a.background_builder.webm_codec(data), "vp9")
-        probe = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "stream=codec_type,codec_name,pix_fmt", "-of", "csv=p=0", "-"],
-                               input=data, capture_output=True)
-        out = probe.stdout.decode()
-        self.assertIn("vp9,video,yuv420p", out.replace("\n", ""))
-        self.assertNotIn("audio", out)
-        self.assertEqual(a.last_report["background"]["error"], "")
-
-    def test_background_layout_missing_and_offline(self):
-        a = self.ap()
-        self._no_ffmpeg(a)
-        good = Path(_TMP) / "ok.webm"
-        good.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 40)
-        a.set_background(str(good))
-        a.background_builder.cache = Path(_TMP) / "empty_cache"
-        a.background_builder.install_layout = lambda: (False, "offline")
-        a.apply_hero_skin(HERO, "cool_head")
-        a.commit()
-        self.assertIn("not installed", a.last_report["background"]["error"])
 
     # ---- river: the game's own water materials ----
     def test_river_colour_copies_a_game_vial_material_over_the_default_river(self):
@@ -1000,8 +946,8 @@ class V15Test(unittest.TestCase):
         self.assertNotIn("music_treasure", c["music"])                # a treasure chest / bundle is not a music pack
         self.assertNotIn("music_bundle_x", c["music"])
         groups = {g: cats for g, cats in self.db.CATEGORY_GROUPS}
-        self.assertEqual(groups["effects"], ["head_effects", "teleport_effects", "blink_effects", "death_effects", "kill_effects"])
-        self.assertEqual(groups["kills"], ["streak"])
+        self.assertEqual(groups["effects"], ["head_effects", "teleport_effects", "blink_effects", "death_effects", "kill_effects", "streak", "multikill_banners", "item_effects"])
+        self.assertNotIn("kills", groups)
         self.assertNotIn("fonts", groups["interface"])
 
     def test_gems_are_offered_only_to_the_heroes_they_belong_to(self):
@@ -1022,7 +968,7 @@ class V15Test(unittest.TestCase):
         self.assertTrue(a.commit())
         rep = a.last_report["overrides"][0]
         self.assertNotIn("error", rep, rep)
-        self.assertIn("gem attached", rep["note"])
+        self.assertIn("prismatic", rep["note"])
         carrier = [v for v in self.items(a).values() if isinstance(v, dict) and "prismatic_red" in str(v)]
         self.assertTrue(carrier)
         pak = self.pak(a)
@@ -1095,38 +1041,6 @@ class V15Test(unittest.TestCase):
             (cache / f).parent.mkdir(parents=True, exist_ok=True)
             (cache / f).write_bytes(b"COMPILED" * 20)
         a.background_builder.cache = cache
-
-    def test_static_picture_becomes_an_even_sized_vp9_clip(self):
-        import shutil, subprocess
-        if not shutil.which("ffmpeg"):
-            self.skipTest("ffmpeg not installed")
-        png = Path(_TMP) / "odd.png"
-        r = subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "testsrc=size=97x61:rate=1:duration=1", "-frames:v", "1", str(png)], capture_output=True)
-        if r.returncode != 0:
-            self.skipTest("cannot create a test picture")
-        a = self.ap()
-        self._layouts(a)
-        a.set_background(str(png))
-        a.apply_hero_skin(HERO, "cool_head")
-        self.assertTrue(a.commit(), a.last_report)
-        data = self.pak(a).get_file("panorama/videos/zxc/zxc.webm").read()
-        self.assertEqual(a.background_builder.webm_codec(data), "vp9")
-        probe = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height,pix_fmt", "-of", "csv=p=0", "-"],
-                               input=data, capture_output=True).stdout.decode().strip()
-        w, h, fmt = probe.split(",")
-        self.assertEqual((int(w) % 2, int(h) % 2, fmt), (0, 0, "yuv420p"))
-        self.assertEqual(a.last_report["background"]["error"], "")
-
-    def test_background_files_method_replaces_the_games_menu_videos(self):
-        a = self.ap(bg_method="files")
-        self.assertEqual(a.background_builder.targets(), [])           # the synthetic game has no menu video
-        good = Path(_TMP) / "m.webm"
-        good.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 60)
-        a.background_builder.convert = lambda src, progress=None: None
-        a.set_background(str(good))
-        a.apply_hero_skin(HERO, "cool_head")
-        a.commit()
-        self.assertIn("No menu-background video", a.last_report["background"]["error"])
 
 
 
@@ -1342,46 +1256,6 @@ class V154Test(unittest.TestCase):
         with self.assertRaises(pa.PanoramaError):
             pa.read_blocks(b"short")
 
-    def test_menu_background_native_method(self):
-        import struct, zlib
-        from chameleon import panorama as pa
-        from chameleon.vpk_io import VPKBuilder
-
-        def container(text):
-            blocks = [(b"REDI", b"R" * 40), (b"DATA", struct.pack("<IH", zlib.crc32(text) & 0xFFFFFFFF, 0) + text)]
-            out = bytearray(16 + 12 * len(blocks)); pos = len(out); ent = []
-            for n, b in blocks:
-                pos = (pos + 15) & ~15; ent.append((n, pos, len(b))); out.extend(b"\0" * (pos - len(out))); out.extend(b); pos = len(out)
-            struct.pack_into("<IHHII", out, 0, len(out), 12, 0, 8, len(blocks))
-            for i, (n, o, l) in enumerate(ent):
-                at = 16 + 12 * i; out[at:at + 4] = n; struct.pack_into("<II", out, at + 4, o - (at + 4), l)
-            return bytes(out)
-        game = build_fake_dota(Path(_TMP) / "menu")
-        files = dict(GAME_FILES)
-        files["panorama/layout/dashboard.vxml_c"] = container(b'<root><DOTADashboardBackgroundManager id="m" override-background="s2r://panorama/layout/x.vxml_c" /></root>')
-        files["panorama/styles/dotastyles.vcss_c"] = container(b".a { color: red; }")
-        b = VPKBuilder()
-        for p_, d_ in files.items():
-            b.add_data(d_, p_)
-        b.build_standalone(game / "game" / "dota" / "pak01_dir.vpk")
-        db = SkinDatabase(game)
-        self.assertTrue(db.initialize())
-        a = SkinApplier(game, db, {"pack_resources": True, "bg_method": "menu"})
-        self.addCleanup(a.restore)
-        a.background_builder.convert = lambda src, progress=None: None
-        vid = Path(_TMP) / "m.webm"
-        vid.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 100)
-        a.set_background(str(vid))
-        a.apply_hero_skin(HERO, "paid_head")
-        self.assertTrue(a.commit(), a.last_report)
-        pak = self.pak(a)
-        dash = pa.get_source(pak.get_file("panorama/layout/dashboard.vxml_c").read())
-        self.assertIn('override-background="s2r://panorama/layout/chameleon_background.vxml_c"', dash)
-        lay = pa.get_source(pak.get_file(pa.MENU_LAYOUT).read())
-        self.assertIn(pa.MENU_VIDEO, lay)
-        self.assertTrue(lay.isascii() and " on" not in lay)                         # Panorama refuses non-ASCII text / handlers
-        self.assertEqual(pak.get_file(pa.MENU_VIDEO).read(), vid.read_bytes())
-        self.assertEqual(a.last_report["background"]["error"], "")
 
     def test_menu_background_reports_a_changed_dota_layout(self):
         a = self.ap(bg_method="menu")
@@ -1409,22 +1283,7 @@ class V154Test(unittest.TestCase):
         self.assertLessEqual(dur, 30.5)                                              # cut to 30 seconds
 
     # ---- item effects ----
-    def test_effect_library_has_pure_effects_only(self):
-        names = [i.name for i in self.db.effect_library()]
-        self.assertIn("frostbloom_blade", names)
-        self.assertNotIn("sparrow_persona", names)                                  # has a model: not an effect
-        self.assertNotIn("paid_head", names)
 
-    def test_effect_goes_to_the_chosen_slot_only(self):
-        a = self.ap()
-        self.assertFalse(a.apply_effect(HERO, "weapon_alt", "paid_head"))
-        self.assertTrue(a.apply_effect(HERO, "weapon_alt", "frostbloom_blade"))
-        self.assertTrue(a.commit())
-        import chameleon.kv as kvm
-        raw = self.pak(a).get_file("scripts/items/items_game.txt").read().decode()
-        items = kvm.KeyValueParser(raw).parse()["items_game"]["items"]
-        self.assertIn("frost_a.vpcf", str(items["1004"]))
-        self.assertNotIn("frost_a.vpcf", str(items["1002"]))
 
     # ---- parsing: None values, hero-bound music, siblings, config ----
     def test_none_strings_never_reach_the_interface(self):
@@ -1514,8 +1373,8 @@ class RPCTest(unittest.TestCase):
         r.set_page("hero", "Axe")
         r.set_page("settings")
         r.set_page("hero", "Sniper")
-        self.assertTrue(self.wait(lambda: c["updates"][-1]["state"] == "Choosing skins for Sniper"))
-        self.assertNotIn("Choosing skins for Axe", [u["state"] for u in c["updates"]])
+        self.assertTrue(self.wait(lambda: c["updates"][-1]["state"] == "Dressing Sniper"))
+        self.assertNotIn("Dressing Axe", [u["state"] for u in c["updates"]])
         r.stop()
 
     def test_disabled_never_connects_and_failures_are_silent(self):
@@ -1648,3 +1507,214 @@ if __name__ == "__main__":
         unittest.main(verbosity=2)
     finally:
         shutil.rmtree(_TMP, ignore_errors=True)
+
+
+class V155Test(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.game = build_fake_dota(Path(_TMP) / "v155")
+        cls.db = SkinDatabase(cls.game)
+        assert cls.db.initialize()
+
+    def ap(self, **cfg):
+        a = SkinApplier(self.game, self.db, dict({"pack_resources": True}, **cfg))
+        self.addCleanup(a.restore)
+        return a
+
+    # ---- the game's own effect list ----
+    def test_effect_library_comes_from_the_games_effect_list_and_the_seasonal_files(self):
+        labels = [e["label"] for e in self.db.particle_library()]
+        self.assertIn("Frostbloom", labels)
+        self.assertIn("Snowdrift", labels)
+        self.assertIn("Gold Drop", labels)                         # seasonal ambient file found in the game files
+        self.assertFalse([l for l in labels if "head" in l.lower()])  # hero items are not effects
+
+    def test_effect_goes_to_the_chosen_slot_only(self):
+        a = self.ap()
+        self.assertFalse(a.apply_effect(HERO, "weapon_alt", "paid_head"))
+        self.assertTrue(a.apply_effect(HERO, "weapon_alt", "fxp_5"))
+        self.assertTrue(a.commit(), a.last_report)
+        import vpk, chameleon.kv as kvm
+        raw = vpk.open(str(a.pak_path)).get_file("scripts/items/items_game.txt").read().decode()
+        items = kvm.KeyValueParser(raw).parse()["items_game"]["items"]
+        self.assertIn("particles/econ/seasonal/frostbloom.vpcf", str(items["1004"]))
+        self.assertNotIn("frostbloom.vpcf", str(items["1002"]))
+        a.apply_effect(HERO, "weapon_alt", "fxp_6")                 # one effect per hero slot
+        self.assertEqual([k for k in a.active_overrides if k.startswith("fx::")], ["fx::%s::weapon_alt" % HERO])
+
+    # ---- menu background: the d2mm way (video + three layouts), blur and dim ----
+    LAST = ('<root><styles><include src="s2r://panorama/styles/dotastyles.vcss" /></styles><DOTADashboardBackgroundLastMatch>'
+            '<DOTAScenePanel id="BackgroundScene" map="scenes/x" camera="c" />'
+            '<Panel class="BackgroundFadeOverlay" hittest="false" /><Panel id="BGVignette" hittest="false" />'
+            '<Panel id="DetailsContainer"><Label text="x" /></Panel><TextButton text="d" id="DebugResetButton" onactivate="X()" />'
+            '<Panel id="MissingDataContainer"><Label text="y" /></Panel></DOTADashboardBackgroundLastMatch></root>')
+
+    def test_menu_background_layout_text(self):
+        from chameleon.extras import BackgroundVPKBuilder
+        out = BackgroundVPKBuilder([]).patch_last_match(self.LAST, 8, 20)
+        self.assertIn('src="s2r://d2chameleon/menu_background.webm"', out)
+        self.assertIn("blur: gaussian(8);", out)
+        self.assertIn("background-color: #00000033;", out)               # 20 % dim
+        for name in ("BackgroundScene", "BGVignette", "DetailsContainer", "MissingDataContainer", "BackgroundFadeOverlay", "DebugResetButton"):
+            self.assertRegex(out, r'(?:id|class)="%s"[^>]*style="visibility: collapse;"' % name)
+        self.assertTrue(out.isascii())
+        self.assertNotIn("blur:", BackgroundVPKBuilder([]).patch_last_match(self.LAST, 0, 0))
+        self.assertIsNone(BackgroundVPKBuilder([]).patch_last_match("<root/>", 0, 10))      # layout changed in a Dota update
+
+    def _menu_game(self):
+        import struct, zlib
+        from chameleon.vpk_io import VPKBuilder
+
+        def container(text):
+            blocks = [(b"REDI", b"R" * 40), (b"DATA", struct.pack("<IH", zlib.crc32(text) & 0xFFFFFFFF, 0) + text)]
+            out = bytearray(16 + 12 * len(blocks)); pos = len(out); ent = []
+            for n, b in blocks:
+                pos = (pos + 15) & ~15; ent.append((n, pos, len(b))); out.extend(b"\0" * (pos - len(out))); out.extend(b); pos = len(out)
+            struct.pack_into("<IHHII", out, 0, len(out), 12, 0, 8, len(blocks))
+            for i, (n, o, l) in enumerate(ent):
+                at = 16 + 12 * i; out[at:at + 4] = n; struct.pack_into("<II", out, at + 4, o - (at + 4), l)
+            return bytes(out)
+        game = build_fake_dota(Path(_TMP) / "menu155")
+        files = dict(GAME_FILES)
+        mgr = b'<root><DOTADashboardBackgroundManager override-background="DOTADashboardBackgroundOld" /></root>'
+        files["panorama/layout/dashboard.vxml_c"] = container(b'<root><DOTADashboardBackgroundManager id="m" override-background="s2r://seasonal.vxml_c" /></root>')
+        files["panorama/layout/dashboard_background_manager.vxml_c"] = container(mgr)
+        files["panorama/layout/dashboard_background_last_match.vxml_c"] = container(self.LAST.encode())
+        b = VPKBuilder()
+        for p_, d_ in files.items():
+            b.add_data(d_, p_)
+        b.build_standalone(game / "game" / "dota" / "pak01_dir.vpk")
+        db = SkinDatabase(game)
+        self.assertTrue(db.initialize())
+        return game, db
+
+    def test_menu_background_end_to_end(self):
+        import vpk
+        from chameleon import panorama as pa
+        game, db = self._menu_game()
+        a = SkinApplier(game, db, {"pack_resources": True, "bg_blur": 6, "bg_dim": 30})
+        self.addCleanup(a.restore)
+        a.background_builder.convert = lambda src, progress=None: None
+        vid = Path(_TMP) / "bg.webm"
+        vid.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 100)
+        a.set_background(str(vid))
+        a.apply_hero_skin(HERO, "paid_head")
+        self.assertTrue(a.commit(), a.last_report)
+        pak = vpk.open(str(a.pak_path))
+        self.assertEqual(pak.get_file("d2chameleon/menu_background.webm").read(), vid.read_bytes())
+        last = pa.get_source(pak.get_file("panorama/layout/dashboard_background_last_match.vxml_c").read())
+        self.assertIn("gaussian(6)", last)
+        for f in ("panorama/layout/dashboard.vxml_c", "panorama/layout/dashboard_background_manager.vxml_c"):
+            self.assertIn('override-background="DOTADashboardBackgroundLastMatch"', pa.get_source(pak.get_file(f).read()))
+        self.assertEqual(a.last_report["background"]["error"], "")
+
+    def test_menu_background_errors_are_explained(self):
+        a = self.ap()
+        a.background_builder.convert = lambda src, progress=None: None
+        f = Path(_TMP) / "x.webm"
+        f.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP8" + b"X" * 50)
+        a.set_background(str(f))
+        a.apply_hero_skin(HERO, "paid_head")
+        a.commit()
+        self.assertIn("not VP9", a.last_report["background"]["error"])
+        good = Path(_TMP) / "g.webm"
+        good.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 50)
+        a.set_background(str(good))
+        a.commit()
+        self.assertIn("menu files were not found", a.last_report["background"]["error"])      # the fake game has no menu layouts
+
+    def test_picture_becomes_a_small_even_sized_clip(self):
+        import shutil, subprocess
+        if not shutil.which("ffmpeg"):
+            self.skipTest("ffmpeg not installed")
+        png = Path(_TMP) / "odd.png"
+        r = subprocess.run(["ffmpeg", "-y", "-f", "lavfi", "-i", "testsrc=size=97x61:rate=1:duration=1", "-frames:v", "1", str(png)], capture_output=True)
+        if r.returncode != 0:
+            self.skipTest("cannot create a test picture")
+        out = self.ap().background_builder.convert(png)
+        self.assertIsNotNone(out)
+        probe = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height,pix_fmt", "-of", "csv=p=0", str(out)],
+                               capture_output=True, text=True).stdout.strip()
+        w, h, fmt = probe.split(",")
+        self.assertEqual((int(w) % 2, int(h) % 2, fmt), (0, 0, "yuv420p"))
+
+    # ---- language folder: files only, Valve's files are never edited ----
+    def test_language_folder_writes_no_gameinfo_no_signatures_no_items_game(self):
+        game = build_fake_dota(Path(_TMP) / "lang155")
+        lang = game / "game" / "dota_russian"
+        lang.mkdir()
+        (lang / "pak01_dir.vpk").write_bytes(b"VOICE")
+        db = SkinDatabase(game)
+        self.assertTrue(db.initialize())
+        a = SkinApplier(game, db, {"pack_resources": True, "install_method": "language", "lang_folder": "russian"})
+        gi, sig = a.gameinfo.branch_path.read_bytes(), a.gameinfo.signatures.path.read_bytes()
+        a.apply_hero_skin(HERO, "paid_head")
+        a.apply_hero_skin(HERO, "arcana_weapon")                  # needs item data: skipped in this method
+        self.assertTrue(a.commit(), a.last_report)
+        import vpk
+        names = {f for f in vpk.open(str(a.pak_path))}
+        self.assertIn("models/heroes/sparrow/head_stock.vmdl_c", names)          # the file swap works
+        self.assertNotIn("scripts/items/items_game.txt", names)
+        self.assertEqual(a.gameinfo.branch_path.read_bytes(), gi)
+        self.assertEqual(a.gameinfo.signatures.path.read_bytes(), sig)
+        a.restore()
+
+    # ---- the mod can be switched off and on again ----
+    def test_mod_can_be_switched_off_and_on(self):
+        game = build_fake_dota(Path(_TMP) / "sw155")
+        lang = game / "game" / "dota_russian"
+        lang.mkdir()
+        (lang / "pak01_dir.vpk").write_bytes(b"VOICE")
+        db = SkinDatabase(game)
+        db.initialize()
+        a = SkinApplier(game, db, {"pack_resources": True, "install_method": "language"})
+        a.apply_hero_skin(HERO, "paid_head")
+        a.commit()
+        pak = a.pak_path
+        self.assertTrue(a.is_enabled())
+        self.assertTrue(a.set_enabled(False))
+        self.assertFalse(pak.exists())
+        self.assertTrue(Path(str(pak) + ".off").exists())
+        self.assertFalse(a.is_enabled())
+        self.assertTrue(a.is_active())
+        self.assertTrue(a.set_enabled(True))
+        self.assertTrue(pak.exists())
+        a.restore()
+        self.assertFalse(Path(str(pak) + ".off").exists())
+
+    # ---- special files: shaders / announcers / emblems / cursors ----
+    def test_special_default_files_are_swapped(self):
+        a = self.ap()
+        files = {"materials/dev/deferred_post_process.vmat_c": "materials/dev/deferred_post_process.vmat_c",
+                 "materials/dev/noir_post.vmat_c": "materials/dev/noir_post.vmat_c"}
+        a._files_cache = files
+        a._swap_pairs = {}
+        src = {"visuals": {"asset_modifier": {"type": "screen_shader", "modifier": "materials/dev/noir_post.vmat"}}}
+        self.assertEqual(a._sound_cursor_swaps("shaders", src, []), 1)
+        self.assertEqual(a._swap_pairs, {"materials/dev/deferred_post_process.vmat_c": "materials/dev/noir_post.vmat_c"})
+        a._files_cache = {"soundevents/voscripts/game_sounds_vo_announcer.vsndevts_c": "soundevents/voscripts/game_sounds_vo_announcer.vsndevts_c",
+                          "soundevents/voscripts/game_sounds_vo_announcer_dlc_bastion.vsndevts_c": "soundevents/voscripts/game_sounds_vo_announcer_dlc_bastion.vsndevts_c"}
+        a._swap_pairs = {}
+        src = {"visuals": {"asset_modifier": {"type": "announcer", "asset": "announcer", "modifier": "announcer_dlc_bastion"}}}
+        self.assertEqual(a._sound_cursor_swaps("announcers", src, []), 1)
+        self.assertIn("soundevents/voscripts/game_sounds_vo_announcer.vsndevts_c", a._swap_pairs)
+        a._files_cache = {"particles/ui_mouseactions/selected_ring.vpcf_c": "particles/ui_mouseactions/selected_ring.vpcf_c",
+                          "particles/econ/rings/gold_ring.vpcf_c": "particles/econ/rings/gold_ring.vpcf_c"}
+        a._swap_pairs = {}
+        src = {"visuals": {"asset_modifier": {"type": "particle_create", "modifier": "particles/econ/rings/gold_ring.vpcf"}}}
+        self.assertEqual(a._sound_cursor_swaps("emblems", src, []), 1)
+
+    # ---- parsing ----
+    def test_chests_tools_and_none_slots_are_not_cosmetics(self):
+        slots = [g["slot"] for g in self.db.get_hero_catalog(HERO)["slots"]]
+        self.assertNotIn("none", [s.lower() for s in slots])
+
+    def test_gems_offered_only_to_heroes_they_belong_to(self):
+        self.assertEqual(self.db.get_hero_gems(FINCH), [])
+        self.assertIn("prismatic_red", [g.name for g in self.db.get_hero_gems(HERO)])
+
+    def test_emblem_junk_and_old_preset_keys(self):
+        self.assertTrue(self.db.EMBLEM_JUNK.search("Arc Warden BP 2021 Ambient Fx"))
+        from chameleon.presets import PresetManager
+        import inspect
+        self.assertEqual(list(inspect.signature(PresetManager.save_preset).parameters)[1:], ["name", "overrides", "settings", "river_color", "background"])

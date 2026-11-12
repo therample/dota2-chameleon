@@ -58,7 +58,8 @@ class IconLookupTest(unittest.TestCase):
         tex = build(4, 1, 1, bytes([9, 9, 9, 255]))
         src = IconSource([FakeReader({"panorama/images/heroes/antimage_png.vtex_c": tex})])
         self.assertIsNotNone(src.hero_icon("antimage"))
-        self.assertEqual(hero_candidates("axe"), ["panorama/images/heroes/axe_png.vtex_c", "panorama/images/heroes/selection/npc_dota_hero_axe_png.vtex_c"])
+        self.assertEqual(hero_candidates("axe")[:3], ["panorama/images/heroes/axe_png.vtex_c", "panorama/images/heroes/npc_dota_hero_axe_png.vtex_c", "panorama/images/heroes/selection/npc_dota_hero_axe_png.vtex_c"])
+        self.assertIn("panorama/images/heroes/icons/axe_png.vtex_c", hero_candidates("axe"))
 
     def test_missing_returns_none(self):
         self.assertIsNone(IconSource([FakeReader({})]).item_icon("econ/nothing/here"))
