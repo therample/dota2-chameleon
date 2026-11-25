@@ -64,9 +64,49 @@ svg.i.sm{width:15px;height:15px}
 .nav{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:var(--muted2);cursor:pointer;position:relative;transition:all .25s var(--ease)}
 .nav:hover{background:var(--hover);color:#ccc;transform:translateY(-1px)}
 .nav svg{transition:transform .25s var(--ease)}.nav:hover svg{transform:scale(1.1)}
-.nav.on{background:var(--panel3);color:#fff}
-.nav.on svg{filter:drop-shadow(0 0 6px rgba(255,255,255,.35))}
-.nav.on::before{content:"";position:absolute;left:-9px;top:50%;width:3px;height:22px;transform:translateY(-50%);background:linear-gradient(180deg,#fff,#888);border-radius:0 3px 3px 0;animation:pop .35s var(--ease)}
+.nav{z-index:2;background:transparent!important}
+.nav.on{color:#fff}
+
+/* Спокойное, аккуратное свечение слева */
+.nav.on svg{filter:drop-shadow(0 0 3px rgba(255,255,255,.18));transform:scale(1.04)}
+#navPill{
+  position:absolute;left:9px;top:0;width:44px;height:44px;
+  border-radius:12px;background:var(--panel3);border:1px solid var(--border3);
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+  pointer-events:none;z-index:1;
+  transform:translateY(var(--ny,0px)) scaleY(var(--nsy,1)) scaleX(var(--nsx,1));
+  transition:transform var(--ndur,.36s) cubic-bezier(.22,1.15,.36,1),opacity .2s ease;
+  opacity:0;
+}
+#navPill::before{
+  content:"";position:absolute;left:-9px;top:50%;width:3px;height:20px;
+  transform:translateY(-50%);
+  background:#fff;
+  border-radius:0 3px 3px 0;
+  box-shadow:0 0 4px rgba(255,255,255,.22);
+}
+
+/* Надёжные, плавные вкладки и чипсы без пропадания и артефактов */
+.seg .s,.gtab,.chip{
+  transition:background-color .24s cubic-bezier(.22,1,.36,1),
+             color .24s cubic-bezier(.22,1,.36,1),
+             border-color .24s cubic-bezier(.22,1,.36,1),
+             transform .22s cubic-bezier(.22,1,.36,1),
+             box-shadow .24s cubic-bezier(.22,1,.36,1)!important;
+}
+.seg .s.on,.gtab.on,.chip.on{
+  background:#fff!important;
+  color:#000!important;
+  border-color:#fff!important;
+  box-shadow:0 2px 10px rgba(255,255,255,.14);
+}
+.seg .s:active,.gtab:active,.chip:active{transform:scale(.95)}
+
+
+
+
+
+
 .nav .tip{position:absolute;left:56px;top:50%;transform:translate(-6px,-50%);background:#fff;color:#000;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:800;white-space:nowrap;pointer-events:none;opacity:0;transition:all .18s;z-index:100;box-shadow:0 6px 18px rgba(0,0,0,.6)}
 .nav .tip::before{content:"";position:absolute;left:-4px;top:50%;width:8px;height:8px;background:#fff;transform:translateY(-50%) rotate(45deg)}
 .nav:hover .tip{opacity:1;transform:translate(0,-50%)}
@@ -168,6 +208,9 @@ select.sm{padding:6px 10px;font-size:11px}
 .card.sel{border-color:#fff;background:var(--panel3);box-shadow:0 0 0 1px #fff,0 8px 22px rgba(255,255,255,.07)}
 .card.sel .tick{transform:scale(1)}
 .card.sel .tick path{stroke-dasharray:24;animation:check .4s .1s ease-out both}
+.play{position:absolute;top:6px;right:34px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(0,0,0,.6);z-index:3;cursor:pointer;transition:all .2s var(--ease)}
+.play:hover{transform:scale(1.15);background:#fff;color:#000}.play.on{background:#fff;color:#000}
+.gdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1px solid rgba(255,255,255,.4)}
 .star{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:var(--muted2);background:rgba(0,0,0,.55);z-index:3;cursor:pointer;opacity:0;transition:all .2s var(--ease)}
 .card:hover .star,.star.on{opacity:1}
 .star:hover{color:#fff;transform:scale(1.15)}
@@ -336,6 +379,74 @@ body{font-family:'Manrope','Segoe UI',system-ui,sans-serif}
 .nav .tip::after{content:"";position:absolute;left:0;top:9px;bottom:9px;width:2px;border-radius:2px;background:linear-gradient(180deg,#fff,#777)}
 .nav:hover .tip{opacity:1;visibility:visible;transform:translate(0,-50%) scale(1);transition:opacity .18s ease,transform .26s cubic-bezier(.22,1,.36,1),visibility 0s}
 @media (max-width:720px){.page{padding:12px}.hero-banner{padding:16px}.hero-banner h1{font-size:19px}.stats{gap:7px}.stat{padding:9px;gap:8px}.stat .n{font-size:17px}}
+
+/* ===== controls: animated segmented choice, sliders, stable card actions, tab transitions, star bar ===== */
+.sgm{position:relative;display:inline-flex;flex-shrink:0;background:var(--bg2);border:1px solid var(--border3);border-radius:11px;padding:3px}
+.sgm .thumb{position:absolute;top:3px;bottom:3px;left:3px;width:var(--w,0);transform:translateX(var(--x,0));background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(255,255,255,.14);transition:transform .34s var(--ease),width .34s var(--ease)}
+.sgm span{position:relative;z-index:1;padding:6px 13px;font-size:11px;font-weight:800;letter-spacing:.2px;color:var(--muted2);cursor:pointer;white-space:nowrap;transition:color .25s,transform .15s}
+.sgm span:hover{color:#ddd}.sgm span:active{transform:scale(.94)}.sgm span.on{color:#000}
+select{-webkit-appearance:none;appearance:none;padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23999' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;transition:border-color .2s,background-color .2s}
+select:hover{border-color:var(--border4);background-color:var(--panel)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:200px;height:24px;background:transparent;cursor:pointer;--p:0%}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:linear-gradient(90deg,#fff var(--p),var(--border3) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-5px;border-radius:50%;background:#fff;border:0;box-shadow:0 0 0 0 rgba(255,255,255,.18),0 2px 6px rgba(0,0,0,.55);transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s cubic-bezier(.22,1,.36,1)}
+input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.15);box-shadow:0 0 0 4px rgba(255,255,255,.08),0 2px 6px rgba(0,0,0,.55)}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.26);box-shadow:0 0 0 7px rgba(255,255,255,.14),0 2px 8px rgba(0,0,0,.6)}
+#bgblurv,#bgdimv{display:inline-block;font-variant-numeric:tabular-nums;transition:transform .18s cubic-bezier(.22,1,.36,1),color .18s ease}
+#bgblurv.active,#bgdimv.active{transform:scale(1.12);color:#fff}
+
+.acts{position:absolute;top:6px;right:6px;display:flex;gap:6px;z-index:3}
+.acts .star,.acts .play{position:static;opacity:1;width:24px;height:24px;background:rgba(0,0,0,.62)}
+.acts .star{color:var(--text2)}.acts .star.on{color:#fff}
+@keyframes pageIn{
+  0%{
+    opacity:0;
+    transform:translate3d(0,var(--dy,28px),0) scale(.972);
+  }
+  100%{
+    opacity:1;
+    transform:translate3d(0,0,0) scale(1);
+  }
+}
+@keyframes pageOut{
+  0%{
+    opacity:1;
+    transform:translate3d(0,0,0) scale(1);
+  }
+  100%{
+    opacity:0;
+    transform:translate3d(0,calc(var(--dy,28px) * -0.35),0) scale(.945);
+  }
+}
+@keyframes headFloat{
+  0%{opacity:0;transform:translate3d(0,calc(var(--dy,20px) * 0.4),0)}
+  100%{opacity:1;transform:translate3d(0,0,0)}
+}
+.content{perspective:1200px}
+.page{will-change:transform,opacity;transform-origin:50% 45%}
+.page.on{display:block;animation:fadeIn .34s cubic-bezier(.16,1,.3,1) both}
+.page.slide.on{display:block;z-index:2;animation:pageIn var(--dur,.44s) cubic-bezier(.16,1,.3,1) both}
+.page.slide.on .phead,
+.page.slide.on .hero-banner{
+  animation:headFloat calc(var(--dur,.44s) * 1.1) cubic-bezier(.16,1,.3,1) both;
+}
+.page.leaving{display:block;pointer-events:none;z-index:1;animation:pageOut calc(var(--dur,.44s) * .85) cubic-bezier(.22,1,.36,1) forwards}
+
+.sgm .thumb{transition:transform .38s cubic-bezier(.2,1.15,.35,1),width .38s cubic-bezier(.2,1.15,.35,1)}
+
+.sel-row.off{opacity:.5}.sel-row.off .v{text-decoration:line-through}
+#starbar{position:absolute;left:50%;bottom:74px;transform:translate(-50%,18px);display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#1c1c1c,#111);border:1px solid var(--border4);border-radius:14px;padding:10px 12px;z-index:96;box-shadow:0 18px 50px rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:opacity .35s,transform .4s var(--ease)}
+#starbar.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#starbar .stx{font-weight:700;font-size:12px;margin-right:6px}
+#starbar .btn{padding:6px 11px;font-size:11px}
+/* Улучшенная сетка настроек и плавность */
+.frow{padding:11px 0;gap:18px}
+.frow .d{line-height:1.45;max-width:380px}
+.sgm{background:#090909;border-color:#262626;box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
+.sgm span{padding:6px 12px;font-size:11px;transition:color .22s ease}
+.panel{background:linear-gradient(180deg,#101010,#0c0c0c);border-color:#202020;box-shadow:0 8px 24px rgba(0,0,0,.25);transition:border-color .25s ease}
+.panel:hover{border-color:#2e2e2e}
+.panel h3{font-size:12px;text-transform:uppercase;letter-spacing:.8px;color:#888;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #191919}
 </style>
 </head>
 <body>
@@ -394,6 +505,8 @@ body{font-family:'Manrope','Segoe UI',system-ui,sans-serif}
     <div class="rt"><div class="tt"><span id="povt"></span><span class="tm" id="povtm"></span></div><div class="dd" id="povd"></div><div class="bar3"><i id="povb"></i></div><div class="tl" id="povs"></div></div>
   </div>
   <div id="upd" data-act="apply"></div>
+  <div id="starbar"><span class="stx"></span><button class="btn pri" data-act="staropen"></button><button class="btn" data-act="starlater"></button><button class="btn" data-act="starnever"></button></div>
+  <div id="newv" data-act="newv" style="position:absolute;left:50%;top:92px;transform:translate(-50%,-16px);z-index:85;background:#fff;color:#000;border-radius:999px;padding:7px 16px;font-size:11.5px;font-weight:800;box-shadow:0 10px 30px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:all .4s var(--ease);cursor:pointer"></div>
   <div id="toasts"></div>
   <div id="loading">
     <div class="lshield"><svg viewBox="0 0 24 24"><path d="M12 2.5l8 3.2v5.6c0 5-3.4 8.6-8 10.2-4.6-1.6-8-5.2-8-10.2V5.7z"/><path d="M8.6 12l2.4 2.4 4.4-4.8"/></svg></div>
@@ -407,10 +520,10 @@ body{font-family:'Manrope','Segoe UI',system-ui,sans-serif}
 "use strict";
 /* ================= translations ================= */
 const TR={
- en:{rpcD:'Shows what you are doing in Chameleon in your Discord profile (needs Discord running).',rpcTitle:'Discord status',filesOnlyD:'Builds the mod from file swaps only (no item data), like many other tools. Picks that need item data are skipped.',filesOnly:'Experimental: files only',stockModelsD:'Writes chosen models under the game\'s own file names, so they still show after you rejoin a match. Also keeps the mod small.',stockModels:'Keep models after reconnect',langFolderD:'Which Dota language folder to use. Launch adds the matching -language option; if you start Dota yourself add it in Steam launch options.',langFolder:'Language folder',instCustom:'Custom folder (old way)',instLang:'Language folder',instMethodD:'Language folder (recommended): the mod goes next to Dota\'s language files and Dota is started with the matching language. Custom folder: the older way with an own folder.',instMethod:'Where the mod is installed',bgMenu:'Native menu (recommended)',streak:'Kill streak effects',fxSlot:'Slot',fxHint:'Put a ready-made effect from the game (Frostbloom, glows, smoke, lava, sands …) on any slot of this hero. Choose the slot first, then the effect.',fxTab:'Item effects',effBoth:'Both',effHero:'On hero items',effSlot:'In the equipped slot',effModeD:'In the equipped slot: shows in the Dota loadout (recommended). On hero items: also works for matches with other players but may look attached to the item. Both does both.',effMode:'Emblems and effects on heroes',cclear:'Clear cache',stepOf:'Step {n} of {m}',restore:'Restore',launch:'Launch',apply:'Apply',ready:'Ready',modOn:'mod active',modOff:'mod not applied',
+ en:{starNever:'Don\'t ask again',starLater:'Later',starOpen:'Star on GitHub',starText:'Enjoying Chameleon? A star on GitHub helps a lot.',itemOnOff:'Switch this item on / off',removeFromGame:'Remove the mod from the game',icBoth:'Game + web',icWeb:'Web',icGame:'Game',icItemSrcD:'The game files, Steam\'s web servers (looked up by the item\'s name), or the game first and the web as a backup.',icItemSrc:'Item pictures from',bgDim:'Darkening',bgBlur:'Blur',webIconsD:'If an item has no picture in the game files, try to load it from Steam\'s web servers.',webIcons:'Item pictures from the web too',updD:'Looks for a newer Chameleon on GitHub when it starts and offers to download it.',updTitle:'Check for updates',newVersion:'New version {v} is available - click to download',modPaused:'mod paused',noPreview:'No sound found for this one in the game files',preview:'Listen',item_effects:'Item ability effects',multikill_banners:'Multikill banners',rpcD:'Shows what you are doing in Chameleon in your Discord profile (needs Discord running).',rpcTitle:'Discord status',filesOnlyD:'Builds the mod from file swaps only (no item data), like many other tools. Picks that need item data are skipped.',filesOnly:'Experimental: files only',stockModelsD:'Writes chosen models under the game\'s own file names, so they still show after you rejoin a match. Also keeps the mod small.',stockModels:'Keep models after reconnect',langFolderD:'Which Dota language folder to use. Launch adds the matching -language option; if you start Dota yourself add it in Steam launch options.',langFolder:'Language folder',instCustom:'Custom folder (old way)',instLang:'Language folder',instMethodD:'',instMethod:'Where the mod is installed',bgMenu:'Native menu (recommended)',streak:'Kill streak effects',fxSlot:'Slot',fxHint:'Put a ready-made effect from the game (Frostbloom, glows, smoke, lava, sands …) on any slot of this hero. Choose the slot first, then the effect.',fxTab:'Item effects',effBoth:'Both',effHero:'On hero items',effSlot:'In the equipped slot',effModeD:'In the equipped slot: shows in the Dota loadout (recommended). On hero items: also works for matches with other players but may look attached to the item. Both does both.',effMode:'Emblems and effects on heroes',cclear:'Clear cache',stepOf:'Step {n} of {m}',restore:'Restore',launch:'Launch',apply:'Apply',ready:'Ready',modOn:'mod active',modOff:'mod not applied',
   home:'Home',heroes:'Heroes',extras:'Catalog',favs:'Favorites',launchp:'Launch',world:'World',selected:'Selected',presets:'Presets',settings:'Settings',
   loading:'Loading…',working:'Working…',search:'Search…',heroSearch:'Search this hero…',searchHeroes:'Search heroes…  ( / )',
-  homeTitle:'Your Dota 2 wardrobe',homeSub:'Choose skins for heroes, towers, couriers, weather and more. Everything goes into one small file and can be removed at any time.',
+  homeTitle:'Your Dota 2 wardrobe',homeSub:'Latest news on Telegram: @chameleontool.\nNot working: cursors, main menu backgrounds, sound previews, announcers, and mega-kills.\nCatalog bugs may occur: taunts, non-existent skins, and other items may appear.',
   browseHeroes:'Browse heroes',openCatalog:'Open catalog',featured:'Featured skins',shuffle:'Shuffle',
   statHeroes:'Heroes',statItems:'Items',statSelected:'Selected',
   cosmetics:'Cosmetics',arcana:'Arcana',persona:'Persona',taunts:'Taunts',gems:'Gems',allSlots:'All slots',nothingHero:'Nothing available for this hero.',
@@ -423,11 +536,11 @@ const TR={
   wards:'Wards',couriers:'Couriers',courier_effects:'Courier effects',emblems:'Emblems & effigies',
   head_effects:'Head effects',teleport_effects:'Teleport effects',blink_effects:'Blink effects',death_effects:'Death effects',kill_effects:'Kill effects',
   hud:'HUD skins',cursors:'Cursors',loadings:'Loading screens',versus:'Versus screens',music:'Music',mega_kills:'Mega-kills',announcers:'Announcers',
-  favSub:'Items you starred. Click a card to select it.',favNone:'No favorites yet — hover a card and press the star.',addFav:'Favorite',
+  favSub:'Items you starred. Click a card to select it.',favNone:'No favorites yet - hover a card and press the star.',addFav:'Favorite',
   worldSub:'River colour and your own picture or video for the main menu.',river:'River',riverSub:'Uses the river looks that already exist in the game. Pick one, then press Apply.',def:'Default',
-  bg:'Main menu background',bgHint:'Choose a video (.mp4 .webm .mov .gif) or a picture (.png .jpg). Chameleon prepares it for Dota automatically — this needs the free program ffmpeg. Without it only ready .webm videos work, and a wrong format shows a black screen.',
+  bg:'Main menu background (Doesnt work)',bgHint:'Choose a video (.mp4 .webm .gif) or a picture. It plays behind the main menu (not in the hero view). Blur and darkening make the buttons easier to read. Chameleon cuts it to 30 seconds and about 12 MB - bigger files give a black menu.',
   bgPick:'Choose video or picture',bgNeeds:'Menu files',bgInstalled:'installed',bgMissing:'not downloaded yet',bgInstall:'Download menu files',
-  bgFfOk:'ffmpeg is installed',bgFfNo:'ffmpeg is not installed. It is a free tool that converts your file. Get it at ffmpeg.org',bgMethod:'How to change it',bgMethodD:'Native menu uses Dota\'s own menu layout, needs no downloads and follows Dota updates. The other two are older ways — try them if you get a black screen.',bgLayout:'Standard',bgFiles:'Replace game video',
+  bgFfOk:'ffmpeg is installed',bgFfNo:'ffmpeg is not installed. It is a free tool that converts your file. Get it at ffmpeg.org',bgMethod:'How to change it',bgMethodD:'Native menu uses Dota\'s own menu layout, needs no downloads and follows Dota updates. The other two are older ways - try them if you get a black screen.',bgLayout:'Standard',bgFiles:'Replace game video',
   
   selectedSub:'Everything below goes into the mod when you press Apply.',clearAll:'Clear all',nothingSel:'Nothing selected yet.',riverColour:'river colour',background:'background',
   presetsSub:'Save the current selection and load it later.',presetName:'Preset name',saveCurrent:'Save current',load:'Load',noPresets:'No presets yet.',presetLoaded:'Preset loaded',
@@ -437,7 +550,7 @@ const TR={
   behaviour:'Behaviour',restoreExit:'Restore on exit',restoreExitD:'Remove the mod from the game when Chameleon closes.',packRes:'Include extra files',packResD:'Adds the replacement effects the chosen skins need.',
   packMode:'Size of the mod',packModeD:'Small is enough for almost everything. Large also copies related files.',
   swap:'Ability effects',swapD:'Some skins change a hero\'s ability effects. Hero only (recommended), All heroes, or Off.',swapHero:'This hero only',swapAll:'All',swapOff:'Off',
-  sigTitle:'Allow online play with the mod',sigD:'Lets Dota accept the changed files so you can still play online. It is removed again when you press Restore.',
+  sigTitle:'Allow online play with the mod',sigD:'Custom folder method only: lets Dota accept the changed files so you can still play online. Removed again when you press Restore.',
   heroModel:'Change the hero model for Arcana / Persona',heroModelD:'Needed so the arcana model really replaces the hero.',
   defMode:'Special items (Roshan, towers, effects …)',defModeD:'Automatic is recommended: replaces what the game has and adds what is missing. Online matches need effects to sit on hero items, which Automatic does.',defAuto:'Automatic',defReplace:'Replace only',defCreate:'Add new only',
   icons:'Icons',icField:'Item pictures',icFieldD:'Item\'s own icon is the normal choice. "Preview" shows the large preview picture; "Any" uses whatever is available.',icOwn:'Item\'s own icon',icAuto:'Any',icPreview:'Preview',
@@ -447,32 +560,32 @@ const TR={
   stale:'{n} item(s) refer to files that are missing in your game. They are skipped.',
   bgReplaced:'Background changed ({n} files)',bgNotReplaced:'Background was not changed',
   maint:'Maintenance',cache:'Cache',clearCache:'Clear cache',rebuild:'Rebuild list',removeMod:'Remove mod files',restartNames:'Item names change after restarting Chameleon.',rebuildToast:'The list will be rebuilt on the next start',
-  applied:'Mod applied — restart Dota 2',applyFail:'Something went wrong — see Settings › Last result',styleNA:'Style not available',staleMsg:'Dota 2 was updated — click here to apply again',
+  applied:'Mod applied - restart Dota 2',applyFail:'Something went wrong - see Settings › Last result',styleNA:'Style not available',staleMsg:'Dota 2 was updated - click here to apply again',
   building:'Building your mod',buildDone:'Mod is ready',buildFail:'Build failed',elapsed:'elapsed',
   stScan:'Prepare',stBuild:'Rewrite',stResources:'Resources',stExtras:'Extras',stWrite:'Write',stRegister:'Register',
   taunt:'taunt',gem:'gem',
   ld_tag:'Dota 2 cosmetic mod builder',ld_start:'Starting…',ld_files:'Opening game files',ld_loc:'Reading names',ld_items:'Reading items',ld_heroes:'Reading heroes',ld_cats:'Sorting',ld_cache:'Saving',ld_done:'Ready',ld_fail:'Could not read the game. Check the Dota 2 folder in Settings.'},
- ru:{rpcD:'Показывает в профиле Discord, что ты делаешь в Chameleon (нужен запущенный Discord).',rpcTitle:'Статус в Discord',filesOnlyD:'Собирает мод только заменой файлов (без данных предметов), как многие другие инструменты. Выборы, которым нужны данные предметов, пропускаются.',filesOnly:'Экспериментально: только файлы',stockModelsD:'Записывает выбранные модели под родными именами файлов игры, поэтому они остаются после перезахода в матч. Заодно мод меньше весит.',stockModels:'Сохранять модели после перезахода',langFolderD:'Какую языковую папку Dota использовать. «Запуск» сам добавляет нужный параметр -language; если запускаешь Dota сам, добавь его в параметры запуска Steam.',langFolder:'Папка языка',instCustom:'Своя папка (старый способ)',instLang:'Папка языка',instMethodD:'Папка языка (рекомендуется): мод кладётся рядом с языковыми файлами Dota, а Dota запускается с нужным языком. Своя папка: старый способ с отдельной папкой.',instMethod:'Куда ставить мод',bgMenu:'Родное меню (рекомендуется)',streak:'Эффекты серий убийств',fxSlot:'Слот',fxHint:'Поставь готовый эффект из игры (Frostbloom, свечения, дым, лава, пески …) на любой слот этого героя. Сначала слот, затем эффект.',fxTab:'Эффекты предметов',effBoth:'Оба',effHero:'На предметах героев',effSlot:'В слоте экипировки',effModeD:'В слоте экипировки: видно в экипировке Dota (рекомендуется). На предметах героев: работает и в матчах с другими игроками, но может выглядеть привязанным к предмету. Оба — и то и другое.',effMode:'Эмблемы и эффекты на героях',cclear:'Очистить кэш',stepOf:'Шаг {n} из {m}',restore:'Сброс',launch:'Запуск',apply:'Применить',ready:'Готово',modOn:'мод активен',modOff:'мод не применён',
+ ru:{starNever:'Больше не спрашивать',starLater:'Позже',starOpen:'Поставить звезду',starText:'Нравится Chameleon? Звезда на GitHub очень помогает.',itemOnOff:'Включить / выключить этот предмет',removeFromGame:'Убрать мод из игры',icBoth:'Игра + веб',icWeb:'Веб',icGame:'Игра',icItemSrcD:'Файлов игры, веб-серверов Steam (поиск по названию предмета) или сначала игра, а веб - как запасной вариант.',icItemSrc:'Картинки предметов из',bgDim:'Затемнение',bgBlur:'Размытие',webIconsD:'Если у предмета нет картинки в файлах игры, пробовать загрузить её с веб-серверов Steam.',webIcons:'Картинки предметов ещё и из интернета',updD:'При запуске ищет более новый Chameleon на GitHub и предлагает скачать.',updTitle:'Проверять обновления',newVersion:'Доступна новая версия {v} - нажми, чтобы скачать',modPaused:'мод на паузе',noPreview:'Для этого звук в файлах игры не найден',preview:'Прослушать',item_effects:'Эффекты способностей предметов',multikill_banners:'Баннеры мультикиллов',rpcD:'Показывает в профиле Discord, что ты делаешь в Chameleon (нужен запущенный Discord).',rpcTitle:'Статус в Discord',filesOnlyD:'Собирает мод только заменой файлов (без данных предметов), как многие другие инструменты. Выборы, которым нужны данные предметов, пропускаются.',filesOnly:'Экспериментально: только файлы',stockModelsD:'Записывает выбранные модели под родными именами файлов игры, поэтому они остаются после перезахода в матч. Заодно мод меньше весит.',stockModels:'Сохранять модели после перезахода',langFolderD:'Какую языковую папку Dota использовать. «Запуск» сам добавляет нужный параметр -language; если запускаешь Dota сам, добавь его в параметры запуска Steam.',langFolder:'Папка языка',instCustom:'Своя папка (старый способ)',instLang:'Папка языка',instMethodD:'',instMethod:'Куда ставить мод',bgMenu:'Родное меню (рекомендуется)',streak:'Эффекты серий убийств',fxSlot:'Слот',fxHint:'Поставь готовый эффект из игры (Frostbloom, свечения, дым, лава, пески …) на любой слот этого героя. Сначала слот, затем эффект.',fxTab:'Эффекты предметов',effBoth:'Оба',effHero:'На предметах героев',effSlot:'В слоте экипировки',effModeD:'В слоте экипировки: видно в экипировке Dota (рекомендуется). На предметах героев: работает и в матчах с другими игроками, но может выглядеть привязанным к предмету. Оба - и то и другое.',effMode:'Эмблемы и эффекты на героях',cclear:'Очистить кэш',stepOf:'Шаг {n} из {m}',restore:'Сброс',launch:'Запуск',apply:'Применить',ready:'Готово',modOn:'мод активен',modOff:'мод не применён',
   home:'Главная',heroes:'Герои',extras:'Каталог',favs:'Избранное',launchp:'Запуск',world:'Мир',selected:'Выбрано',presets:'Пресеты',settings:'Настройки',
   loading:'Загрузка…',working:'Работаю…',search:'Поиск…',heroSearch:'Поиск по герою…',searchHeroes:'Поиск героев…  ( / )',
-  homeTitle:'Твой гардероб Dota 2',homeSub:'Выбирай скины героев, башен, курьеров, погоду и многое другое. Всё записывается в один небольшой файл и в любой момент убирается.',
+  homeTitle:'Твой гардероб Dota 2',homeSub:'Свежие новости в Telegram: @chameleontool.\nНе работают: курсоры, фон главного меню, предпросмотр звука, дикторы и мегакиллы.\n Возможны баги каталога: отображение насмешек, несуществующих скинов и других предметов.',
   browseHeroes:'К героям',openCatalog:'Открыть каталог',featured:'Подборка скинов',shuffle:'Перемешать',
   statHeroes:'Героев',statItems:'Предметов',statSelected:'Выбрано',
   cosmetics:'Косметика',arcana:'Аркана',persona:'Персона',taunts:'Насмешки',gems:'Самоцветы',allSlots:'Все слоты',nothingHero:'Для этого героя ничего нет.',
   modsApplied:'Применено модов: {n}',appliedSlot:'применено {n}',gemHint:'Выбери самоцвет для арканы этого героя (например, Призматик). Один самоцвет на героя.',
   sortAz:'А–Я',sortRarity:'Редкость',sortSel:'Выбранные первыми',selOnly:'Только выбранные',noItems:'Ничего не найдено.',
-  extrasSub:'Всё, что нашлось в твоей игре, по разделам. Клик по карточке — выбрать, ещё клик — снять.',
+  extrasSub:'Всё, что нашлось в твоей игре, по разделам. Клик по карточке - выбрать, ещё клик - снять.',
   catEmpty:'В файлах твоей игры для этого ничего не нашлось.',catEmptyD:'Так бывает после большого обновления Dota. Попробуй «Пересобрать список» в настройках.',
   grp_world:'Мир',grp_units:'Юниты и здания',grp_items:'Предметы',grp_effects:'Эффекты',grp_interface:'Интерфейс',grp_kills:'Эффекты убийств',grp_sound:'Звук',
   weather:'Погода',terrain:'Ландшафт',shaders:'Шейдеры карты',towers:'Башни',creeps:'Крипы',ancients:'Древние',roshan:'Рошан',tormentor:'Торменторы',statues:'Статуи героев',
   wards:'Варды',couriers:'Курьеры',courier_effects:'Эффекты курьера',emblems:'Эмблемы и эффигии',
   head_effects:'Эффекты головы',teleport_effects:'Эффекты телепорта',blink_effects:'Эффекты блинка',death_effects:'Эффекты смерти',kill_effects:'Эффекты убийства',
   hud:'Скины HUD',cursors:'Курсоры',loadings:'Загрузочные экраны',versus:'Экраны Versus',music:'Музыка',mega_kills:'Мегакиллы',announcers:'Дикторы',
-  favSub:'Предметы, отмеченные звездой. Клик по карточке — выбрать.',favNone:'Избранного пока нет — наведи на карточку и нажми звезду.',addFav:'В избранное',
+  favSub:'Предметы, отмеченные звездой. Клик по карточке - выбрать.',favNone:'Избранного пока нет - наведи на карточку и нажми звезду.',addFav:'В избранное',
   worldSub:'Цвет реки и своя картинка или видео для главного меню.',river:'Река',riverSub:'Используются варианты реки, которые уже есть в игре. Выбери и нажми «Применить».',def:'По умолчанию',
-  bg:'Фон главного меню',bgHint:'Выбери видео (.mp4 .webm .mov .gif) или картинку (.png .jpg). Chameleon сам подготовит её для Dota — для этого нужна бесплатная программа ffmpeg. Без неё работают только готовые .webm, а неподходящий формат даёт чёрный экран.',
+  bg:'Фон главного меню (Не работает)',bgHint:'Выбери видео (.mp4 .webm .gif) или картинку. Оно играет за главным меню (но не в просмотре героя). Размытие и затемнение делают кнопки читаемее. Chameleon обрезает до 30 секунд и примерно 12 МБ - файлы больше дают чёрное меню.',
   bgPick:'Выбрать видео или картинку',bgNeeds:'Файлы меню',bgInstalled:'установлены',bgMissing:'ещё не скачаны',bgInstall:'Скачать файлы меню',
-  bgFfOk:'ffmpeg установлен',bgFfNo:'ffmpeg не установлен. Это бесплатная программа, которая подготавливает файл. Скачай на ffmpeg.org',bgMethod:'Как менять',bgMethodD:'Родное меню использует собственную раскладку Dota, ничего не качает и следует за обновлениями. Остальные два — старые способы, пробуй при чёрном экране.',bgLayout:'Обычный',bgFiles:'Замена видео игры',
+  bgFfOk:'ffmpeg установлен',bgFfNo:'ffmpeg не установлен. Это бесплатная программа, которая подготавливает файл. Скачай на ffmpeg.org',bgMethod:'Как менять',bgMethodD:'Родное меню использует собственную раскладку Dota, ничего не качает и следует за обновлениями. Остальные два - старые способы, пробуй при чёрном экране.',bgLayout:'Обычный',bgFiles:'Замена видео игры',
   
   selectedSub:'Всё ниже попадёт в мод после нажатия «Применить».',clearAll:'Очистить всё',nothingSel:'Пока ничего не выбрано.',riverColour:'цвет реки',background:'фон',
   presetsSub:'Сохрани текущий выбор и загрузи позже.',presetName:'Название пресета',saveCurrent:'Сохранить текущий',load:'Загрузить',noPresets:'Пресетов пока нет.',presetLoaded:'Пресет загружен',
@@ -482,17 +595,17 @@ const TR={
   behaviour:'Поведение',restoreExit:'Сбрасывать при выходе',restoreExitD:'Убирать мод из игры при закрытии Chameleon.',packRes:'Добавлять доп. файлы',packResD:'Добавляет заменяющие эффекты, нужные выбранным скинам.',
   packMode:'Размер мода',packModeD:'Малый подходит почти всегда. Большой копирует ещё и связанные файлы.',
   swap:'Эффекты способностей',swapD:'Некоторые скины меняют эффекты способностей героя. Только этот герой (рекомендуется), Все герои или Выкл.',swapHero:'Только этот герой',swapAll:'Все',swapOff:'Выкл',
-  sigTitle:'Разрешить онлайн-игру с модом',sigD:'Позволяет Dota принять изменённые файлы, чтобы можно было играть онлайн. При нажатии «Сброс» это убирается.',
+  sigTitle:'Разрешить онлайн-игру с модом',sigD:'Только для способа «своя папка»: позволяет Dota принять изменённые файлы, чтобы можно было играть онлайн. При сбросе убирается.',
   heroModel:'Менять модель героя для Арканы / Персоны',heroModelD:'Нужно, чтобы модель арканы действительно заменяла героя.',
-  defMode:'Особые предметы (Рошан, башни, эффекты …)',defModeD:'Рекомендуется «Автоматически»: заменяет то, что есть в игре, и добавляет недостающее. Для онлайн-матчей эффекты крепятся к предметам героев — так и делает автоматический режим.',defAuto:'Автоматически',defReplace:'Только замена',defCreate:'Только добавить',
-  icons:'Иконки',icField:'Картинки предметов',icFieldD:'Обычный выбор — собственная иконка предмета. «Превью» показывает большую картинку, «Любая» берёт что найдётся.',icOwn:'Иконка предмета',icAuto:'Любая',icPreview:'Превью',
-  icSource:'Картинки героев',icSourceD:'Автоматически: сначала из Steam, а из игры — как запасной вариант. Картинки предметов всегда берутся из игры.',icSrcAuto:'Автоматически',icSrcGame:'Из игры',icSrcCdn:'Из Steam',
+  defMode:'Особые предметы (Рошан, башни, эффекты …)',defModeD:'Рекомендуется «Автоматически»: заменяет то, что есть в игре, и добавляет недостающее. Для онлайн-матчей эффекты крепятся к предметам героев - так и делает автоматический режим.',defAuto:'Автоматически',defReplace:'Только замена',defCreate:'Только добавить',
+  icons:'Иконки',icField:'Картинки предметов',icFieldD:'Обычный выбор - собственная иконка предмета. «Превью» показывает большую картинку, «Любая» берёт что найдётся.',icOwn:'Иконка предмета',icAuto:'Любая',icPreview:'Превью',
+  icSource:'Картинки героев',icSourceD:'Автоматически: сначала из Steam, а из игры - как запасной вариант. Картинки предметов всегда берутся из игры.',icSrcAuto:'Автоматически',icSrcGame:'Из игры',icSrcCdn:'Из Steam',
   icCast:'Исправлять оттенок картинок героев',icCastD:'Если картинка героя из игры с жёлтым оттенком, она не используется.',icClear:'Очистить кэш картинок',icStats:'Картинки: из игры / из Steam / сохранённые / не найдено',icCleared:'Кэш иконок очищен',
   report:'Последний результат',noReport:'Ещё ничего не собрано. Нажми «Применить».',targets:'целей',noMods:'нет модификаторов',particleRepl:'замен частиц',heroModelTxt:'модель героя',
   stale:'Ссылок на файлы, которых нет в твоей игре: {n}. Они пропускаются.',
   bgReplaced:'Фон изменён (файлов: {n})',bgNotReplaced:'Фон не изменён',
   maint:'Обслуживание',cache:'Кэш',clearCache:'Очистить кэш',rebuild:'Пересобрать список',removeMod:'Удалить файлы мода',restartNames:'Названия предметов сменятся после перезапуска Chameleon.',rebuildToast:'Список пересоберётся при следующем запуске',
-  applied:'Мод применён — перезапусти Dota 2',applyFail:'Что-то пошло не так — смотри Настройки › Последний результат',styleNA:'Стиль недоступен',staleMsg:'Dota 2 обновилась — нажми сюда, чтобы применить заново',
+  applied:'Мод применён - перезапусти Dota 2',applyFail:'Что-то пошло не так - смотри Настройки › Последний результат',styleNA:'Стиль недоступен',staleMsg:'Dota 2 обновилась - нажми сюда, чтобы применить заново',
   building:'Собираю мод',buildDone:'Мод готов',buildFail:'Сборка не удалась',elapsed:'прошло',
   stScan:'Подготовка',stBuild:'Правка',stResources:'Ресурсы',stExtras:'Допы',stWrite:'Запись',stRegister:'Регистрация',
   taunt:'насмешка',gem:'самоцвет',
@@ -504,11 +617,11 @@ const applyStatic=()=>document.querySelectorAll('[data-t]').forEach(e=>{e.textCo
 
 /* ================= state & helpers ================= */
 let cham=null;
-const S={fxlib:[],fxLoaded:false,fxSlot:'',heroes:[],cur:null,catalog:null,group:'cosmetics',slot:'all',active:{},counts:{heroes:{},slots:{}},page:'home',grp:'world',cat:'weather',cats:[],catItems:[],
+const S={heroes:[],cur:null,catalog:null,group:'cosmetics',slot:'all',active:{},counts:{heroes:{},slots:{}},page:'home',grp:'world',cat:'weather',cats:[],catItems:[],
   reg:{},regCat:{},icons:{},hq:'',hs:'',eq:'',favs:{},featured:[],ready:false,cfg:{},sort:'az',selOnly:false,dens:'m',itemTotal:0,rt:0,t0:0,pending:0};
 const NAV=[['home','i-home'],['heroes','i-heroes'],['extras','i-extras'],['world','i-world'],['favs','i-star'],['sp'],['queue','i-queue'],['launch','i-rocket'],['presets','i-preset'],['settings','i-settings']];
 const NAVT={home:'home',heroes:'heroes',extras:'extras',world:'world',favs:'favs',queue:'selected',launch:'launchp',presets:'presets',settings:'settings'};
-const ORDER=NAV.map(n=>n[0]);
+const ORDER=NAV.filter(n=>n[0]!=='sp').map(n=>n[0]);
 const RAR={common:'--r-common',uncommon:'--r-uncommon',rare:'--r-rare',mythical:'--r-mythical',legendary:'--r-legendary',immortal:'--r-immortal',arcana:'--r-arcana',ancient:'--r-ancient',seasonal:'--r-seasonal'};
 const RANK={common:0,uncommon:1,rare:2,mythical:3,legendary:4,immortal:5,ancient:6,arcana:7,seasonal:2};
 const $=id=>document.getElementById(id);
@@ -546,23 +659,93 @@ function resetIcons(){S.icons={};document.querySelectorAll('img[data-ik]').forEa
 
 /* ================= navigation ================= */
 function buildNav(){
-  let h='<div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8 3.2v5.6c0 5-3.4 8.6-8 10.2-4.6-1.6-8-5.2-8-10.2V5.7z"/><path d="M8.6 12l2.4 2.4 4.4-4.8"/></svg></div>';
+  let h='<div id="navPill"></div><div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l8 3.2v5.6c0 5-3.4 8.6-8 10.2-4.6-1.6-8-5.2-8-10.2V5.7z"/><path d="M8.6 12l2.4 2.4 4.4-4.8"/></svg></div>';
   NAV.forEach(n=>{
     if(n[0]==='sp'){h+='<div class="sp"></div>';return}
     h+='<div class="nav" data-go="'+n[0]+'">'+ic(n[1])+'<span class="tip" data-tt="'+NAVT[n[0]]+'">'+t(NAVT[n[0]])+'</span>'+(n[0]==='queue'?'<span class="badge" id="qBadge" style="display:none">0</span>':'')+'</div>';
   });
   $('nav').innerHTML=h;
+  moveNavPill(S.page,true);
 }
+
+let _lastNavY=null;
+const _gPos={};
+function syncGliders(){} //fix 
+
+function moveNavPill(page,instant){
+  const pill=$('navPill'),btn=document.querySelector('.nav[data-go="'+page+'"]');
+  if(!pill||!btn)return;
+  const y=btn.offsetTop;
+  if(instant||_lastNavY===null){
+    pill.style.transition='none';
+    pill.style.setProperty('--ny',y+'px');
+    pill.style.setProperty('--nsy','1');
+    pill.style.setProperty('--nsx','1');
+    pill.style.opacity='1';
+    void pill.offsetWidth;
+    pill.style.transition='';
+    _lastNavY=y;
+    return;
+  }
+  const dist=Math.abs(y-_lastNavY);
+  // Длительность и эффект "капли" (растяжение) зависят от расстояния
+  const dur=Math.min(0.62,0.26+dist*0.00065).toFixed(2)+'s';
+  const stretch=Math.min(1.42,1+dist*0.00085).toFixed(2);
+  const squish=(1/Math.sqrt(stretch)).toFixed(2);
+
+  pill.style.setProperty('--ndur',dur);
+  pill.style.setProperty('--ny',((y+_lastNavY)/2)+'px');
+  pill.style.setProperty('--nsy',stretch);
+  pill.style.setProperty('--nsx',squish);
+  pill.style.opacity='1';
+
+  clearTimeout(pill._t);
+  pill._t=setTimeout(()=>{
+    pill.style.setProperty('--ny',y+'px');
+    pill.style.setProperty('--nsy','1');
+    pill.style.setProperty('--nsx','1');
+  },Math.min(140,40+dist*0.18));
+  _lastNavY=y;
+}
+
+function afterRender(){placeThumbs(document);syncRanges(document);syncGliders(document,true)}
 function retitle(){document.querySelectorAll('.tip[data-tt]').forEach(e=>{e.textContent=t(e.getAttribute('data-tt'))});applyStatic();modPill()}
 function rpcPage(p,d){try{cham.rpc_state(p,d||'')}catch(e){}}
+let _leaveTimer=0;
 function go(p,opts){
-  opts=opts||{};const prev=S.page;S.page=p;S.rt++;rpcPage(p);
-  document.querySelectorAll('.page').forEach(e=>e.classList.remove('on','fwd','back'));
-  const el=$('p-'+p);el.classList.add('on');
-  if(prev!==p&&!opts.still)el.classList.add(ORDER.indexOf(p)>ORDER.indexOf(prev)?'fwd':'back');
+  opts=opts||{};const prev=S.page;S.page=p;S.rt++;rpcPage(p,p==='queue'?String(totalSelected()):'');
+  clearTimeout(_leaveTimer);
+  document.querySelectorAll('.page').forEach(e=>{
+    if(e.id!=='p-'+prev)e.classList.remove('on','fwd','back','slide','leaving');
+  });
+  const prevEl=$('p-'+prev),el=$('p-'+p);
+  if(prev&&prev!==p&&prevEl&&!opts.still){
+    const b1=document.querySelector('.nav[data-go="'+prev+'"]'),b2=document.querySelector('.nav[data-go="'+p+'"]');
+    const distPx=(b1&&b2)?(b2.getBoundingClientRect().top-b1.getBoundingClientRect().top):((ORDER.indexOf(p)-ORDER.indexOf(prev))*48);
+    const steps=Math.max(1,Math.abs(distPx)/48);
+    const dy=Math.sign(distPx||1)*Math.min(72,18+steps*10);
+    const dur=Math.min(0.54,0.32+steps*0.034).toFixed(3)+'s';
+    prevEl.style.setProperty('--dy',dy+'px');
+    prevEl.style.setProperty('--dur',dur);
+    prevEl.classList.remove('on','slide');
+    prevEl.classList.add('leaving');
+    el.style.setProperty('--dy',dy+'px');
+    el.style.setProperty('--dur',dur);
+    el.classList.remove('leaving');
+    el.classList.add('on','slide');
+    _leaveTimer=setTimeout(()=>{prevEl.classList.remove('leaving')},560);
+
+  }else{
+    if(prevEl)prevEl.classList.remove('on','slide','leaving');
+    el.classList.remove('leaving','slide');
+    el.classList.add('on');
+  }
   document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('on',b.getAttribute('data-go')===p));
+  moveNavPill(p,false);
+  raf(afterRender);
   ({home:renderHome,heroes:renderHeroes,extras:renderExtras,world:renderWorld,favs:renderFavs,queue:renderQueue,launch:renderLaunch,presets:renderPresets,settings:renderSettings})[p](opts);
 }
+
 const head=(icon,title,sub,extra)=>'<div class="phead"><div class="pi">'+ic(icon)+'</div><div class="grow"><h1>'+esc(title)+'</h1>'+(sub?'<div class="sub" style="margin:2px 0 0">'+esc(sub)+'</div>':'')+'</div>'+(extra||'')+'</div>';
 
 /* ================= state refresh (no re-render) ================= */
@@ -576,13 +759,11 @@ function refresh(cb){
     if(cb)cb();
   });
 }
-const fxSel=(name,ctx)=>{const h=String(ctx).split(':')[1];return ((S.active.overrides||{})['fx::'+h+'::'+S.fxSlot])===name};
-const selFor=(name,ctx)=>String(ctx).indexOf('fx:')===0?fxSel(name,ctx):isSel(name);
 const isSel=name=>{const o=(S.active.overrides||{});for(const k in o)if(o[k]===name)return true;return false};
 const keysFor=name=>{const o=(S.active.overrides||{}),out=[];for(const k in o)if(o[k]===name)out.push(k);return out};
 function patchSelection(){
   document.querySelectorAll('.card[data-n]').forEach(c=>{
-    const n=c.getAttribute('data-n'),on=selFor(n,c.getAttribute('data-ctx')||'');
+    const n=c.getAttribute('data-n'),on=isSel(n);
     if(c.classList.contains('sel')!==on)c.classList.toggle('sel',on);
     const cur=(S.active.styles||{})[n];
     c.querySelectorAll('.styles .chip').forEach((ch,ix)=>{const id=ch.getAttribute('data-s');const act=on&&(cur!=null?String(cur)===String(id):ix===0);ch.classList.toggle('on',act)});
@@ -593,15 +774,17 @@ function patchCounts(){
     if(S.cur){
       const total=(S.counts.heroes||{})[S.cur]||0,m=$('modsBadge');
       if(m){m.textContent=total?t('modsApplied',{n:total}):'';m.style.display=total?'inline-flex':'none'}
-      const sc=$('slotchips');if(sc&&S.catalog)sc.innerHTML=slotChips();
+      const sc=$('slotchips');if(sc&&S.catalog){sc.innerHTML=slotChips();syncGliders(sc,true)}
       document.querySelectorAll('.slothead[data-slot]').forEach(h=>{const k=slotCount(h.getAttribute('data-slot')),c=h.querySelector('.ct');
         if(k){if(c)c.textContent=t('appliedSlot',{n:k});else h.insertAdjacentHTML('beforeend','<span class="ct">'+esc(t('appliedSlot',{n:k}))+'</span>')}else if(c)c.remove()});
+        syncGliders(document,true);
+
     }else{
       document.querySelectorAll('.hcard[data-n]').forEach(h=>{const c=(S.counts.heroes||{})[h.getAttribute('data-n')]||0;let b=h.querySelector('.cnt');
         h.classList.toggle('has',!!c);if(c){if(b)b.textContent=c;else h.insertAdjacentHTML('afterbegin','<span class="cnt">'+c+'</span>')}else if(b)b.remove()});
     }
   }else if(S.page==='extras'){
-    const cc=$('catchips');if(cc&&S.cats.length)cc.innerHTML=catChips();
+    const cc=$('catchips');if(cc&&S.cats.length){cc.innerHTML=catChips();syncGliders(cc,true)}
     document.querySelectorAll('.gtab[data-v]').forEach(g=>{const grp=S.cats.filter(x=>x.id===g.getAttribute('data-v'))[0];if(!grp)return;const k=grpCount(grp);let c=g.querySelector('.ct');
       if(k){if(c)c.textContent=k;else g.insertAdjacentHTML('beforeend','<span class="ct chip-ct" style="margin-left:2px;background:#000;color:#fff;min-width:15px;height:15px;border-radius:8px;display:grid;place-items:center;font-size:9.5px;padding:0 4px">'+k+'</span>')}else if(c)c.remove()});
   }else if(S.page==='home'){const e=$('statSel');if(e)e.textContent=totalSelected()}
@@ -612,7 +795,7 @@ function afterChange(){refresh(()=>{patchSelection();patchCounts()})}
 /* ================= cards / grids ================= */
 const rc=it=>{let r=String(it.rarity||'').replace('rarity_','').toLowerCase();if(it.is_arcana)r='arcana';return 'var('+(RAR[r]||'--r-common')+')'};
 function card(it,ctx,i){
-  S.reg[it.name]=it;const sel=selFor(it.name,ctx);
+  S.reg[it.name]=it;const sel=isSel(it.name);const snd=/^cat:(music|announcers|mega_kills)$/.test(ctx)?'<span class="play" data-act="preview" data-n="'+esc(it.name)+'" title="'+esc(t('preview'))+'">'+ic('i-play','sm')+'</span>':'';
   const tag=it.is_arcana?'<span class="tag arc">'+esc(t('arcana').toUpperCase())+'</span>':(it.is_persona?'<span class="tag">'+esc(t('persona').toUpperCase())+'</span>':'');
   let styles='';
   if(it.styles&&it.styles.length>1){
@@ -621,8 +804,8 @@ function card(it,ctx,i){
   }
   const rar=String(it.rarity||'').replace('rarity_','');
   return '<div class="card'+(sel?' sel':'')+(i>=40?' late':'')+'" style="--i:'+Math.min(i||0,18)+';--rc:'+rc(it)+'" data-act="pick" data-n="'+esc(it.name)+'" data-ctx="'+esc(ctx)+'">'
-   +ph('item',it,'','<span class="star'+(S.favs[it.name]?' on':'')+'" data-act="fav" data-n="'+esc(it.name)+'" title="'+esc(t('addFav'))+'">'+ic('i-star','sm')+'</span><span class="tick">'+CHECK+'</span>'+tag)+'<div class="bar"></div>'
-   +'<div class="info"><div class="t">'+esc(nameOf(it))+'</div>'+(rar?'<div class="m">'+esc(rar)+'</div>':'')+styles+'</div></div>';
+   +ph('item',it,'','<span class="acts">'+snd+'<span class="star'+(S.favs[it.name]?' on':'')+'" data-act="fav" data-n="'+esc(it.name)+'" title="'+esc(t('addFav'))+'">'+ic('i-star','sm')+'</span></span>'+'<span class="tick">'+CHECK+'</span>'+tag)+'<div class="bar"></div>'
+   +'<div class="info"><div class="t">'+(it.gem_color?'<i class="gdot" style="background:rgb('+esc(it.gem_color)+')"></i>':'')+esc(nameOf(it))+'</div>'+(rar?'<div class="m">'+esc(rar)+'</div>':'')+styles+'</div></div>';
 }
 /* fills a grid in small frames so a 600-card tab never blocks the UI */
 function fillGrid(el,items,ctx){
@@ -637,23 +820,20 @@ function fillGrid(el,items,ctx){
 }
 function prepare(list,q){
   const ql=(q||'').toLowerCase();
-  let out=list.filter(x=>(!ql||nameOf(x).toLowerCase().indexOf(ql)>=0)&&(!S.selOnly||isSel(x.name)));
+  let out=list.filter(x=>(!ql||nameOf(x).toLowerCase().indexOf(ql)>=0)&&true);
   const az=(a,b)=>nameOf(a).localeCompare(nameOf(b));
   const rk=x=>{const r=String(x.rarity||'').replace('rarity_','').toLowerCase();return x.is_arcana?7:(RANK[r]||0)};
   if(S.sort==='rarity')out.sort((a,b)=>rk(b)-rk(a)||az(a,b));
-  else if(S.sort==='sel')out.sort((a,b)=>(isSel(b.name)-isSel(a.name))||az(a,b));
   else out.sort(az);
   return out;
 }
-const toolbar=()=>'<select class="sm" data-act="sort"><option value="az"'+(S.sort==='az'?' selected':'')+'>'+esc(t('sortAz'))+'</option><option value="rarity"'+(S.sort==='rarity'?' selected':'')+'>'+esc(t('sortRarity'))+'</option><option value="sel"'+(S.sort==='sel'?' selected':'')+'>'+esc(t('sortSel'))+'</option></select>'
+const toolbar=()=>'<select class="sm" data-act="sort"><option value="az"'+(S.sort==='az'?' selected':'')+'>'+esc(t('sortAz'))+'</option><option value="rarity"'+(S.sort==='rarity'?' selected':'')+'>'+esc(t('sortRarity'))+'</option></select>'
   +'<div class="seg sm" id="densSeg">'+['s','m','l'].map(d=>'<div class="s'+(S.dens===d?' on':'')+'" data-act="dens" data-v="'+d+'">'+d.toUpperCase()+'</div>').join('')+'</div>'
-  +'<span class="chip'+(S.selOnly?' on':'')+'" data-act="selonly" id="selOnlyChip">'+esc(t('selOnly'))+'</span>';
+  ;
 function setDens(d){S.dens=d;document.querySelectorAll('.igrid').forEach(g=>{g.classList.remove('d-s','d-m','d-l');g.classList.add('d-'+d)});
   const s=$('densSeg');if(s)s.querySelectorAll('.s').forEach(x=>x.classList.toggle('on',x.getAttribute('data-v')===d));cham.set_option('ui_density',d)}
 const ripple=(e,el)=>{const r=el.getBoundingClientRect(),s=document.createElement('span');s.className='rip';s.style.left=(e.clientX-r.left)+'px';s.style.top=(e.clientY-r.top)+'px';el.appendChild(s);setTimeout(()=>s.remove(),650)};
 function pick(name,ctx){
-  const p0=ctx.split(':');
-  if(p0[0]==='fx'){const key='fx::'+p0[1]+'::'+S.fxSlot;if((S.active.overrides||{})[key]===name)cham.remove_override(key);else cham.apply_skin('fx',p0[1],name,S.fxSlot);setTimeout(afterChange,70);return}
   if(isSel(name)){keysFor(name).forEach(k=>cham.remove_override(k));setTimeout(afterChange,70);return}
   const p=ctx.split(':'),kind=p[0];
   if(kind==='hero')cham.apply_skin('heroes',p[1],name,'');
@@ -675,12 +855,12 @@ function countUp(el,to){const n=parseInt(to,10);if(isNaN(n)||n<2){el.textContent
 function renderHome(){
   modPill();
   $('p-home').innerHTML='<div class="hero-banner"><div class="row" style="gap:14px;align-items:flex-start"><svg class="i" style="width:40px;height:40px;stroke-width:1.5"><use href="#i-logo"/></svg><div class="grow"><h1>'+esc(t('homeTitle'))+'</h1><p>'+esc(t('homeSub'))+'</p><div class="row"><button class="btn pri" data-act="gohero">'+ic('i-heroes','sm')+esc(t('browseHeroes'))+'</button><button class="btn" data-act="gocat">'+ic('i-extras','sm')+esc(t('openCatalog'))+'</button></div></div></div></div>'
-   +'<div class="stats">'+stat('i-heroes',S.heroes.length,t('statHeroes'),0,'statH')+stat('i-box',S.itemTotal||'—',t('statItems'),1,'statI')+stat('i-apply',totalSelected(),t('statSelected'),2,'statSel')+'</div>'
+   +'<div class="stats">'+stat('i-heroes',S.heroes.length,t('statHeroes'),0,'statH')+stat('i-box',S.itemTotal||'-',t('statItems'),1,'statI')+stat('i-apply',totalSelected(),t('statSelected'),2,'statSel')+'</div>'
    +'<div class="row" style="margin:4px 0 8px"><h1 class="grow" style="font-size:14px">'+esc(t('featured'))+'</h1><button class="btn" data-act="shuffle">'+ic('i-undo','sm')+esc(t('shuffle'))+'</button></div><div class="fgrid" id="fgrid"></div>';
   ['statH','statI'].forEach(id=>{const e=$(id);if(e)countUp(e,e.textContent)});
   const draw=()=>{const g=$('fgrid');if(!g)return;
     g.innerHTML=S.featured.map((x,i)=>{S.reg[x.name]=x;const r=x.is_arcana?'ARCANA':(x.is_persona?'PERSONA':String(x.rarity||'').replace('rarity_','').toUpperCase());
-      return '<div class="fcard" style="--i:'+i+'" data-act="hero" data-n="'+esc(x.hero)+'"><span class="rar">'+esc(r)+'</span>'+ph('item',x)+'<div class="cap"><b>'+esc(nameOf(x))+'</b><span>'+esc(x.hero_name||'')+'</span></div></div>'}).join('')||'<div class="empty">—</div>';lazy(g)};
+      return '<div class="fcard" style="--i:'+i+'" data-act="hero" data-n="'+esc(x.hero)+'"><span class="rar">'+esc(r)+'</span>'+ph('item',x)+'<div class="cap"><b>'+esc(nameOf(x))+'</b><span>'+esc(x.hero_name||'')+'</span></div></div>'}).join('')||'<div class="empty">-</div>';lazy(g)};
   if(S.featured.length)draw();else cham.get_featured().then(r=>{S.featured=J(r)||[];draw()});
 }
 
@@ -703,9 +883,10 @@ function drawHeroGrid(){
 }
 function openHero(n){
   if(S.page!=='heroes'){S.page='heroes';document.querySelectorAll('.page').forEach(e=>e.classList.remove('on'));$('p-heroes').classList.add('on');document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('on',b.getAttribute('data-go')==='heroes'))}
+  moveNavPill('heroes',false);
   S.cur=n;S.slot='all';S.hs='';S.catalog=null;S.rt++;renderHero({});
   rpcPage('hero',(S.heroes.filter(x=>x.name===n)[0]||{}).display_name||'');
-  (S.fxLoaded?Promise.resolve():cham.get_effect_library().then(r=>{S.fxlib=J(r)||[];S.fxLoaded=true})).then(()=>cham.get_hero_catalog(n)).then(s=>{
+  cham.get_hero_catalog(n).then(s=>{
     if(S.cur!==n)return;
     S.catalog=J(s)||{slots:[],arcanas:[],personas:[],taunts:[],gems:[]};if(!S.catalog.gems)S.catalog.gems=[];
     const c=S.catalog;S.group=c.slots.length?'cosmetics':(c.arcanas.length?'arcanas':(c.personas.length?'personas':(c.taunts.length?'taunts':(c.gems.length?'gems':'cosmetics'))));
@@ -723,16 +904,16 @@ function renderHero(o){
   let h='<div class="dhead"><button class="btn" data-act="back">'+ic('i-back','sm')+esc(t('heroes'))+'</button>'+ph('hero',hd)+'<div><h1>'+esc(hd.display_name)+'</h1><div class="meta"><span class="mods" id="modsBadge" style="'+(total?'':'display:none')+'">'+(total?esc(t('modsApplied',{n:total})):'')+'</span></div></div></div>';
   if(!c){$('p-heroes').innerHTML=h+'<div class="empty">'+esc(t('loading'))+'</div>';lazy($('p-heroes'));return}
   let nc=0;c.slots.forEach(g=>{nc+=g.items.length});
-  const groups=[['cosmetics','cosmetics',nc],['arcanas','arcana',c.arcanas.length],['personas','persona',c.personas.length],['taunts','taunts',c.taunts.length],['gems','gems',c.gems.length],['fx','fxTab',S.fxlib.length]].filter(g=>g[2]>0);
+  const groups=[['cosmetics','cosmetics',nc],['arcanas','arcana',c.arcanas.length],['personas','persona',c.personas.length],['taunts','taunts',c.taunts.length],['gems','gems',c.gems.length]].filter(g=>g[2]>0);
   if(!groups.length){$('p-heroes').innerHTML=h+'<div class="empty">'+esc(t('nothingHero'))+'</div>';return}
   if(!groups.some(g=>g[0]===S.group))S.group=groups[0][0];
-  h+='<div class="seg">'+groups.map(g=>'<div class="s'+(S.group===g[0]?' on':'')+'" data-act="group" data-v="'+g[0]+'">'+esc(t(g[1]))+'<span class="n">'+g[2]+'</span></div>').join('')+'</div>';
+  h+='<div class="seg" id="hseg">'+groups.map(g=>'<div class="s'+(S.group===g[0]?' on':'')+'" data-act="group" data-v="'+g[0]+'">'+esc(t(g[1]))+'<span class="n">'+g[2]+'</span></div>').join('')+'</div>';
   h+='<div class="tbar"><input class="search" id="hs" data-inp="hs" placeholder="'+esc(t('heroSearch'))+'" value="'+esc(S.hs)+'" style="min-width:210px">'+toolbar()+'</div>';
   if(S.group==='cosmetics')h+='<div class="chips" id="slotchips" style="margin:0 0 2px">'+slotChips()+'</div>';
   if(S.group==='gems')h+='<div class="sub" style="margin:4px 0 0">'+esc(t('gemHint'))+'</div>';
-  if(S.group==='fx'){if(!c.slots.some(g=>g.slot===S.fxSlot))S.fxSlot=(c.slots[0]||{}).slot||'';h+='<div class="row" style="margin:6px 0 4px"><span class="sub" style="margin:0">'+esc(t('fxSlot'))+'</span><select class="sm" data-act="fxslot">'+c.slots.map(g=>'<option value="'+esc(g.slot)+'"'+(g.slot===S.fxSlot?' selected':'')+'>'+esc(g.title)+'</option>').join('')+'</select></div><div class="sub" style="margin:0 0 4px">'+esc(t('fxHint'))+'</div>'}
   h+='<div id="hbody"></div>';
-  const pg=$('p-heroes');pg.innerHTML=h;lazy(pg);drawHeroBody();
+    const pg=$('p-heroes');pg.innerHTML=h;lazy(pg);drawHeroBody();raf(()=>syncGliders(pg,true));
+
 }
 function drawHeroBody(){
   const c=S.catalog,body=$('hbody');if(!c||!body)return;S.rt++;body.innerHTML='';
@@ -745,8 +926,8 @@ function drawHeroBody(){
       fillGrid($('gs'+gi),list,ctx);
     });
   }else{
-    const src=S.group==='fx'?S.fxlib:(c[S.group]||[]),list=prepare(src,S.hs);
-    const cx=S.group==='gems'?'gem:'+S.cur:(S.group==='fx'?'fx:'+S.cur:ctx);
+    const src=c[S.group]||[],list=prepare(src,S.hs);
+    const cx=S.group==='gems'?'gem:'+S.cur:ctx;
     if(list.length){any=true;body.insertAdjacentHTML('beforeend','<div class="igrid d-'+S.dens+'" id="gs0" style="margin-top:10px"></div>');fillGrid($('gs0'),list,cx)}
   }
   if(!any)body.innerHTML='<div class="empty">'+esc(t('noItems'))+'</div>';
@@ -761,10 +942,13 @@ function renderExtras(o){
   const build=()=>{
     const G=S.cats,cur=G.filter(g=>g.id===S.grp)[0]||G[0];if(!cur)return;S.grp=cur.id;
     if(!cur.cats.some(c=>c.id===S.cat))S.cat=cur.cats[0].id;
-    let h=head('i-extras',t('extras'),t('extrasSub'))+'<div class="gtabs">'+G.map(g=>{const k=grpCount(g);return '<div class="gtab'+(g.id===S.grp?' on':'')+'" data-act="grp" data-v="'+g.id+'">'+esc(t('grp_'+g.id))+(k?'<span class="ct" style="margin-left:2px;background:#000;color:#fff;min-width:15px;height:15px;border-radius:8px;display:grid;place-items:center;font-size:9.5px;padding:0 4px">'+k+'</span>':'')+'</div>'}).join('')+'</div>'
+    let h=head('i-extras',t('extras'),t('extrasSub'))+'<div class="gtabs" id="exgtabs">'+G.map(g=>{const k=grpCount(g);return '<div class="gtab'+(g.id===S.grp?' on':'')+'" data-act="grp" data-v="'+g.id+'">'+esc(t('grp_'+g.id))+(k?'<span class="ct" style="margin-left:2px;background:#000;color:#fff;min-width:15px;height:15px;border-radius:8px;display:grid;place-items:center;font-size:9.5px;padding:0 4px">'+k+'</span>':'')+'</div>'}).join('')+'</div>'
       +'<div class="chips" id="catchips" style="margin-bottom:10px">'+catChips()+'</div>';
     pg.innerHTML=h+'<div class="tbar"><input class="search" id="cq" placeholder="'+esc(t('search'))+'" data-inp="eq" value="'+esc(S.eq)+'">'+toolbar()+'<span class="sub" id="ccount" style="margin:0"></span></div><div class="igrid d-'+S.dens+'" id="cgrid"><div class="empty">'+esc(t('loading'))+'</div></div>';
+    raf(()=>syncGliders(pg,true));
     cham.get_category_items(S.cat).then(s=>{S.catItems=J(s)||[];S.catItems.forEach(x=>{S.regCat[x.name]=S.cat});drawCat()});
+
+
   };
   if(S.cats.length)build();else cham.get_catalog().then(s=>{S.cats=J(s)||[];build()});
 }
@@ -796,13 +980,15 @@ function renderWorld(){
    +'<div class="panel"><h3>'+esc(t('river'))+'</h3><div class="sub" style="margin-top:-4px">'+esc(t('riverSub'))+'</div><div class="chips" id="riv"></div></div>'
    +'<div class="panel"><h3>'+esc(t('bg'))+'</h3><div class="sub" style="margin-top:-4px">'+esc(t('bgHint'))+'</div>'
    +'<div class="frow"><div><div class="l" id="bgcur">'+esc(bgLabel())+'</div><div class="d" id="bgff"></div></div><div class="row"><button class="btn" data-act="bgbrowse">'+ic('i-folder','sm')+esc(t('bgPick'))+'</button><button class="btn dng" data-act="bgreset">'+ic('i-trash','sm')+'</button></div></div>'
-   +'<div class="frow"><div><div class="l">'+esc(t('bgMethod'))+'</div><div class="d">'+esc(t('bgMethodD'))+'</div></div><select data-act="bgmethod" id="bgm"><option value="menu">'+esc(t('bgMenu'))+'</option><option value="layout">'+esc(t('bgLayout'))+'</option><option value="files">'+esc(t('bgFiles'))+'</option></select></div>'
-   +'<div class="frow" id="bglayrow"><div><div class="l">'+esc(t('bgNeeds'))+'</div><div class="d" id="bgstate">…</div></div><button class="btn" data-act="bginstall" id="bginst" style="display:none">'+ic('i-apply','sm')+esc(t('bgInstall'))+'</button></div></div></div>';
+   +'<div class="frow"><div class="l">'+esc(t('bgBlur'))+'</div><div class="row"><input type="range" id="bgblur" min="0" max="30" step="1" data-inp="bgblur"><span class="sub" id="bgblurv" style="margin:0;min-width:28px">0</span></div></div>'
+   +'<div class="frow"><div class="l">'+esc(t('bgDim'))+'</div><div class="row"><input type="range" id="bgdim" min="0" max="90" step="5" data-inp="bgdim"><span class="sub" id="bgdimv" style="margin:0;min-width:34px">10%</span></div></div></div></div>';
   cham.get_river_colors().then(s=>{const l=J(s)||[],cur=S.active.river_color||'default',el=$('riv');if(!el)return;
-    el.innerHTML=l.map(c=>'<span class="chip'+((cur||'default')===c?' on':'')+'" data-act="river" data-v="'+esc(c)+'">'+esc(riverLabel(c))+'</span>').join('')});
-  cham.get_background_state().then(s=>{const d=J(s)||{},el=$('bgstate');if(!el)return;
-    el.textContent=d.layout_installed?t('bgInstalled'):t('bgMissing');$('bginst').style.display=d.layout_installed?'none':'inline-flex';
-    $('bgff').textContent=d.ffmpeg?t('bgFfOk'):t('bgFfNo');$('bgm').value=d.method||'menu';$('bglayrow').style.display=(d.method||'menu')==='layout'?'flex':'none'});
+    el.innerHTML=l.map(c=>'<span class="chip'+((cur||'default')===c?' on':'')+'" data-act="river" data-v="'+esc(c)+'">'+esc(riverLabel(c))+'</span>').join('');
+    syncGliders(el,true);
+  });
+  cham.get_background_state().then(s=>{const d=J(s)||{};if(!$('bgff'))return;
+    $('bgff').textContent=d.ffmpeg?t('bgFfOk'):t('bgFfNo');
+    $('bgblur').value=d.blur||0;$('bgblurv').textContent=d.blur||0;$('bgdim').value=d.dim==null?10:d.dim;$('bgdimv').textContent=(d.dim==null?10:d.dim)+'%';syncRanges(document)});
 }
 
 /* ================= selected ================= */
@@ -810,13 +996,12 @@ function label(k){const p=k.split('::');
   if(p[0]==='cat')return t(p[1])+' · '+(p[2]||'').replace(/_/g,' ');
   if(p[0]==='hero')return p[1].replace('npc_dota_hero_','').replace(/_/g,' ')+' · '+(p[2]||'').replace(/_/g,' ');
   if(p[0]==='taunt')return p[1].replace('npc_dota_hero_','').replace(/_/g,' ')+' · '+t('taunt');
-  if(p[0]==='fx')return p[1].replace('npc_dota_hero_','').replace(/_/g,' ')+' · '+(p[2]||'').replace(/_/g,' ')+' · '+t('fxTab');
   if(p[0]==='gem')return p[1].replace('npc_dota_hero_','').replace(/_/g,' ')+' · '+t('gem');
   return k.replace(/_/g,' ')}
 function renderQueue(){
   const a=S.active;let n=0,i=0;
-  let h=head('i-queue',t('selected'),t('selectedSub'),'<button class="btn dng" data-act="clearall">'+ic('i-trash','sm')+esc(t('clearAll'))+'</button>');
-  const row=(k,v)=>{n++;const it=S.reg[v];return '<div class="sel-row" style="animation-delay:'+(Math.min(i++,14)*22)+'ms">'+(it?ph('item',it):'<div class="ph loaded"><span class="ini" style="display:block">'+esc(initials(v))+'</span></div>')+'<span class="k">'+esc(label(k))+'</span><span class="v">'+esc(it?nameOf(it):String(v).replace(/_/g,' '))+'</span><button class="rm" data-act="rm" data-k="'+esc(k)+'">'+ic('i-close','sm')+'</button></div>'};
+  let h=head('i-queue',t('selected'),t('selectedSub'),'<button class="btn" data-act="clearall">'+ic('i-trash','sm')+esc(t('clearAll'))+'</button><button class="btn dng" data-act="restoreall">'+ic('i-undo','sm')+esc(t('removeFromGame'))+'</button>');
+  const row=(k,v)=>{n++;const it=S.reg[v];const off=(a.disabled||[]).indexOf(k)>=0;return '<div class="sel-row'+(off?' off':'')+'" style="animation-delay:'+(Math.min(i++,14)*22)+'ms">'+(it?ph('item',it):'<div class="ph loaded"><span class="ini" style="display:block">'+esc(initials(v))+'</span></div>')+'<span class="k">'+esc(label(k))+'</span><span class="v">'+esc(it?nameOf(it):String(v).replace(/_/g,' '))+'</span><div class="sw'+(off?'':' on')+'" data-act="itemsw" data-k="'+esc(k)+'" title="'+esc(t('itemOnOff'))+'"></div><button class="rm" data-act="rm" data-k="'+esc(k)+'">'+ic('i-close','sm')+'</button></div>'};
   for(const k in (a.overrides||{}))h+=row(k,a.overrides[k]);
   if(a.river_color&&a.river_color!=='default'){n++;h+='<div class="sel-row"><span class="k">'+esc(t('riverColour'))+'</span><span class="v">'+esc(a.river_color)+'</span></div>'}
   if(a.background){n++;h+='<div class="sel-row"><span class="k">'+esc(t('background'))+'</span><span class="v">'+esc(bgLabel())+'</span></div>'}
@@ -847,11 +1032,39 @@ function renderLaunch(){
 
 /* ================= settings ================= */
 const sw=(id,on)=>'<div class="sw'+(on?' on':'')+'" data-act="sw" data-id="'+id+'"></div>';
-const sel3=(act,cur,opts)=>'<select data-act="'+act+'">'+opts.map(o=>'<option value="'+o[0]+'"'+(o[0]===cur?' selected':'')+'>'+esc(t(o[1]))+'</option>').join('')+'</select>';
+const sel3_old=(act,cur,opts)=>'<select data-act="'+act+'">'+opts.map(o=>'<option value="'+o[0]+'"'+(o[0]===cur?' selected':'')+'>'+esc(t(o[1]))+'</option>').join('')+'</select>';
+const sel3=(act,cur,opts)=>{
+  const has=opts.some(o=>o[0]===cur);
+  return '<div class="sgm" data-act="'+act+'" data-val="'+esc(cur)+'"><i class="thumb"></i>'+
+    opts.map((o,i)=>{
+      const on=o[0]===cur||(!has&&i===0);
+      return '<span data-v="'+esc(o[0])+'"'+(on?' class="on"':'')+'>'+esc(t(o[1]))+'</span>';
+    }).join('')+'</div>';
+};
+
+function placeThumbs(root){
+  (root||document).querySelectorAll('.sgm').forEach(g=>{
+    const on=g.querySelector('span.on')||g.querySelector('span');
+    if(!on||!on.offsetWidth)return;
+    on.classList.add('on');
+    g.style.setProperty('--x',(on.offsetLeft-3)+'px');
+    g.style.setProperty('--w',on.offsetWidth+'px');
+  });
+}
+
+
+function syncRanges(root){
+  (root||document).querySelectorAll('input[type=range]').forEach(r=>{
+    const min=Number(r.min||0),max=Number(r.max||100),val=Number(r.value||0);
+    const p=Math.max(0,Math.min(100,((val-min)/((max-min)||1))*100));
+    r.style.setProperty('--p',p+'%');
+  });
+}
+
 const LNAME={english:'English',russian:'Русский',schinese:'简体中文',tchinese:'繁體中文',german:'Deutsch',french:'Français',spanish:'Español',latam:'Español (LatAm)',brazilian:'Português (BR)',portuguese:'Português',polish:'Polski',turkish:'Türkçe',ukrainian:'Українська',koreana:'한국어',japanese:'日本語',italian:'Italiano',thai:'ไทย',czech:'Čeština',dutch:'Nederlands',swedish:'Svenska',hungarian:'Magyar',romanian:'Română'};
 function renderSettings(){
-  Promise.all([cham.get_config(),cham.get_cache_size(),cham.get_build_report(),cham.get_item_languages(),cham.get_icon_stats(),cham.get_lang_folders()]).then(r=>{
-    const c=J(r[0])||{},cs=J(r[1])||{},rep=J(r[2])||{},langs=J(r[3])||[],ist=J(r[4])||{},lf=J(r[5])||['russian'];
+  Promise.all([cham.get_config(),cham.get_cache_size(),cham.get_build_report(),cham.get_item_languages(),cham.get_icon_stats()]).then(r=>{
+    const c=J(r[0])||{},cs=J(r[1])||{},rep=J(r[2])||{},langs=J(r[3])||[],ist=J(r[4])||{};
     let rh='';
     (rep.overrides||[]).forEach(o=>{
       const m=Object.keys(o.modifiers||{}).map(k=>k+' ×'+o.modifiers[k]).join(', ');
@@ -864,10 +1077,11 @@ function renderSettings(){
     const itl=langs.length?'<select data-act="itemlang">'+langs.map(l=>'<option value="'+esc(l)+'"'+(l===(c.item_language||'english')?' selected':'')+'>'+esc(LNAME[l]||l)+'</option>').join('')+'</select>':'<span class="sub" style="margin:0">English</span>';
     const fr=(l,d,ctl)=>'<div class="frow"><div><div class="l">'+esc(t(l))+'</div>'+(d?'<div class="d">'+esc(t(d))+'</div>':'')+'</div>'+ctl+'</div>';
     $('p-settings').innerHTML=head('i-settings',t('settings'),'')+'<div class="two">'
-    +'<div class="panel"><h3>'+esc(t('language'))+'</h3>'+fr('uiLang','uiLangD','<select data-act="uilang"><option value="en"'+(LANG==='en'?' selected':'')+'>English</option><option value="ru"'+(LANG==='ru'?' selected':'')+'>Русский</option></select>')+'</div>'
+    +'<div class="panel"><h3>'+esc(t('language'))+'</h3>'+fr('uiLang','uiLangD',sel3('uilang',LANG,[['en','English'],['ru','Русский']]))+'</div>'
     +'<div class="panel"><h3>'+esc(t('icons'))+'</h3>'
       +fr('icField','icFieldD',sel3('icfield',c.icon_field||'inventory',[['inventory','icOwn'],['auto','icAuto'],['preview','icPreview']]))
       +fr('icSource','icSourceD',sel3('icsource',c.icon_source||'auto',[['auto','icSrcAuto'],['game','icSrcGame'],['cdn','icSrcCdn']]))
+      +fr('icItemSrc','icItemSrcD',sel3('icitem',c.icon_item_source||'game',[['game','icGame'],['web','icWeb'],['auto','icBoth']]))
       +fr('icCast','icCastD',sw('iccast',c.icon_fix_cast!==false))
       +'<div class="frow"><div><div class="l">'+esc(t('icStats'))+'</div><div class="d" id="icst">'+(ist.from_vpk||0)+' / '+(ist.from_cdn||0)+' / '+(ist.from_disk||0)+' / '+(ist.missing||0)+'</div></div><button class="btn" data-act="icclear">'+esc(t('icClear'))+'</button></div></div>'
     +'<div class="panel"><h3>'+esc(t('game'))+'</h3><div class="frow"><div><div class="l">'+esc(t('dotaFolder'))+'</div><div class="d" id="dp">'+esc(c.dota_path||t('notSet'))+'</div></div><button class="btn" data-act="dpath">'+ic('i-folder','sm')+esc(t('browse'))+'</button></div>'
@@ -878,17 +1092,17 @@ function renderSettings(){
       +fr('sigTitle','sigD',sw('sig',c.patch_signatures!==false))
       +fr('swap','swapD',sel3('swap',c.particle_swap||'hero',[['hero','swapHero'],['all','swapAll'],['off','swapOff']]))
       +fr('defMode','defModeD',sel3('defmode',c.default_mode||'auto',[['auto','defAuto'],['replace','defReplace'],['create','defCreate']]))
-      +fr('instMethod','instMethodD',sel3('instmethod',c.install_method||'language',[['language','instLang'],['custom','instCustom']]))
-      +fr('langFolder','langFolderD','<select data-act="langfolder">'+lf.map(x=>'<option value="'+esc(x)+'"'+(x===(c.lang_folder||'russian')?' selected':'')+'>'+esc(x)+'</option>').join('')+'</select>')
       +fr('stockModels','stockModelsD',sw('stock',c.stock_models!==false))
-      +fr('filesOnly','filesOnlyD',sw('fonly',!!c.files_only))
       +fr('rpcTitle','rpcD',sw('rpc',c.discord_rpc!==false))
+      +fr('updTitle','updD',sw('upd',c.check_updates!==false))
       +fr('effMode','effModeD',sel3('effmode',c.effect_mode||'slot',[['slot','effSlot'],['hero','effHero'],['both','effBoth']]))
       +fr('heroModel','heroModelD',sw('hmodel',c.patch_hero_model!==false))+'</div>'
     +'<div class="panel"><h3>'+esc(t('report'))+'</h3>'+(rh||'<div class="d" style="color:var(--muted2)">'+esc(t('noReport'))+'</div>')+'</div>'
     +'<div class="panel"><h3>'+esc(t('maint'))+'</h3><div class="frow"><div><div class="l">'+esc(t('cache'))+'</div><div class="d">'+esc(cs.formatted||'')+'</div></div><div class="row"><button class="btn" data-act="cclear">'+esc(t('clearCache'))+'</button><button class="btn" data-act="rebuild">'+esc(t('rebuild'))+'</button><button class="btn dng" data-act="cleanmod">'+esc(t('removeMod'))+'</button></div></div></div></div>';
+    raf(()=>placeThumbs($('p-settings')));
   });
 }
+
 
 /* ================= apply progress card ================= */
 const STAGES=['scan','build','resources','extras','write','register'],STN={scan:'stScan',build:'stBuild',resources:'stResources',extras:'stExtras',write:'stWrite',register:'stRegister'};
@@ -937,13 +1151,52 @@ document.addEventListener('click',e=>{
     case 'gocat':go('extras');break;
     case 'shuffle':S.featured=[];renderHome();break;
     case 'back':S.cur=null;S.catalog=null;S.page='extras';go('heroes');break;
-    case 'group':S.group=v;S.slot='all';S.hs='';renderHero({still:true});$('p-heroes').scrollTop=0;break;
-    case 'slot':S.slot=v;{const sc=$('slotchips');if(sc)sc.innerHTML=slotChips();}drawHeroBody();break;
-    case 'grp':S.grp=v;S.eq='';S.cat='';renderExtras({still:true});break;
-    case 'cat':S.cat=v;S.eq='';renderExtras({still:true});break;
+    case 'group':{
+      if(S.group===v)break;
+      S.group=v;S.slot='all';S.hs='';
+      renderHero({still:true});
+      $('p-heroes').scrollTop=0;
+    }break;
+    case 'slot':{
+      if(S.slot===v)break;
+      S.slot=v;
+      tt.parentNode.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===tt));
+      syncGliders(tt.parentNode,false);
+      drawHeroBody();
+    }break;
+    case 'grp':{
+      if(S.grp===v)break;
+      S.grp=v;S.eq='';
+      const cur=S.cats.filter(g=>g.id===v)[0];
+      S.cat=cur&&cur.cats[0]?cur.cats[0].id:'';
+      tt.parentNode.querySelectorAll('.gtab').forEach(x=>x.classList.toggle('on',x===tt));
+      syncGliders(tt.parentNode,false);
+      const cc=$('catchips');
+      if(cc){delete _gPos['catchips'];cc.innerHTML=catChips();raf(()=>syncGliders(cc,true))}
+      const cg=$('cgrid');if(cg)cg.innerHTML='<div class="empty">'+esc(t('loading'))+'</div>';
+      cham.get_category_items(S.cat).then(s=>{S.catItems=J(s)||[];S.catItems.forEach(x=>{S.regCat[x.name]=S.cat});drawCat()});
+    }break;
+    case 'cat':{
+      if(S.cat===v)break;
+      S.cat=v;S.eq='';
+      tt.parentNode.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===tt));
+      syncGliders(tt.parentNode,false);
+      const cg=$('cgrid');if(cg)cg.innerHTML='<div class="empty">'+esc(t('loading'))+'</div>';
+      cham.get_category_items(S.cat).then(s=>{S.catItems=J(s)||[];S.catItems.forEach(x=>{S.regCat[x.name]=S.cat});drawCat()});
+    }break;
+
+    case 'dens':{
+      setDens(v);
+      syncGliders(tt.parentNode,false);
+    }break;
+
     case 'sort':break;
-    case 'dens':setDens(v);break;
-    case 'selonly':S.selOnly=!S.selOnly;$('selOnlyChip').classList.toggle('on',S.selOnly);if(S.page==='heroes')drawHeroBody();else drawCat();break;
+    case 'preview':{e.stopPropagation();if(S._aud){S._aud.pause();S._aud=null;document.querySelectorAll('.play.on').forEach(x=>x.classList.remove('on'))}if(tt.getAttribute('data-playing')){tt.removeAttribute('data-playing');break}
+      cham.get_preview(n).then(r=>{const d=J(r);if(!d){toast(t('noPreview'),'err');return}tt.classList.add('on');tt.setAttribute('data-playing','1');const a=new Audio('data:'+d.mime+';base64,'+d.b64);S._aud=a;a.volume=.6;a.onended=()=>{tt.classList.remove('on');tt.removeAttribute('data-playing')};a.play().catch(()=>toast(t('noPreview'),'err'))})}break;
+    case 'newv':cham.open_url(tt.getAttribute('data-url')||'');break;
+    case 'staropen':cham.open_url('https://github.com/therample/dota2-chameleon');cham.star_hide();$('starbar').classList.remove('on');break;
+    case 'starlater':$('starbar').classList.remove('on');break;
+    case 'starnever':cham.star_hide();$('starbar').classList.remove('on');break;
     case 'fav':e.stopPropagation();cham.toggle_favorite(n).then(on=>{S.favs[n]=on?1:0;document.querySelectorAll('.star[data-n="'+n+'"]').forEach(x=>x.classList.toggle('on',!!on));if(S.page==='favs')setTimeout(renderFavs,60)});break;
     case 'lpsel':cham.select_launch_preset(n);setTimeout(renderLaunch,80);break;
     case 'lpdel':e.stopPropagation();cham.delete_launch_preset(n);setTimeout(renderLaunch,80);break;
@@ -951,8 +1204,9 @@ document.addEventListener('click',e=>{
     case 'lpsave':{const nn=$('lpn').value.trim();if(nn){cham.save_launch_preset(nn,$('lpp').value);setTimeout(renderLaunch,120)}}break;
     case 'river':cham.set_river_color(v);setTimeout(()=>refresh(renderWorld),150);break;
     case 'bgbrowse':cham.browse_background();setTimeout(()=>refresh(renderWorld),1400);break;
-    case 'bgreset':cham.set_background('');setTimeout(()=>refresh(renderWorld),150);break;
-    case 'bginstall':cham.install_background_layout().then(()=>renderWorld());break;
+    case 'bgreset':clearTimeout(S._bgt);cham.set_background('');setTimeout(()=>refresh(renderWorld),150);break;
+    case 'itemsw':{const on=!tt.classList.contains('on');tt.classList.toggle('on',on);tt.parentNode.classList.toggle('off',!on);cham.set_override_enabled(tt.getAttribute('data-k'),on);setTimeout(()=>refresh(),80)}break;
+    case 'restoreall':cham.restore_all();setTimeout(()=>refresh(()=>{renderQueue();modPill()}),400);break;
     case 'rm':cham.remove_override(tt.getAttribute('data-k'));setTimeout(afterChange,80);break;
     case 'clearall':cham.clear_all_overrides();setTimeout(afterChange,100);break;
     case 'psave':{const pn=$('pn').value.trim();if(pn){cham.save_preset(pn);setTimeout(renderPresets,200)}}break;
@@ -960,7 +1214,7 @@ document.addEventListener('click',e=>{
     case 'pdel':cham.delete_preset(n);setTimeout(renderPresets,200);break;
     case 'restore':cham.restore_all();setTimeout(()=>refresh(()=>{go(S.page,{still:true});modPill()}),300);break;
     case 'launch':cham.launch_dota();break;
-    case 'apply':rpcPage('apply');$('applyBtn').disabled=true;onProgress(2,'scan',t('working'));cham.apply_all();break;
+    case 'apply':rpcPage('apply',String(totalSelected()));$('applyBtn').disabled=true;onProgress(2,'scan',t('working'));cham.apply_all();break;
     case 'dpath':cham.browse_dota_path().then(p=>{if(p)$('dp').textContent=p});break;
     case 'cclear':cham.clear_cache();setTimeout(renderSettings,300);break;
     case 'icclear':cham.clear_icon_cache().then(()=>{resetIcons();toast(t('icCleared'),'ok');renderSettings()});break;
@@ -973,33 +1227,47 @@ document.addEventListener('click',e=>{
       else if(id==='hmodel')cham.set_option('patch_hero_model',on?'true':'false');
       else if(id==='sig')cham.set_option('patch_signatures',on?'true':'false');
       else if(id==='stock')cham.set_option('stock_models',on?'true':'false');
-      else if(id==='fonly')cham.set_option('files_only',on?'true':'false');
       else if(id==='rpc')cham.set_option('discord_rpc',on?'true':'false');
+      else if(id==='upd')cham.set_option('check_updates',on?'true':'false');
       else if(id==='iccast'){cham.set_option('icon_fix_cast',on?'true':'false');resetIcons()}
     }break;
   }
 });
-document.addEventListener('change',e=>{
-  const el=e.target,a=el.getAttribute&&el.getAttribute('data-act');if(!a)return;
-  if(a==='sort'){S.sort=el.value;if(S.page==='heroes')drawHeroBody();else drawCat()}
-  else if(a==='packmode')cham.set_option('pack_mode',el.value);
-  else if(a==='swap')cham.set_option('particle_swap',el.value);
-  else if(a==='defmode')cham.set_option('default_mode',el.value);
-  else if(a==='effmode')cham.set_option('effect_mode',el.value);
-  else if(a==='fxslot'){S.fxSlot=el.value;patchSelection()}
-  else if(a==='instmethod')cham.set_option('install_method',el.value);
-  else if(a==='langfolder')cham.set_option('lang_folder',el.value);
-  else if(a==='bgmethod'){cham.set_option('bg_method',el.value);$('bglayrow').style.display=el.value==='layout'?'flex':'none'}
-  else if(a==='icfield'){cham.set_option('icon_field',el.value);resetIcons();S.catItems=[];S.catalog=null;S.featured=[];toast(t('icCleared'),'ok')}
-  else if(a==='icsource'){cham.set_option('icon_source',el.value);resetIcons()}
-  else if(a==='uilang'){LANG=el.value;cham.set_option('language',LANG);buildNav();retitle();go('settings',{still:true})}
-});
+function onChoice(a,v){
+  if(a==='sort'){S.sort=v;if(S.page==='heroes')drawHeroBody();else drawCat()}
+  else if(a==='packmode')cham.set_option('pack_mode',v);
+  else if(a==='swap')cham.set_option('particle_swap',v);
+  else if(a==='defmode')cham.set_option('default_mode',v);
+  else if(a==='effmode')cham.set_option('effect_mode',v);
+  else if(a==='icfield'){cham.set_option('icon_field',v);resetIcons();S.catItems=[];S.catalog=null;S.featured=[];toast(t('icCleared'),'ok')}
+  else if(a==='icsource'){cham.set_option('icon_source',v);resetIcons()}
+  else if(a==='icitem'){cham.set_option('icon_item_source',v);resetIcons()}
+  else if(a==='uilang'){LANG=v;S.cfg.language=v;cham.set_option('language',LANG);setTimeout(()=>{buildNav();retitle();go('settings',{still:true})},220)}
+
+}
+document.addEventListener('change',e=>{const el=e.target,a=el.getAttribute&&el.getAttribute('data-act');if(a&&el.tagName==='SELECT')onChoice(a,el.value)});
+document.addEventListener('click',e=>{const sp=e.target.closest('.sgm span');if(!sp)return;const g=sp.parentNode;g.querySelectorAll('span').forEach(x=>x.classList.toggle('on',x===sp));placeThumbs(g.parentNode);onChoice(g.getAttribute('data-act'),sp.getAttribute('data-v'))});
 document.addEventListener('input',e=>{
   const el=e.target,k=el.getAttribute&&el.getAttribute('data-inp');if(!k)return;
   if(k==='hq'){S.hq=el.value;clearTimeout(S._ht);S._ht=setTimeout(drawHeroGrid,80)}
   else if(k==='eq'){S.eq=el.value;clearTimeout(S._et);S._et=setTimeout(drawCat,110)}
   else if(k==='hs'){S.hs=el.value;clearTimeout(S._hst);S._hst=setTimeout(drawHeroBody,110)}
   else if(k==='lp')cham.set_launch_params(el.value);
+  else if(k==='bgblur'||k==='bgdim'){
+    const bl=parseInt($('bgblur').value,10),dm=parseInt($('bgdim').value,10);
+    const lbl=$(k+'v');
+    $('bgblurv').textContent=bl;
+    $('bgdimv').textContent=dm+'%';
+    syncRanges(el.parentNode);
+    if(lbl){
+      lbl.classList.add('active');
+      clearTimeout(lbl._t);
+      lbl._t=setTimeout(()=>lbl.classList.remove('active'),220);
+    }
+    clearTimeout(S._bgt);
+    S._bgt=setTimeout(()=>cham.set_background_look(bl,dm),180);
+  }
+
 });
 document.addEventListener('mousedown',e=>{const r=e.target.closest('[data-rs]');if(r){cham.start_resize(r.getAttribute('data-rs'));return}if(e.target.closest('#drag')&&e.button===0)cham.start_move()});
 document.addEventListener('keydown',e=>{
@@ -1024,7 +1292,7 @@ function modPill(){cham.get_status().then(s=>{const st=J(s)||{};const u=$('upd')
 /* ================= background particles ================= */
 (function(){
   const cv=$('particles'),cx=cv.getContext('2d'),P=[];let W=0,H=0;
-  const size=()=>{W=cv.width=cv.offsetWidth;H=cv.height=cv.offsetHeight};size();window.addEventListener('resize',size);
+    const size=()=>{W=cv.width=cv.offsetWidth;H=cv.height=cv.offsetHeight;placeThumbs(document);moveNavPill(S.page,true);syncGliders(document,true)};size();window.addEventListener('resize',size);
   for(let i=0;i<30;i++)P.push({x:Math.random(),y:Math.random(),r:Math.random()*1.4+.4,vx:(Math.random()-.5)*.00012,vy:-Math.random()*.00022-.00005,a:Math.random()*.25+.05});
   (function tick(){
     if(!document.hidden&&S.ready){cx.clearRect(0,0,W,H);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.y<-.02){p.y=1.02;p.x=Math.random()}cx.beginPath();cx.arc(p.x*W,p.y*H,p.r,0,6.283);cx.fillStyle='rgba(255,255,255,'+p.a+')';cx.fill()})}
@@ -1077,11 +1345,13 @@ new QWebChannel(qt.webChannelTransport,ch=>{
     else if(/^(Done|Selected|Settings saved|Restored|Launching|Style)/.test(m))toast(m,'ok');
     if(!S.ready)loadStatus(m);
   });
-  cham.applyResult.connect(ok=>{rpcPage(S.page);$('applyBtn').disabled=false;povFinish(ok);toast(ok?t('applied'):t('applyFail'),ok?'ok':'err');modPill();if(S.page==='settings')renderSettings()});
+  cham.applyResult.connect(ok=>{if(ok)cham.star_check().then(show=>{if(show){const b=$('starbar');b.querySelector('.stx').textContent=t('starText');b.querySelector('[data-act=staropen]').textContent=t('starOpen');b.querySelector('[data-act=starlater]').textContent=t('starLater');b.querySelector('[data-act=starnever]').textContent=t('starNever');b.classList.add('on')}});rpcPage(S.page);$('applyBtn').disabled=false;povFinish(ok);toast(ok?t('applied'):t('applyFail'),ok?'ok':'err');modPill();if(S.page==='settings')renderSettings()});
   cham.dbLoaded.connect(ok=>{if(ok){L.target=Math.max(L.target,96);setTimeout(onReady,180)}else{loadFinish(false)}});
   cham.iconReady.connect(onIconReady);
+  cham.updateChecked.connect(r=>{const d=J(r)||{};if(d.available){const n=$('newv');n.textContent=t('newVersion',{v:d.latest});n.setAttribute('data-url',d.url);n.style.opacity='1';n.style.pointerEvents='auto';n.style.transform='translate(-50%,0)'}});
+  cham.check_update();
   cham.progressChanged.connect(onProgress);
-  $('ver').textContent='v15.4';
+  $('ver').textContent='v15.6';
   (function poll(){cham.get_status().then(s=>{const st=J(s)||{};if(st.status==='ready')onReady();else setTimeout(poll,500)})})();
 });
 </script>
