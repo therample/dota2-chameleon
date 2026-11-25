@@ -34,12 +34,12 @@ const bridge = {
   get_launch_presets: () => P(JSON.stringify(F.launch)), get_cache_size: () => P('{"formatted":"1 MB"}'),
   get_build_report: () => P('{}'), get_item_languages: () => P('["english","russian"]'), get_presets: () => P('[]'),
   get_river_colors: () => P('["default","blood","slime"]'), get_background_state: () => P(JSON.stringify({ path: '', ffmpeg: true, blur: 4, dim: 20 })),
-  get_featured: () => P(JSON.stringify(F.featured)), get_effect_library: () => P(JSON.stringify(F.effect_lib)), get_lang_folders: () => P('["russian","koreana"]'), get_mod_enabled: () => P(true), set_mod_enabled: () => P(true), check_update: () => P(true), get_preview: (n) => P(n === 'big_3' ? JSON.stringify({ mime: 'audio/mpeg', b64: 'AAAA' }) : ''), set_background_look: (b, d) => { calls.push(['set_background_look', b, d]); return P(true); }, rpc_state: (p, d) => { calls.push(['rpc_state', p, d]); return P(true); },  get_fonts: () => P(JSON.stringify(F.fonts)),
+  get_featured: () => P(JSON.stringify(F.featured)), star_check: () => P(true), star_hide: () => P(true), get_mod_enabled: () => P(true), set_mod_enabled: () => P(true), check_update: () => P(true), get_preview: (n) => P(n === 'big_3' ? JSON.stringify({ mime: 'audio/mpeg', b64: 'AAAA' }) : ''), set_background_look: (b, d) => { calls.push(['set_background_look', b, d]); return P(true); }, rpc_state: (p, d) => { calls.push(['rpc_state', p, d]); return P(true); },  get_fonts: () => P(JSON.stringify(F.fonts)),
   get_icon_stats: () => P('{"from_vpk":1,"from_cdn":0,"from_disk":0,"missing":0}'),
   get_hero_icon: () => P(''), get_item_icon: (n) => P(n === 'big_3' ? 'iVBORw0KGgo=' : ''),
-  install_background_layout: () => P(true), browse_font: () => P(false), clear_icon_cache: () => P(3),
+  browse_font: () => P(false), clear_icon_cache: () => P(3),
 };
-['apply_skin', 'apply_style', 'remove_override', 'clear_all_overrides', 'set_option', 'select_launch_preset', 'save_launch_preset',
+['apply_skin', 'apply_style', 'remove_override', 'set_override_enabled', 'clear_all_overrides', 'set_option', 'select_launch_preset', 'save_launch_preset',
  'delete_launch_preset', 'set_river_color', 'set_background', 'browse_background', 'restore_all', 'launch_dota', 'apply_all',
  'start_move', 'start_resize', 'minimize_window', 'close_window', 'toggle_maximize_window', 'set_font', 'set_all_fonts', 'clear_fonts',
  'save_hud_settings', 'set_launch_params', 'set_auto_restore', 'save_preset', 'load_preset', 'delete_preset', 'cleanup_mod',
@@ -47,7 +47,7 @@ const bridge = {
   .forEach(n => bridge[n] = (...a) => { calls.push([n, ...a]); return P(true); });
 // the fake bridge mirrors what the real one does for selections so the page can refresh
 bridge.apply_skin = (cat, hero, name, slot) => { calls.push(['apply_skin', cat, hero, name, slot]);
-  const key = cat === 'fx' ? 'fx::' + hero + '::' + slot : cat === 'gems' ? 'gem::' + hero + '::socket' : (cat === 'heroes' ? 'hero::' + hero + '::head' : 'cat::' + cat + '::x');
+  const key = cat === 'gems' ? 'gem::' + hero + '::socket' : (cat === 'heroes' ? 'hero::' + hero + '::head' : 'cat::' + cat + '::x');
   active.overrides = active.overrides || {}; active.overrides[key] = name; return P(true); };
 bridge.remove_override = (k) => { calls.push(['remove_override', k]); delete (active.overrides || {})[k]; return P(true); };
 
@@ -113,18 +113,7 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
   click(d.querySelector('#hbody .card')); await sleep(250);
   ok(calls.some(c => c[0] === 'apply_skin' && c[1] === 'gems' && c[2] === F.hero_with_items), 'choosing a gem calls apply_skin("gems", hero, gem)');
   ok(d.querySelector('#hbody .card').classList.contains('sel'), 'the chosen gem card is marked selected');
-  const fxTab = d.querySelector('.seg .s[data-v="fx"]');
-  ok(!!fxTab, 'hero page has the Item effects tab');
-  click(fxTab); await sleep(300);
-  ok(await waitFor(() => q('#hbody .card').length === F.effect_lib.length && F.effect_lib.length > 0), 'effects tab lists the effect library');
-  const slotSel = d.querySelector('select[data-act="fxslot"]');
-  ok(!!slotSel && slotSel.options.length >= 2, 'effects tab has a slot picker');
-  change(slotSel, slotSel.options[1].value); await sleep(60);
-  click(d.querySelector('#hbody .card')); await sleep(250);
-  ok(calls.some(c => c[0] === 'apply_skin' && c[1] === 'fx' && c[4] === slotSel.options[1].value), 'choosing an effect calls apply_skin("fx", hero, effect, slot)');
-  ok(d.querySelector('#hbody .card').classList.contains('sel'), 'the effect is marked on the chosen slot');
-  change(slotSel, slotSel.options[0].value); await sleep(120);
-  ok(!d.querySelector('#hbody .card').classList.contains('sel'), 'not marked on another slot');
+  ok(!d.querySelector('.seg .s[data-v="fx"]'), 'the Item effects tab is gone');
   click(d.querySelector('.seg .s[data-v="cosmetics"]')); await sleep(300);
 
   // search / sort / density / selected-only without full re-render
@@ -135,10 +124,7 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
   ok(q('#hbody .card').length > 0, 'clearing the hero search brings the items back');
   click(d.querySelector('[data-act="dens"][data-v="s"]')); await sleep(80);
   ok(q('#hbody .igrid.d-s').length > 0 && calls.some(c => c[0] === 'set_option' && c[1] === 'ui_density' && c[2] === 's'), 'density S applies to the grids and is saved');
-  click(d.getElementById('selOnlyChip')); await sleep(200);
-  const selOnlyCount = q('#hbody .card').length;
-  click(d.getElementById('selOnlyChip')); await sleep(200);
-  ok(selOnlyCount <= q('#hbody .card').length, 'selected-only filter narrows the list and toggles back');
+  ok(!d.getElementById('selOnlyChip') && ![...q('select[data-act="sort"] option')].some(o => o.value === 'sel'), 'no selected-only filter and no selected-first sort');
 
   // picking must NOT rebuild the page: same DOM node survives and is marked
   const pickCard = d.querySelector('#hbody .card');
@@ -155,7 +141,7 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
   ok(!!d.querySelector('.gtab[data-v="effects"]'), 'catalog has the Effects group');
   const allCats = [];
   for (const gid of ['world', 'units', 'items', 'effects', 'interface', 'sound']) { click(d.querySelector('.gtab[data-v="' + gid + '"]')); await sleep(120); q('#catchips .chip').forEach(c => allCats.push(c.getAttribute('data-v'))); }
-  ['head_effects', 'teleport_effects', 'blink_effects', 'death_effects', 'kill_effects', 'courier_effects', 'shaders', 'emblems', 'streak', 'multikill_banners'].forEach(c => ok(allCats.includes(c), 'catalog has category ' + c));
+  ['head_effects', 'teleport_effects', 'blink_effects', 'death_effects', 'courier_effects', 'shaders', 'emblems', 'streak', 'multikill_banners'].forEach(c => ok(allCats.includes(c), 'catalog has category ' + c));
   ok(!allCats.includes('river') && !allCats.includes('gems') && !allCats.includes('fonts') && !allCats.includes('statues'), 'catalog has no river / gems / fonts / statues category');
 
   // chunked rendering of a 420-card category
@@ -173,7 +159,7 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
   const firstRarity = d.querySelector('#cgrid .card .m');
   ok(firstRarity && /mythical/.test(firstRarity.textContent), 'sorting by rarity puts rare items first');
   ok(await waitFor(() => d.querySelector('#cgrid img[data-ik="item_3"]') && d.querySelector('#cgrid img[data-ik="item_3"]').getAttribute('src'), 2000), 'an icon returned by the bridge is shown on its card');
-  ok(q('#cgrid .play').length > 0, 'music cards have a listen button');
+  ok(q('#cgrid .play').length > 0 && q('#cgrid .acts .star').length > 0, 'music cards always show the listen button and the star in one row');
   const star = d.querySelector('#cgrid .star');
   click(star); await sleep(120);
   ok(star.classList.contains('on'), 'star toggles on');
@@ -199,22 +185,37 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
   ok(!/HUD scale|Масштаб HUD/.test(st), 'no HUD scale controls in settings');
   ok(!!d.querySelector('[data-id="sig"]') && !!d.querySelector('[data-act="defmode"]') && !!d.querySelector('[data-act="swap"]') && !!d.querySelector('[data-act="effmode"]'), 'settings: signatures switch, special-items mode, effects mode, particle-swap mode');
   ok(!d.querySelector('[data-act="itemlang"]'), 'the item-names language setting is gone');
-  ok(!!d.querySelector('[data-id="upd"]') && !!d.querySelector('[data-id="webic"]'), 'settings: update check and web item pictures switches');
-  ok(!!d.querySelector('[data-act="instmethod"]') && !!d.querySelector('[data-act="langfolder"]') && !!d.querySelector('[data-id="fonly"]') && !!d.querySelector('[data-id="rpc"]') && !!d.querySelector('[data-id="stock"]'), 'settings: install method, language folder, experimental files-only, Discord status, stock models');
-  change(d.querySelector('[data-act="instmethod"]'), 'custom'); await sleep(60); click(d.querySelector('[data-id="rpc"]')); await sleep(60);
-  ok(calls.some(c => c[0] === 'set_option' && c[1] === 'install_method' && c[2] === 'custom') && calls.some(c => c[0] === 'set_option' && c[1] === 'discord_rpc'), 'install method and Discord switch reach the backend');
+  const seg = (act, v) => { const s = d.querySelector('.sgm[data-act="' + act + '"] span[data-v="' + v + '"]'); click(s); return s; };
+  ok(!!d.querySelector('[data-id="upd"]') && !!d.querySelector('.sgm[data-act="icitem"]'), 'settings: update check switch and the item picture source choice');
+  ok(!d.querySelector('[data-act="instmethod"]') && !d.querySelector('[data-act="langfolder"]') && !d.querySelector('[data-id="fonly"]') && !d.querySelector('[data-id="webic"]'), 'language folder, install method and files-only are gone');
+  ok(!!d.querySelector('[data-id="rpc"]') && !!d.querySelector('[data-id="stock"]') && !!d.querySelector('[data-id="sig"]') && !!d.querySelector('.sgm[data-act="defmode"]') && !!d.querySelector('.sgm[data-act="effmode"]') && !!d.querySelector('.sgm[data-act="swap"]'), 'settings: Discord, stock models, signatures, special items, effects and particle swap choices');
+  ok(d.querySelectorAll('.sgm .thumb').length >= 6 && d.querySelectorAll('.sgm span.on').length === d.querySelectorAll('.sgm').length, 'every segmented choice has a sliding thumb and one active option');
+  seg('icitem', 'web'); await sleep(60); click(d.querySelector('[data-id="rpc"]')); await sleep(60);
+  ok(calls.some(c => c[0] === 'set_option' && c[1] === 'icon_item_source' && c[2] === 'web') && calls.some(c => c[0] === 'set_option' && c[1] === 'discord_rpc'), 'item picture source and Discord switch reach the backend');
   ok(calls.some(c => c[0] === 'rpc_state' && c[1] === 'settings'), 'the page tells Discord status where you are (settings)');
-  ok(!!d.querySelector('[data-act="icfield"]') && !!d.querySelector('[data-act="icsource"]') && !!d.querySelector('[data-id="iccast"]'), 'settings: icon field, icon source and cast switch exist');
-  change(d.querySelector('[data-act="icfield"]'), 'auto'); await sleep(80);
-  change(d.querySelector('[data-act="icsource"]'), 'cdn'); await sleep(80);
+  seg('icfield', 'auto'); await sleep(80);
+  seg('icsource', 'game'); await sleep(80);
   click(d.querySelector('[data-id="iccast"]')); await sleep(80);
-  ok(calls.some(c => c[0] === 'set_option' && c[1] === 'icon_field' && c[2] === 'auto'), 'icon field setting is sent to the backend');
-  ok(calls.some(c => c[0] === 'set_option' && c[1] === 'icon_source' && c[2] === 'cdn'), 'icon source setting is sent to the backend');
-  ok(calls.some(c => c[0] === 'set_option' && c[1] === 'icon_fix_cast'), 'cast switch is sent to the backend');
+  ok(calls.some(c => c[0] === 'set_option' && c[1] === 'icon_field' && c[2] === 'auto'), 'icon field choice is sent to the backend');
+  ok(calls.some(c => c[0] === 'set_option' && c[1] === 'icon_source' && c[2] === 'game'), 'icon source choice is sent to the backend');
   click(d.querySelector('[data-act="icclear"]')); await sleep(150);
   ok(calls.length > 0, 'clear icon cache button works');
-  change(d.querySelector('[data-act="bgmethod"]') || d.createElement('select'), 'files');
 
+  // ---------- selected page: per-item switch, remove from the game ----------
+  click(d.querySelector('[data-go="queue"]')); await sleep(300);
+  ok(q('#p-queue .sel-row .sw').length > 0, 'every selected item has its own on/off switch');
+  ok(!!d.querySelector('[data-act="restoreall"]'), 'the Selected page has "Remove the mod from the game"');
+  const sw0 = d.querySelector('#p-queue .sel-row .sw'); click(sw0); await sleep(150);
+  ok(calls.some(c => c[0] === 'set_override_enabled' && c[2] === false) && sw0.parentNode.classList.contains('off'), 'switching one item off is sent to the backend and shown');
+  click(sw0); await sleep(100);
+  // ---------- tab transitions follow the distance ----------
+  click(d.querySelector('[data-go="home"]')); await sleep(60);
+  click(d.querySelector('[data-go="settings"]')); await sleep(40);
+  const far = Math.abs(parseFloat(d.getElementById('p-settings').style.getPropertyValue('--dx')));
+  click(d.querySelector('[data-go="heroes"]')); await sleep(40);
+  click(d.querySelector('[data-go="extras"]')); await sleep(40);
+  const near = Math.abs(parseFloat(d.getElementById('p-extras').style.getPropertyValue('--dx')));
+  ok(far > near && near > 0, `slide distance grows with the distance between tabs (${near}px < ${far}px)`);
   // ---------- apply progress card ----------
   click(d.getElementById('applyBtn')); await sleep(80);
   const pov = d.getElementById('pov');
@@ -225,7 +226,9 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
   ok(q('#povs .st').length === 6 && q('#povs .st.done').length === 2 && q('#povs .st.act').length === 1, 'stage timeline: 2 done, 1 active, 6 total');
   ok(/12\/40/.test(d.getElementById('povd').textContent), 'progress card shows the detail text');
   ok(/%$/.test(d.getElementById('pct') ? d.getElementById('pct').textContent : '%') || true, 'ok');
-  bridge.applyResult.emit(true); await sleep(80);
+  bridge.applyResult.emit(true); await sleep(120);
+  ok(d.getElementById('starbar').classList.contains('on'), 'the GitHub star request appears (3rd successful apply)');
+  click(d.querySelector('[data-act="starlater"]'));
   ok(pov.classList.contains('done') && !pov.classList.contains('err') && d.getElementById('povp').textContent === '100%', 'successful build completes the card at 100%');
   ok(await waitFor(() => !pov.classList.contains('on'), 4000), 'progress card hides itself afterwards');
   click(d.getElementById('applyBtn')); bridge.progressChanged.emit(10, 'build', 'x'); bridge.applyResult.emit(false); await sleep(80);
@@ -239,7 +242,7 @@ const waitFor = async (fn, ms = 3000) => { const t0 = Date.now(); while (Date.no
 
   // ---------- language ----------
   click(d.querySelector('[data-go="settings"]')); await sleep(350);
-  change(d.querySelector('[data-act="uilang"]'), 'ru'); await sleep(300);
+  seg('uilang', 'ru'); await sleep(300);
   ok(/Герои/.test(d.getElementById('nav').innerHTML) && /Каталог/.test(d.getElementById('nav').innerHTML), 'language switches to Russian immediately');
   const TR = w.eval('TR');
   const used = new Set();
