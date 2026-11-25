@@ -19,7 +19,7 @@
 <br>
 
 [![Сайт](https://img.shields.io/badge/Сайт-rample.pythonanywhere.com-white?style=for-the-badge&labelColor=0b0b0b)](https://rample.pythonanywhere.com)
-[![Версия](https://img.shields.io/badge/версия-15.5_BETA-white?style=for-the-badge&labelColor=0b0b0b)](CHANGELOG.md)
+[![Версия](https://img.shields.io/badge/версия-15.6_BETA-white?style=for-the-badge&labelColor=0b0b0b)](CHANGELOG.md)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-white?style=for-the-badge&logo=python&logoColor=0b0b0b&labelColor=0b0b0b)](https://www.python.org/)
 [![Платформа](https://img.shields.io/badge/платформа-Windows-white?style=for-the-badge&logo=windows&logoColor=0b0b0b&labelColor=0b0b0b)](#установка)
 [![Лицензия](https://img.shields.io/badge/лицензия-GPL--3.0-white?style=for-the-badge&labelColor=0b0b0b)](LICENSE)
