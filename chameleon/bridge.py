@@ -31,6 +31,8 @@ from .iconsrc import choose_icon_path
 
 
 from .rpc import DiscordRPC
+from PySide6.QtGui import QDesktopServices
+from PySide6.QtCore import QUrl
 
 
 def _clean(v) -> str:
@@ -113,23 +115,6 @@ class ChameleonBridge(QObject):
             return "[]"
 
     @Slot(result=str)
-    def get_lang_folders(self):
-        """Language folders of the game (game/dota_<name> with a pak01_dir.vpk): the places Dota reads extra paks from."""
-        out = []
-        try:
-            g = Path(self.config.get("dota_path", "")) / "game"
-            out = sorted(d.name[5:] for d in g.glob("dota_*") if d.is_dir() and (d / "pak01_dir.vpk").exists())
-        except OSError:
-            pass
-        return json.dumps(out or ["russian"])
-
-    @Slot(result=str)
-    def get_effect_library(self):
-        if not self.database:
-            return "[]"
-        return json.dumps([self._item_to_dict(i) for i in self.database.effect_library()])
-
-    @Slot(result=str)
     def get_favorites(self):
         out = []
         for n in (self.config.get("favorites", []) or []):
@@ -188,6 +173,141 @@ class ChameleonBridge(QObject):
         allp, sel = self._launch_state()
         return json.dumps({"presets": allp, "selected": sel, "flags": self.LAUNCH_FLAGS})
 
+    @Slot(str)
+    def save_preset(self, name):
+        if not self.applier:
+            return
+        ap = self.applier
+        self.preset_manager.save_preset(
+            name, ap.active_overrides.copy(), {"styles": dict(ap.active_styles)}, ap.river_color_builder.color,
+            {"path": ap.background_builder.background_path, "blur": int(self.config.get("bg_blur", 0) or 0), "dim": int(self.config.get("bg_dim", 10) or 0)})
+        self.statusChanged.emit(f"Preset saved: {name}")
+
+    @Slot(str)
+    def load_preset(self, name):
+        """Old preset files (with gems / frostbloom / background_path keys) still load; unknown keys are ignored."""
+        preset = self.preset_manager.load_preset(name)
+        if not preset or not self.applier:
+            return
+        ap, db = self.applier, self.database
+        ap.active_overrides.clear()
+        ap.active_styles.clear()
+        for key, item_name in preset.get("overrides", {}).items():
+            parts = key.split("::")
+            if parts[0] in ("hero", "bugged", "cat", "gem") and item_name in db.items:
+                ap.active_overrides[key] = item_name
+        for k, v in ((preset.get("settings") or {}).get("styles") or {}).items():
+            if k in db.items:
+                ap.active_styles[k] = v
+        if preset.get("river_color"):
+            ap.set_river_color(preset["river_color"])
+        bg = preset.get("background") or {}
+        path = bg.get("path") or preset.get("background_path") or ""
+        ap.set_background(path)
+        if path:
+            self.config["bg_blur"], self.config["bg_dim"] = int(bg.get("blur", 0) or 0), int(bg.get("dim", 10) or 0)
+        self.statusChanged.emit(f"Loaded preset: {name}")
+
+    # ---- menu background (blur / dim) ----
+    @Slot(result=str)
+    def get_background_state(self):
+        if not self.applier:
+            return "{}"
+        bg = self.applier.background_builder
+        return json.dumps({"path": bg.background_path, "ffmpeg": bool(bg.ffmpeg_path()), "blur": int(self.config.get("bg_blur", 0) or 0),
+                           "dim": int(self.config.get("bg_dim", 10) or 0)})
+
+    @Slot(str)
+    def set_background(self, path):
+        if self.applier:
+            self.applier.set_background(path)
+            self.config["background_path"] = path
+
+    @Slot(int, int)
+    def set_background_look(self, blur, dim):
+        self.config["bg_blur"] = max(0, min(30, int(blur)))
+        self.config["bg_dim"] = max(0, min(90, int(dim)))
+        if self.window:
+            self.window.save_config()
+
+    @Slot()
+    def browse_background(self):
+        if not self.window or not self.applier:
+            return
+        p = QFileDialog.getOpenFileName(self.window, "Select a video or picture", "", "Video or picture (*.webm *.mp4 *.mov *.mkv *.avi *.gif *.png *.jpg *.jpeg *.webp)")[0]
+        if p:
+            self.set_background(p)
+            self.statusChanged.emit(f"Selected: background {Path(p).name}")
+
+    # ---- the game's own effect list (Frostbloom, Gold Drop, ...), seasonal particles from the files ----
+    @Slot(result=bool)
+    def get_mod_enabled(self):
+        return bool(self.applier.is_enabled()) if self.applier else True
+
+    @Slot(bool, result=bool)
+    def set_mod_enabled(self, on):
+        ok = bool(self.applier and self.applier.set_enabled(bool(on)))
+        self.statusChanged.emit(("Selected: mod switched on" if on else "Selected: mod switched off") if ok else "Failed: nothing to switch")
+        return ok
+
+    # ---- updates / links / audio preview ----
+    updateChecked = Signal(str)
+
+    @Slot()
+    def check_update(self):
+        if not self.config.get("check_updates", True):
+            return
+        import threading
+        from .updater import check
+        threading.Thread(target=lambda: self.updateChecked.emit(json.dumps(check())), daemon=True).start()
+
+    @Slot(result=bool)
+    def star_check(self):
+        """Counts a successful Apply; asks for a GitHub star on the 3rd, 10th and 25th one (unless dismissed for good)."""
+        n = int(self.config.get("apply_count", 0) or 0) + 1
+        self.config["apply_count"] = n
+        if self.window:
+            self.window.save_config()
+        return bool(n in (3, 10, 25) and not self.config.get("star_hidden", False))
+
+    @Slot()
+    def star_hide(self):
+        self.config["star_hidden"] = True
+        if self.window:
+            self.window.save_config()
+
+    @Slot(str)
+    def open_url(self, url):
+        if str(url).startswith("https://"):
+            QDesktopServices.openUrl(QUrl(url))
+
+    @Slot(str, result=str)
+    def get_preview(self, item_name):
+        """Audio of a music pack / announcer, read from the game files ('' when the pack has no sound file we can read)."""
+        from .preview import find_sound, extract_audio
+        db = self.database
+        it = db.items.get(item_name) if db else None
+        if not it:
+            return ""
+        raw = it.raw_item_data or {}
+        strings = [s.lower() for s in db._all_strings(raw)]
+        music = db.music_ids()
+        kind = "music" if any(s in music or s.rsplit("/", 1)[-1] in music for s in strings) else "announcer"
+        names = [s for s in strings if (s in music) or (kind == "announcer" and "announcer" in s and "/" not in s)]
+        files = []
+        for r in db.vpk_readers:
+            files.extend(f for f in r.files if f.startswith(("sounds/music/", "sounds/vo/")))
+        hit = find_sound(files, kind, names)
+        if not hit:
+            return ""
+        for r in db.vpk_readers:
+            if hit in r.files:
+                got = extract_audio(r.extract_to_bytes(hit) or b"")
+                if got:
+                    import base64
+                    return json.dumps({"mime": got[0], "b64": base64.b64encode(got[1]).decode("ascii")})
+        return ""
+
     @Slot(str, str)
     def rpc_state(self, page, detail):
         self.rpc.set_page(page, detail)
@@ -238,20 +358,12 @@ class ChameleonBridge(QObject):
         return ok
 
     @Slot()
-    def browse_background(self):
-        if not self.window:
-            return
-        p = QFileDialog.getOpenFileName(self.window, "Select a background video", "", "Video or picture (*.webm *.mp4 *.mov *.mkv *.avi *.gif *.png *.jpg *.jpeg *.webp)")[0]
-        if p:
-            self.set_background(p)
-            self.statusChanged.emit(f"Selected: background {Path(p).name}")
-
-    @Slot()
     def clear_all_overrides(self):
         if not self.applier:
             return
         self.applier.active_overrides.clear()
         self.applier.active_styles.clear()
+        self.applier.disabled.clear()
         self.statusChanged.emit("All overrides cleared")
 
     @Slot(str, result=bool)
@@ -273,15 +385,14 @@ class ChameleonBridge(QObject):
             return
         if key in self.applier.active_overrides:
             del self.applier.active_overrides[key]
+        self.applier.disabled.discard(key)
         self.statusChanged.emit(f"Removed: {key}")
 
-    @Slot(str)
-    def set_background(self, path):
-        if not self.applier:
-            return
-        self.applier.set_background(path)
-        self.config["background_path"] = path
-        self.statusChanged.emit("Background set")
+    @Slot(str, bool)
+    def set_override_enabled(self, key, on):
+        """Switch ONE selected item off / on without removing it (it is left out of the next build)."""
+        if self.applier and key in self.applier.active_overrides:
+            (self.applier.disabled.discard if on else self.applier.disabled.add)(key)
 
     @Slot(str)
     def set_river_color(self, color_name):
@@ -312,13 +423,12 @@ class ChameleonBridge(QObject):
         per_slot: Dict[str, int] = {}
         if self.applier:
             for key in self.applier.active_overrides:
+                if key in self.applier.disabled:
+                    continue
                 parts = key.split("::")
                 if parts[0] in ("hero", "bugged") and len(parts) >= 3:
                     per_hero[parts[1]] = per_hero.get(parts[1], 0) + 1
                     per_slot[f"{parts[1]}::{parts[2]}"] = per_slot.get(f"{parts[1]}::{parts[2]}", 0) + 1
-                elif parts[0] == "fx" and len(parts) >= 3:
-                    per_hero[parts[1]] = per_hero.get(parts[1], 0) + 1
-                    per_slot[f"{parts[1]}::fx"] = per_slot.get(f"{parts[1]}::fx", 0) + 1
                 elif parts[0] == "gem" and len(parts) >= 2:
                     per_hero[parts[1]] = per_hero.get(parts[1], 0) + 1
                     per_slot[f"{parts[1]}::gem"] = 1
@@ -332,24 +442,6 @@ class ChameleonBridge(QObject):
     @Slot(result=str)
     def get_item_languages(self):
         return json.dumps(self.database.available_languages() if self.database else [])
-
-    @Slot(result=str)
-    def get_background_state(self):
-        if not self.applier:
-            return "{}"
-        bg = self.applier.background_builder
-        return json.dumps({"path": bg.background_path, "layout_installed": bg.layout_installed(), "target": bg.VIDEO_TARGET,
-                           "ffmpeg": bool(bg.ffmpeg_path()), "image": bool(bg.background_path and bg.is_image(Path(bg.background_path))),
-                           "method": self.config.get("bg_method", "menu")})
-
-    @Slot(result=bool)
-    def install_background_layout(self):
-        if not self.applier:
-            return False
-        self.statusChanged.emit("Downloading menu layout files...")
-        ok, msg = self.applier.background_builder.install_layout()
-        self.statusChanged.emit(("Selected: " if ok else "Failed: ") + msg)
-        return ok
 
     @Slot(result=str)
     def get_featured(self):
@@ -391,7 +483,8 @@ class ChameleonBridge(QObject):
             "overrides": self.applier.active_overrides,
             "styles": self.applier.active_styles,
             "river_color": self.applier.river_color_builder.color,
-            "background": self.applier.background_builder.background_path
+            "disabled": sorted(self.applier.disabled),
+            "background": self.applier.background_builder.background_path,
         })
 
     @Slot(result=str)
@@ -439,7 +532,8 @@ class ChameleonBridge(QObject):
     def get_item_icon(self, combined_name, icon_path, size):
         item_name = combined_name.split("@@@")[0]
         it = self.database.items.get(item_name) if self.database else None
-        key, b64 = IconManager.request("item", item_name, _clean(icon_path), size, f"item_{it.item_id}" if it else None)
+        key, b64 = IconManager.request("item", item_name, _clean(icon_path), size, f"item_{it.item_id}" if it else None,
+                                       _clean(it.localized_name) if it else "")
         return b64
 
     @Slot(str, str, str, str)
@@ -451,8 +545,6 @@ class ChameleonBridge(QObject):
             ok = self.applier.apply_hero_skin(hero, item_name, slot)
         elif category == "gems":
             ok = self.applier.apply_gem(hero, item_name)
-        elif category == "fx":
-            ok = self.applier.apply_effect(hero, slot, item_name)
         elif category == "bugged":
             ok = self.applier.apply_bugged_item(hero, item_name)
         else:
@@ -497,53 +589,6 @@ class ChameleonBridge(QObject):
             self.statusChanged.emit("Launching Dota 2")
         else:
             self.statusChanged.emit("Failed to launch Dota 2")
-
-    @Slot(str)
-    def save_preset(self, name):
-        if not self.applier:
-            return
-        self.preset_manager.save_preset(
-            name,
-            self.applier.active_overrides.copy(),
-            {},
-            {"styles": {k: v for k, v in self.applier.active_styles.items()}},
-            {},
-            self.applier.river_color_builder.color,
-            self.applier.background_builder.background_path
-        )
-        self.statusChanged.emit(f"Preset saved: {name}")
-
-    @Slot(str)
-    def load_preset(self, name):
-        preset = self.preset_manager.load_preset(name)
-        if not preset or not self.applier:
-            return
-        ap = self.applier
-        ap.active_overrides.clear()
-        ap.active_styles.clear()
-        db = self.database
-        for key, item_name in preset.get("overrides", {}).items():
-            parts = key.split("::")
-            if item_name not in db.items:
-                continue
-            if parts[0] in ("hero", "bugged", "cat", "fx", "gem"):          # current key format: restore as saved
-                ap.active_overrides[key] = item_name
-            elif parts[0] == "hero":
-                ap.apply_hero_skin(parts[1], item_name)
-            else:                                                         # keys written by older versions: ward, courier ...
-                cat = {"ward": "wards", "courier": "couriers", "weather": "weather", "terrain": "terrain", "music": "music",
-                       "tower": "towers", "announcer": "announcers", "mega_kills": "mega_kills", "loading_screen": "loadings"}.get(key)
-                if cat:
-                    ap.apply_category(cat, item_name)
-        settings = preset.get("settings", {})
-        for k, v in (settings.get("styles") or {}).items():
-            if k in db.items:
-                ap.active_styles[k] = v
-        if preset.get("river_color"):
-            ap.set_river_color(preset["river_color"])
-        if preset.get("background_path"):
-            ap.set_background(preset["background_path"])
-        self.statusChanged.emit(f"Loaded preset: {name}")
 
     @Slot(str)
     def delete_preset(self, name):
@@ -600,18 +645,18 @@ class ChameleonBridge(QObject):
                    "particle_swap": {"off", "hero", "all"},
                    "icon_field": {"inventory", "auto", "preview"}, "icon_source": {"auto", "game", "cdn"},
                    "icon_fix_cast": {"true", "false"}, "default_mode": {"auto", "replace", "create"},
-                   "bg_method": {"menu", "layout", "files"}, "lang_folder": None, "custom_folder": None, "install_method": {"language", "custom"}, "files_only": {"true", "false"}, "discord_rpc": {"true", "false"}, "stock_models": {"true", "false"}, "effect_mode": {"slot", "hero", "both"}, "ui_density": {"s", "m", "l"}}
+                   "check_updates": {"true", "false"}, "icon_item_source": {"game", "web", "auto"},   "discord_rpc": {"true", "false"}, "stock_models": {"true", "false"}, "effect_mode": {"slot", "hero", "both"}, "ui_density": {"s", "m", "l"}}
         if key not in allowed or (allowed[key] is not None and value not in allowed[key]):
             return
         if key == "item_language" and not re.fullmatch(r"[a-z_]{3,20}", value or ""):
             return
-        self.config[key] = (value == "true") if key in ("patch_hero_model", "patch_signatures", "icon_fix_cast", "discord_rpc", "stock_models", "files_only") else value
+        self.config[key] = (value == "true") if key in ("patch_hero_model", "patch_signatures", "icon_fix_cast", "discord_rpc", "stock_models", "check_updates") else value
         if key == "discord_rpc":
             self.rpc.configure(self.config.get("discord_rpc", True), self.config.get("language", "en"))
         if key == "language":
             self.rpc.lang = value if value in ("en", "ru") else "en"
-        if key in ("icon_source", "icon_fix_cast"):
-            IconManager.configure(self.config.get("icon_source", "auto"), self.config.get("icon_fix_cast", True))
+        if key in ("icon_source", "icon_fix_cast", "icon_item_source"):
+            IconManager.configure(self.config.get("icon_source", "auto"), self.config.get("icon_fix_cast", True), self.config.get("icon_item_source", "game"))
         if key == "patch_signatures" and self.applier:
             self.applier.gameinfo.sign = (value == "true")
         if self.window:
@@ -750,7 +795,7 @@ class ChameleonBridge(QObject):
             "display_name": display_name, 
             "localized_name": item.localized_name if item.localized_name != item.name else "",
             "raw_token": raw_token,
-            "item_id": item.item_id, "rarity": _clean(item.rarity), "icon_path": self._icon_path(item), "is_arcana": item.is_arcana, "is_persona": item.is_persona, "is_immortal": item.is_immortal, "is_bugged": item.is_bugged, "is_gem": item.is_gem, "item_slot": item.item_slot, "item_type": getattr(item, 'item_type', ''), "gem_type": item.gem_type, "meta": " · ".join(meta[:4]), "used_by_hero": item.used_by_hero, "ability_overrides": [{"ability_id": ao.ability_id, "icon": ao.icon} for ao in item.ability_overrides], "styles": [{"id": s.style_id, "name": s.name} for s in item.styles], "slots": getattr(item, 'slots', [item.item_slot] if item.item_slot else [])
+            "item_id": item.item_id, "gem_color": (self.database.gem_color(item) if self.database and item.prefab == "socket_gem" else ""), "rarity": _clean(item.rarity), "icon_path": self._icon_path(item), "is_arcana": item.is_arcana, "is_persona": item.is_persona, "is_immortal": item.is_immortal, "is_bugged": item.is_bugged, "is_gem": item.is_gem, "item_slot": item.item_slot, "item_type": getattr(item, 'item_type', ''), "gem_type": item.gem_type, "meta": " · ".join(meta[:4]), "used_by_hero": item.used_by_hero, "ability_overrides": [{"ability_id": ao.ability_id, "icon": ao.icon} for ao in item.ability_overrides], "styles": [{"id": s.style_id, "name": s.name} for s in item.styles], "slots": getattr(item, 'slots', [item.item_slot] if item.item_slot else [])
         }
 
 # ==============================================================================

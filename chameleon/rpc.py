@@ -13,14 +13,16 @@ CLIENT_ID = "1563628624442298510"
 REPO_URL = "https://github.com/therample/dota2-chameleon"
 
 TEXT = {
-    "en": {"details": "Open Source", "button": "Download Chameleon", "home": "In the main menu", "heroes": "Browsing heroes",
-           "hero": "Choosing skins for {x}", "extras": "Browsing the catalog", "world": "Changing the world",
-           "favs": "Looking at favorites", "queue": "Reviewing the selection", "launch": "Setting up the launch",
-           "presets": "Managing presets", "settings": "In the settings", "apply": "Building the mod"},
+    "en": {"details": "Open Source", "button": "Download Chameleon", "home": "In the main menu", "heroes": "Choosing a hero",
+           "hero": "Dressing {x}", "extras": "Browsing the catalog", "world": "Modifying the river and the world",
+           "favs": "Looking at favorites", "queue": "Reviewing the selection", "queue_n": "Looking at {x} mods",
+           "launch": "Setting up the launch", "presets": "Managing presets", "settings": "Tuning Chameleon",
+           "apply": "Building the mod", "apply_n": "Building a mod of {x} changes"},
     "ru": {"details": "Open Source", "button": "Скачать Chameleon", "home": "В главном меню", "heroes": "Выбирает героя",
-           "hero": "Выбирает скины для {x}", "extras": "Смотрит каталог", "world": "Меняет мир",
-           "favs": "Смотрит избранное", "queue": "Проверяет выбор", "launch": "Настраивает запуск",
-           "presets": "Работает с пресетами", "settings": "В настройках", "apply": "Собирает мод"},
+           "hero": "Наряжает {x}", "extras": "Смотрит каталог", "world": "Модифицирует реку и мир",
+           "favs": "Смотрит избранное", "queue": "Проверяет выбор", "queue_n": "Смотрит свои моды: {x}",
+           "launch": "Настраивает запуск", "presets": "Работает с пресетами", "settings": "Настраивает Chameleon",
+           "apply": "Собирает мод", "apply_n": "Собирает мод из {x} изменений"},
 }
 
 
@@ -57,6 +59,8 @@ class DiscordRPC:
     def set_page(self, page: str, detail: str = ""):
         t = TEXT[self.lang]
         key = page if page in t else "home"
+        if page in ("queue", "apply") and str(detail).strip().isdigit() and int(detail) > 0:
+            key = page + "_n"
         state = t[key].format(x=detail) if "{x}" in t[key] else t[key]
         with self._lock:
             self._state = state

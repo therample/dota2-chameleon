@@ -44,42 +44,58 @@ def get_source(data: bytes) -> str:
     raise PanoramaError("no DATA block")
 
 
-def set_source(template: bytes, text: str) -> bytes:
-    """The template's container with its DATA text replaced by `text` (any other resource of the same kind works as a template)."""
-    head, blocks = read_blocks(template)
+# Classic containers (REDI + DATA) for the resources we write. The REDI blocks were recorded for these exact paths; only the 4-byte
+# source CRC inside REDI depends on the text. This is the format the game accepts for Panorama sources (Valve's own newer files cannot
+# be read back as text, so nothing is read from the game's layouts here).
+TEMPLATES = {'panorama/layout/dashboard_background_last_match.vxml_c': 'rQEAAAwAAwAIAAAAAgAAAFJFREkUAAAAeAEAAERBVEGAAQAADQAAAFAAAAACAAAAAAAAAAAAAADUAAAAAQAAAAQBAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAEAAAEAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAFEAAAAAAAAAAQAAAEoAAAB6AAAAEV7nTAIAAABwYW5vcmFtYS9sYXlvdXQvZGFzaGJvYXJkX2JhY2tncm91bmRfbGFzdF9tYXRjaC52eG1sAGRvdGEAcGFub3JhbWEvbGF5b3V0L2Rhc2hib2FyZF9iYWNrZ3JvdW5kX2xhc3RfbWF0Y2gueG1sAGRvdGEAABAAAAAkAAAAAAAAAAAAAABfX19PdmVycmlkZUlucHV0RGF0YV9fXwBCaW5hcnlCbG9iQXJnAAAAIAAAAAwAAAABAAAAAAAAAENvbXBpbGVQYW5vcmFtYQBQYW5vcmFtYSBMYXlvdXQgQ29tcGlsZXIgVmVyc2lvbgAAAAAIAAAAAAAAAElzQ2hpbGRSZXNvdXJjZQARXudMAAA8cm9vdC8+', 'panorama/layout/dashboard_background_manager.vxml_c': 'rQEAAAwAAwAIAAAAAgAAAFJFREkUAAAAeAEAAERBVEGAAQAADQAAAFAAAAACAAAAAAAAAAAAAADQAAAAAQAAAAABAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAEAAAEAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAE4AAAAAAAAAAQAAAEcAAAB0AAAAEV7nTAIAAABwYW5vcmFtYS9sYXlvdXQvZGFzaGJvYXJkX2JhY2tncm91bmRfbWFuYWdlci52eG1sAGRvdGEAcGFub3JhbWEvbGF5b3V0L2Rhc2hib2FyZF9iYWNrZ3JvdW5kX21hbmFnZXIueG1sAGRvdGEAAAAAEAAAACQAAAAAAAAAAAAAAF9fX092ZXJyaWRlSW5wdXREYXRhX19fAEJpbmFyeUJsb2JBcmcAAAAgAAAADAAAAAEAAAAAAAAAQ29tcGlsZVBhbm9yYW1hAFBhbm9yYW1hIExheW91dCBDb21waWxlciBWZXJzaW9uAAAAAAAAAAAIAAAAAAAAAElzQ2hpbGRSZXNvdXJjZQARXudMAAA8cm9vdC8+', 'panorama/layout/dashboard.vxml_c': 'jQEAAAwAAwAIAAAAAgAAAFJFREkUAAAAUAEAAERBVEFgAQAADQAAAFAAAAACAAAAAAAAAAAAAACoAAAAAQAAANgAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAEAAAAAAAAAAAAAAAAAAAAAAAAAIAAAADsAAAAAAAAAAQAAADQAAABOAAAAEV7nTAIAAABwYW5vcmFtYS9sYXlvdXQvZGFzaGJvYXJkLnZ4bWwAZG90YQBwYW5vcmFtYS9sYXlvdXQvZGFzaGJvYXJkLnhtbABkb3RhAAAQAAAAJAAAAAAAAAAAAAAAX19fT3ZlcnJpZGVJbnB1dERhdGFfX18AQmluYXJ5QmxvYkFyZwAAACAAAAAMAAAAAQAAAAAAAABDb21waWxlUGFub3JhbWEAUGFub3JhbWEgTGF5b3V0IENvbXBpbGVyIFZlcnNpb24AAAAAAAAAAAgAAAAAAAAASXNDaGlsZFJlc291cmNlAAAAAAAAAAAAEV7nTAAAPHJvb3QvPg=='}
+CRC_AT = {'panorama/layout/dashboard_background_last_match.vxml_c': 104, 'panorama/layout/dashboard_background_manager.vxml_c': 104, 'panorama/layout/dashboard.vxml_c': 104}
+
+
+def build(path: str, text: str) -> bytes:
+    import base64
+    head, blocks = read_blocks(base64.b64decode(TEMPLATES[path]))
     raw = text.encode("utf-8")
-    body = struct.pack("<IH", zlib.crc32(raw) & 0xFFFFFFFF, 0) + raw
-    blocks = [(n, body if n == b"DATA" else b) for n, b in blocks]
-    if not any(n == b"DATA" for n, _ in blocks):
-        raise PanoramaError("template has no DATA block")
-    table_len = 12 * len(blocks)
-    out = bytearray(16 + table_len)
-    pos = len(out)
-    entries = []
+    crc = struct.pack("<I", zlib.crc32(raw) & 0xFFFFFFFF)
+    at = CRC_AT[path]
+    out_blocks = []
     for name, b in blocks:
-        pos = (pos + 15) & ~15
+        if name == b"REDI":
+            b = b[:at] + crc + b[at + 4:]
+        elif name == b"DATA":
+            b = crc + b"\x00\x00" + raw
+        out_blocks.append((name, b))
+    out = bytearray(16 + 12 * len(out_blocks))
+    pos, entries = len(out), []
+    for name, b in out_blocks:
+        pos = (pos + 7) & ~7
         entries.append((name, pos, len(b)))
         out.extend(b"\x00" * (pos - len(out)))
         out.extend(b)
         pos = len(out)
     out[0:16] = head
     struct.pack_into("<I", out, 0, len(out))
-    struct.pack_into("<II", out, 8, 8, len(blocks))          # table right after the 16-byte header
+    struct.pack_into("<II", out, 8, 8, len(out_blocks))
     for i, (name, off, ln) in enumerate(entries):
-        at = 16 + 12 * i
-        out[at:at + 4] = name
-        struct.pack_into("<II", out, at + 4, off - (at + 4), ln)
+        e = 16 + 12 * i
+        out[e:e + 4] = name
+        struct.pack_into("<II", out, e + 4, off - (e + 4), ln)
     return bytes(out)
 
 
-MENU_LAYOUT = "panorama/layout/chameleon_background.vxml_c"
-MENU_STYLE = "panorama/styles/chameleon_background.vcss_c"
-MENU_VIDEO = "panorama/videos/chameleon_background.webm"
+MENU_DIR = "d2chameleon"
+MENU_VIDEO = MENU_DIR + "/menu_background.webm"
+LAST_MATCH = "panorama/layout/dashboard_background_last_match.vxml_c"
+MANAGER = "panorama/layout/dashboard_background_manager.vxml_c"
 
-LAYOUT_XML = ('<root><styles><include src="s2r://panorama/styles/dotastyles.vcss_c" />'
-              '<include src="s2r://%s" /></styles>'
-              '<Panel class="ChameleonBg" hittest="false">'
-              '<MoviePanel id="ChameleonBgMovie" src="s2r://%s" repeat="true" autoplay="onload" hittest="false" />'
-              '</Panel></root>' % (MENU_STYLE, MENU_VIDEO))
-STYLE_CSS = (".ChameleonBg { width: 100%; height: 100%; background-color: black; }\n"
-             "#ChameleonBgMovie { width: 100%; height: 100%; }\n")
+# The main-menu background is the "last match" dashboard background with the scene hidden and a video behind the buttons
+# (not in the hero view). The text mirrors Valve's layout; the 2 %s are the blur style and the dim alpha.
+LAST_MATCH_XML = '<root>\n    <styles>\n        <include src="s2r://panorama/styles/dotastyles.vcss" />\n        <include src="s2r://panorama/styles/dashboard_background_last_match.vcss" />\n        <include src="s2r://panorama/styles/dashboard_background_last_match_heroscale.vcss" />\n    </styles>\n    <DOTADashboardBackgroundLastMatch>\n        <DOTAScenePanel id="BackgroundScene" map="scenes/dashboard_background/dashboard_background_last_match_radiant" camera="versus_camera" light="versus_light" deferredalpha="false" renderdeferred="true" particleonly="false" style="visibility: collapse;" />\n        <MoviePanel id="ChameleonBackground" src="s2r://d2chameleon/menu_background.webm" repeat="true" autoplay="onload" hittest="false" style="width: 100%%; height: 100%%; horizontal-align: center; vertical-align: center;%s" />\n        <Panel id="ChameleonBackgroundDim" hittest="false" style="width: 100%%; height: 100%%; horizontal-align: center; vertical-align: center; background-color: #000000%s;" />\n        <Panel class="BackgroundFadeOverlay" hittest="false" style="visibility: collapse;" />\n        <Panel id="BGVignette" hittest="false" style="visibility: collapse;" />\n        <Panel id="DetailsContainer" style="visibility: collapse;">\n            <Label class="LastMatchTitle" text="#DOTA_Background_LastMatch_Title" />\n            <Label class="HeroName" text="{g:dota_hero_name:hero_id}" />\n            <Panel class="MatchInfo">\n                <Label id="Win" class="MatchOutcome Green" text="#dota_profile_recent_game_result_win" />\n                <Label id="Loss" class="MatchOutcome Red" text="#dota_profile_recent_game_result_loss" />\n                <Label id="NotScored" class="MatchOutcome" text="#dota_profile_recent_game_result_notscored" />\n                <Label class="KDALabel" text="#DOTA_Background_LastMatch_KDA" />\n                <Label class="KDA" text="{i:kills} / {i:deaths} / {i:assists}" />\n            </Panel>\n            <Panel id="Items">\n                <DOTAItemImage id="Item0" class="ItemImage" />\n                <DOTAItemImage id="Item1" class="ItemImage" />\n                <DOTAItemImage id="Item2" class="ItemImage" />\n                <DOTAItemImage id="Item3" class="ItemImage" />\n                <DOTAItemImage id="Item4" class="ItemImage" />\n                <DOTAItemImage id="Item5" class="ItemImage" />\n            </Panel>\n            <TextButton id="ViewDetailsButton" text="#DOTA_Background_LastMatch_ViewMatch" onactivate="DOTAShowLastMatchDetails()" />\n        </Panel>\n        <TextButton text="(DEBUG) Reset" id="DebugResetButton" onactivate="DOTABackgroundLastMatchDebugReset()" style="visibility: collapse;" />\n        <Panel id="MissingDataContainer" style="visibility: collapse;">\n            <Label class="MissingDataTitle" text="#DOTA_Background_LastMatch_WelcomeToDota" />\n        </Panel>\n    </DOTADashboardBackgroundLastMatch>\n</root>\n'
+MANAGER_XML = '<root>\n    <styles>\n        <include src="s2r://panorama/styles/dotastyles.vcss" />\n        <include src="s2r://panorama/styles/dashboard_background_manager.vcss" />\n    </styles>\n    <DOTADashboardBackgroundManager override-background="DOTADashboardBackgroundLastMatch" />\n</root>\n'
+
+
+def menu_files(blur: int = 0, dim: int = 10) -> dict:
+    """{path: compiled bytes} for the menu background; blur 0-30 (gaussian), dim 0-90 percent."""
+    blur = max(0, min(30, int(blur)))
+    alpha = max(0, min(255, round(max(0, min(90, int(dim))) * 255 / 100)))
+    last = LAST_MATCH_XML % ((" blur: gaussian(%d);" % blur) if blur else "", "%02x" % alpha)
+    return {LAST_MATCH: build(LAST_MATCH, last), MANAGER: build(MANAGER, MANAGER_XML)}

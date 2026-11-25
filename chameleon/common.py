@@ -29,7 +29,7 @@ if sys.platform == "win32":
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 APP_NAME = "Chameleon"
-APP_VERSION = "15.4"
+APP_VERSION = "15.6"
 
 CONFIG_DIR = Path(os.environ.get("CHAMELEON_HOME") or (Path.home() / ".chameleon"))
 CONFIG_FILE = CONFIG_DIR / "config.json"
@@ -50,8 +50,8 @@ DEFAULT_CONFIG = {
     "auto_restore_on_exit": True, "pack_resources": True, "pack_mode": "minimal",
     "patch_hero_model": True, "patch_signatures": True, "stock_models": True,
     "particle_swap": "hero", "default_mode": "auto", "effect_mode": "slot",
-    "icon_field": "inventory", "icon_source": "auto", "icon_fix_cast": True,
-    "bg_method": "menu", "install_method": "language", "lang_folder": "russian", "custom_folder": "dota_chameleon", "files_only": False, "ui_density": "m", "discord_rpc": True,
+    "icon_field": "inventory", "icon_source": "cdn", "icon_fix_cast": True,
+    "bg_blur": 0, "bg_dim": 10, "check_updates": True, "apply_count": 0, "star_hidden": False, "icon_item_source": "game",  "ui_density": "m", "discord_rpc": True,
     "launch_parameters": "-novid", "launch_preset": "Default", "launch_presets": [], "favorites": [],
 }
 # keys that are written at run time and must survive a save

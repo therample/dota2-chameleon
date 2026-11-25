@@ -39,10 +39,10 @@ def candidates_from_inventory_path(icon_path: str) -> List[str]:
 
 
 def hero_candidates(short_name: str) -> List[str]:
-    """Only the real portrait files. (Small minimap icons and crops were tried before and looked wrong.)"""
     sn = short_name.lower()
-    return [f"panorama/images/heroes/{sn}_png.vtex_c",
-            f"panorama/images/heroes/selection/npc_dota_hero_{sn}_png.vtex_c"]
+    return [f"panorama/images/heroes/{sn}_png.vtex_c", f"panorama/images/heroes/npc_dota_hero_{sn}_png.vtex_c",
+            f"panorama/images/heroes/selection/npc_dota_hero_{sn}_png.vtex_c", f"panorama/images/heroes/icons/{sn}_png.vtex_c",
+            f"panorama/images/heroes/crops/{sn}_png.vtex_c"]
 
 
 def choose_icon_path(raw: dict, mode: str, fallback: str = "") -> str:

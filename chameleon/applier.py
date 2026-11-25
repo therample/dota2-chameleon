@@ -26,9 +26,10 @@ class SkinApplier:
         self.database = database
         self.config = config or {}
         self.override_dir = CACHE_DIR / "override_build"
-        self.gameinfo = GameInfoManager(dota_path, sign=bool((config or {}).get('patch_signatures', True)), folder=self.custom_folder_name())
+        self.gameinfo = GameInfoManager(dota_path, sign=bool((config or {}).get('patch_signatures', True)))
         self.active_overrides: Dict[str, str] = {}
         self._data_changed = False
+        self.disabled: set = set()
         self.pack_resources: bool = config.get("pack_resources", True)
         self.river_color_builder = RiverColorVPKBuilder(database.vpk_readers)
         self.background_builder = BackgroundVPKBuilder(database.vpk_readers)
@@ -90,7 +91,25 @@ class SkinApplier:
         key = f"hero::{hero_name}::{resolved}"
         self.active_overrides.pop(key, None)
         self.active_overrides[key] = item_name
+        self._drop_overlaps(hero_name, key)
         return True
+
+    def _targets(self, key: str) -> set:
+        p = key.split("::")
+        if len(p) < 3:
+            return set()
+        if p[2] == CARRIER_SLOT:
+            c = self._taunt_carrier(p[1])
+            return {c} if c else set()
+        return set(self.database.slot_resolver.targets_for(p[1], p[2])[0])
+
+    def _drop_overlaps(self, hero: str, key: str):
+        """Two picks that land on the same default item stack up into nonsense: the new pick replaces the older one."""
+        mine = self._targets(key)
+        for k in list(self.active_overrides):
+            if k != key and k.startswith(f"hero::{hero}::") and mine & self._targets(k):
+                del self.active_overrides[k]
+                self.disabled.discard(k)
 
     def apply_ward(self, n): return self.apply_category("wards", n)
     def apply_courier(self, n): return self.apply_category("couriers", n)
@@ -101,16 +120,6 @@ class SkinApplier:
     def apply_announcer(self, n): return self.apply_category("announcers", n)
     def apply_mega_kills(self, n): return self.apply_category("mega_kills", n)
 
-    def apply_effect(self, hero_name, slot, item_name):
-        """Put a pure particle effect on one slot of a hero (one effect per slot)."""
-        if item_name not in {i.name for i in self.database.effect_library()}:
-            return False
-        resolved = self.database.resolve_slot(hero_name, slot) or slot
-        key = f"fx::{hero_name}::{resolved}"
-        self.active_overrides.pop(key, None)
-        self.active_overrides[key] = item_name
-        return True
-
     def apply_gem(self, hero_name, item_name):
         """Socket gem effects for a hero's arcana (Terrorblade, Techies ...): one gem per hero."""
         if item_name not in self.database.categories.get("gems", {}):
@@ -118,7 +127,23 @@ class SkinApplier:
         key = f"gem::{hero_name}::socket"
         self.active_overrides.pop(key, None)
         self.active_overrides[key] = item_name
+        self._gem_styles(hero_name, item_name)
         return True
+
+    def _gem_styles(self, hero: str, gem_name: str):
+        """The gem's colour is inherited by the hero's chosen items: their style whose name matches the gem (Abysm, Summer Warmth ...)."""
+        gem = self.database.items.get(gem_name)
+        words = {w for w in re.findall(r"[a-z]{4,}", f"{gem_name} {gem.localized_name if gem else ''}".lower()) if w not in ("gem", "gems")}
+        if not words:
+            return
+        for k, iname in list(self.active_overrides.items()):
+            if not k.startswith(f"hero::{hero}::"):
+                continue
+            it = self.database.items.get(iname)
+            for st in (it.styles if it else []) or []:
+                if any(w in str(st.name).lower() for w in words):
+                    self.active_styles[iname] = st.style_id
+                    break
 
     def apply_bugged_item(self, hero_name, item_name):
         if item_name not in self.database.bugged_items:
@@ -140,72 +165,45 @@ class SkinApplier:
                     self.active_overrides[f"bugged::{hn}::{resolved_slot}"] = item_name
         return True
 
+    def set_background(self, path: str):
+        self.background_builder.set_background(path)
+
     def set_river_color(self, color_name):
         self.river_color_builder.set_color(color_name)
         return True
 
-    def set_background(self, bg_path):
-        self.background_builder.set_background(bg_path)
         return True
 
     # ================================================================== where the mod is installed
-    # "language": game/dota_<language>/pakNN_dir.vpk - Dota reads pak*_dir.vpk only from the folder of a real (voice) language,
-    #             no gameinfo edit needed. Needs the launch option -language <name> (added by Launch).
-    # "custom"  : the old method - a folder of our own registered in gameinfo_branchspecific.gi.
-    def custom_folder_name(self) -> str:
-        name = re.sub(r"[^A-Za-z0-9_]", "", str(self.config.get("custom_folder") or MOD_FOLDER_NAME))[:32]
-        return name or MOD_FOLDER_NAME
-
-    def lang_dir(self) -> Path:
-        lang = re.sub(r"[^a-z_]", "", str(self.config.get("lang_folder") or "russian").lower()) or "russian"
-        return self.dota_path / "game" / f"dota_{lang}"
-
-    def method(self) -> str:
-        want = self.config.get("install_method", "custom")
-        return "language" if want == "language" and self.lang_dir().is_dir() else "custom"
-
+    # One method: our own folder next to Dota's, registered in gameinfo_branchspecific.gi, with one dota.signatures line.
     @property
     def mod_dir(self) -> Path:
-        return self.lang_dir() if self.method() == "language" else self.dota_path / "game" / self.custom_folder_name()
-
-    MANIFEST = BACKUP_DIR / "installed_pak.json"
-
-    def is_active(self) -> bool:
-        p = self._manifest()
-        return bool((p and p.exists()) or self.gameinfo.is_injected())
-
-
-    def _manifest(self) -> Optional[Path]:
-        try:
-            p = Path(json.loads(self.MANIFEST.read_text(encoding="utf-8")).get("path", ""))
-            return p if p.name.startswith("pak") and p.name.endswith("_dir.vpk") else None
-        except (OSError, ValueError):
-            return None
-
-    def remove_installed_pak(self):
-        p = self._manifest()
-        if p and p.exists():
-            p.unlink(missing_ok=True)
-        self.MANIFEST.unlink(missing_ok=True)
+        return self.dota_path / "game" / MOD_FOLDER_NAME
 
     @property
     def pak_path(self) -> Path:
-        if self.method() == "custom":
-            return self.mod_dir / "pak01_dir.vpk"
-        prev = self._manifest()
-        if prev and prev.parent == self.mod_dir:
-            return prev
-        for n in range(2, 30):                          # never Valve's own pak01_dir.vpk or another mod's file
-            cand = self.mod_dir / f"pak{n:02d}_dir.vpk"
-            if not cand.exists():
-                return cand
-        return self.mod_dir / "pak99_dir.vpk"
+        return self.mod_dir / "pak01_dir.vpk"
+
+    def is_enabled(self) -> bool:
+        """The mod is switched off while its pak is named *.vpk.off (nothing is deleted)."""
+        return not Path(str(self.pak_path) + ".off").exists()
+
+    def set_enabled(self, on: bool) -> bool:
+        pak, off = self.pak_path, Path(str(self.pak_path) + ".off")
+        if on and off.exists():
+            off.replace(pak)
+            return True
+        if not on and pak.exists():
+            pak.replace(off)
+            return True
+        return False
+
+    def is_active(self) -> bool:
+        return bool(self.gameinfo.is_injected() or self.pak_path.exists() or Path(str(self.pak_path) + ".off").exists())
 
     def launch_dota(self, params=""):
         try:
             launch_params = params or self.config.get("launch_parameters", "")
-            if self.method() == "language" and "-language" not in launch_params:
-                launch_params = (launch_params + " -language " + self.lang_dir().name[len("dota_"):]).strip()
             url = f"steam://run/570//{launch_params.replace(' ', '%20')}" if launch_params else "steam://run/570"
             webbrowser.open(url)
             log.info(f"Launching Dota 2 with params: {launch_params}")
@@ -248,6 +246,72 @@ class SkinApplier:
     # ---- stock paths: keep models after a reconnect (technique of Dota2 Mod Manager) ----
     # The server names the STOCK model paths; after a reconnect the client only loads those. So the chosen model is written under
     # the stock path (a file swap) and the model modifier is dropped, instead of pointing items_game at a path that is not loaded.
+    def _all_files(self) -> Dict[str, str]:
+        if getattr(self, "_files_cache", None) is None:
+            self._files_cache = {fp.lower(): fp for r in self.database.vpk_readers for fp in r.files}
+        return self._files_cache
+
+    def _sound_cursor_swaps(self, cat: str, src: dict, defaults: List[dict]) -> int:
+        """
+        Announcers / mega-kills: the pack's sound-event script is written over the default pack's script (file swap), because the
+        data change alone does not change the sound. Cursors: the pack's .cur/.ani files are written over the stock cursor files.
+        """
+        files, idx, n = self._all_files(), self._base_index(), 0
+        mods = [v for k, v in (src.get("visuals") or {}).items() if is_modifier_key(k) and isinstance(v, dict)]
+        if cat == "cursors":
+            for v in mods:
+                folder = normalise_path(str(v.get("modifier") or "")).rstrip("/") + "/"
+                if folder == "/":
+                    continue
+                for low, real in files.items():
+                    if low.startswith(folder) and low.endswith((".cur", ".ani")):
+                        stock = "resource/cursor/" + low[len(folder):]
+                        if stock in files and files[stock] != real:
+                            self._swap_pairs[files[stock]] = real
+                            n += 1
+            return n
+        if cat == "shaders":
+            # post-processing: the game draws the map through one material - the chosen one is written over it
+            stock = "materials/dev/deferred_post_process.vmat_c"
+            for s in self.database._all_strings(src.get("visuals", {})):
+                low = s.lower().replace(".vmat\"", ".vmat")
+                cand = low if low.endswith(".vmat_c") else (low + "_c" if low.endswith(".vmat") else "")
+                if cand and cand in files and stock in files and files[cand] != files[stock]:
+                    self._swap_pairs[files[stock]] = files[cand]
+                    return 1
+            return 0
+        if cat == "emblems":
+            ring = "particles/ui_mouseactions/selected_ring.vpcf_c"
+            for v in mods:
+                if str(v.get("type", "")).lower() == "particle_create":
+                    cand = normalise_path(str(v.get("modifier") or "")).lower() + "_c"
+                    if cand in files and ring in files and files[cand] != files[ring]:
+                        self._swap_pairs[files[ring]] = files[cand]
+                        return 1
+            return 0
+        def names(vs):
+            return [str(v.get("modifier") or "").lower() for v in vs if str(v.get("type", "")).lower() == "announcer" and v.get("modifier")]
+        pack = names(mods)
+        stock_script = "soundevents/voscripts/game_sounds_vo_announcer.vsndevts_c"
+        if cat == "announcers" and stock_script in files:
+            for pn in pack:
+                hit = next((r for l, r in files.items() if l.startswith("soundevents/voscripts/") and l.endswith(".vsndevts_c") and pn in l), None)
+                if hit and hit != files[stock_script]:
+                    self._swap_pairs[files[stock_script]] = hit
+                    return 1
+        dflt = [x for d in defaults for x in names([m for k, m in (d.get("visuals") or {}).items() if is_modifier_key(k) and isinstance(m, dict)])]
+        for pn in pack:
+            for dn in dflt[:1]:
+                if not dn or dn == pn:
+                    continue
+                for low, real in files.items():
+                    if low.startswith("soundevents/") and low.endswith(".vsndevts_c") and pn in low:
+                        stock = low.replace(pn, dn)
+                        if stock in files and files[stock] != real:
+                            self._swap_pairs[files[stock]] = real
+                            n += 1
+        return n
+
     def _m(self, item: dict, vis: dict, types=None) -> int:
         self._data_changed = True
         return merge_asset_modifiers(item, vis, types) if types else merge_asset_modifiers(item, vis)
@@ -276,8 +340,25 @@ class SkinApplier:
             self._unit_models = units
         return units.get(name)
 
+    MODEL_TYPES = ("model", "entity_model", "entity_clientside_model")
+
+    @classmethod
+    def _is_complex(cls, src: dict) -> bool:
+        """
+        Items that carry more than a plain model (a bird on the shoulder, attachments, hidden body groups, animations, effects) must keep
+        ALL their data: swapping only the model file under the stock path loses how it is attached to the hero.
+        """
+        vis = src.get("visuals") or {}
+        if not isinstance(vis, dict):
+            return False
+        if any(not is_modifier_key(k) and k not in ("skip_model_combine",) for k in vis):
+            return True
+        if any(is_modifier_key(k) and isinstance(v, dict) and str(v.get("type", "")).lower() not in cls.MODEL_TYPES for k, v in vis.items()):
+            return True
+        return any(k in src for k in ("hide_bodygroups", "attachment", "bodygroups", "bodygroup", "attachments"))
+
     def _prune_model_swaps(self, src: dict, hero: Optional[str] = None) -> dict:
-        if not self.config.get("stock_models", True):
+        if not self.config.get("stock_models", True) or self._is_complex(src):
             return src
         vis = src.get("visuals")
         if not isinstance(vis, dict):
@@ -304,7 +385,7 @@ class SkinApplier:
 
     def _override_item(self, default: dict, src: dict, hero_scoped: bool) -> dict:
         res = build_override(default, src, hero_scoped=hero_scoped)
-        if self.config.get("stock_models", True):
+        if self.config.get("stock_models", True) and not self._is_complex(src):
             stock, paid = default.get("model_player"), src.get("model_player")
             if looks_like_resource(stock) and looks_like_resource(paid) and normalise_path(stock) != normalise_path(paid):
                 idx = self._base_index()
@@ -350,6 +431,8 @@ class SkinApplier:
             self._final_sources.append((item_name, src, short))
 
         for key, item_name in list(self.active_overrides.items()):
+            if key in self.disabled:
+                continue
             src = self._source_block(item_name, items, prefabs)
             if src is None:
                 report.append({"key": key, "item": item_name, "error": "item not found in items_game"})
@@ -409,28 +492,19 @@ class SkinApplier:
                 elif note:
                     report[-1]["note"] = note
 
-            elif kind == "fx" and len(parts) >= 3:
-                hero, slot = parts[1], parts[2]
-                ids, used = resolver.targets_for(hero, slot)
-                n = sum(self._m(items[iid], src.get("visuals", {}), {"particle_create"}) for iid in ids)
-                record(key, item_name, ids, src, hero)
-                if not ids:
-                    report[-1]["error"] = f"hero has no default item for slot '{slot}'"
-                elif not n:
-                    report[-1]["error"] = "this effect has no particles to attach"
-                else:
-                    report[-1]["note"] = f"effect attached to the '{used}' item ({n} particle(s))"
-
             elif kind == "gem" and len(parts) >= 2:
                 hero = parts[1]
                 carrier = self._taunt_carrier(hero)
-                n = self._m(items[carrier], src.get("visuals", {})) if carrier else 0
+                gem = self.database.items.get(item_name)
+                word = self.database.gem_word(gem) if gem else ""
+                vis = dict(src.get("visuals", {}) or {})
+                vis.update(self.database.hero_gem_mods(hero, word) if word else {})
+                n = self._m(items[carrier], vis) if carrier else 0
                 record(key, item_name, [carrier] if carrier else [], src, hero)
                 if not carrier or not n:
-                    report[-1]["error"] = "this gem has no effect data (its colour is chosen by the game itself)" if carrier else "hero has no default item to carry the gem"
+                    report[-1]["error"] = "this hero has nothing that changes with this gem" if carrier else "hero has no default item to carry the gem"
                 else:
-                    report[-1]["note"] = f"gem attached to default item #{carrier} ({n} modifier(s))"
-
+                    report[-1]["note"] = f"{word or 'gem'}: {n} modifier(s) of the hero's own items switched on"
             elif kind == "cat" and len(parts) >= 3 and parts[1] == "courier_effects":
                 courier_fx.append((key, item_name, src))      # attached to the courier itself, after the courier skin is applied
 
@@ -440,6 +514,10 @@ class SkinApplier:
                 ids = find_default_ids(items, resolve_prefabs(own, prefabs), prefabs)
                 mode = self.config.get("default_mode", "auto")
                 notes: List[str] = []
+                if cat in ("announcers", "mega_kills", "cursors", "shaders", "emblems") and mode != "create":
+                    n_sw = self._sound_cursor_swaps(cat, src, [items[i] for i in ids])
+                    if n_sw:
+                        notes.append(f"{n_sw} game file(s) swapped (the sound / cursor files themselves)")
                 if mode == "create":
                     ids = []                                  # never touch Valve's own defaults
                 else:
@@ -718,15 +796,9 @@ class SkinApplier:
             stage("scan", 0, "Preparing")
             self._packed_resources.clear()
             self._data_changed = False
-            if self.method() == "custom":
-                self.mod_dir.mkdir(parents=True, exist_ok=True)
-                for old in self.mod_dir.glob("pak*_dir.vpk"):
-                    old.unlink()
-                self.remove_installed_pak()
-            elif self.config.get("install_method") == "language":
-                pass
-            if self.config.get("install_method") == "language" and self.method() == "custom":
-                say("Language folder not found - using the custom folder instead")
+            self.mod_dir.mkdir(parents=True, exist_ok=True)
+            for old in list(self.mod_dir.glob("pak*_dir.vpk")) + list(self.mod_dir.glob("pak*_dir.vpk.off")):
+                old.unlink()
             stage("scan", 1, "Preparing")
 
             stage("build", 0, "Rewriting items_game")
@@ -735,16 +807,12 @@ class SkinApplier:
                 say("Error: items_game.txt not available - rebuild the database in Settings")
                 return False
             builder = VPKBuilder()
-            files_only = bool(self.config.get("files_only"))
-            if self._data_changed and not files_only:
+            if self._data_changed:
                 builder.add_data(items_text.encode("utf-8"), "scripts/items/items_game.txt")
                 for path, text in extra_scripts.items():
                     builder.add_data(text.encode("utf-8"), path)
             else:
-                # light mod: only the swapped files (a few MB) instead of a full items_game copy (tens of MB)
-                self.last_report["items_game"] = "skipped (files only)" if files_only else "not needed"
-                if files_only and self._data_changed:
-                    self.last_report["files_only_note"] = "Some picks need the item data and were skipped in files-only mode."
+                self.last_report["items_game"] = "not needed"      # light mod: only swapped files, no items_game copy
             stage("build", 1, f"{len(self.last_report.get('overrides', []))} item(s)")
 
             stock = self._stock_files()
@@ -762,36 +830,27 @@ class SkinApplier:
                         stage("resources", i / n, f"{i}/{n} files")
             stage("resources", 1, "Resources ready")
 
-            stage("extras", 0, "River, background, fonts")
+            stage("extras", 0, "River")
             if self.river_color_builder.color:
                 self.river_color_builder.add_to(builder)
-            stage("extras", 0.4, "River, background, fonts")
+            stage("extras", 0.4, "River")
             if self.background_builder.background_path:
-                n_bg = self.background_builder.add_to(builder, lambda m: stage('extras', 0.5, m), self.config.get("bg_method", "layout"))
-                self.last_report["background"] = {"source": self.background_builder.background_path,
-                                                  "replaced": list(self.background_builder.last_replaced),
-                                                  "error": self.background_builder.last_error}
-                if not n_bg and self.background_builder.last_error:
-                    say("Warning: " + self.background_builder.last_error)
-            stage("extras", 0.8, "River, background, fonts")
+                n_bg = self.background_builder.add_to(builder, lambda m: stage("extras", 0.5, m),
+                                                      int(self.config.get("bg_blur", 0) or 0), int(self.config.get("bg_dim", 10) or 0))
+                self.last_report["background"] = {"replaced": list(self.background_builder.last_replaced), "error": self.background_builder.last_error}
+            stage("extras", 0.8, "River")
             stage("extras", 1, "Extras ready")
 
             stage("write", 0, "Writing the mod file")
             pak = self.pak_path
             builder.build_standalone(pak)
-            if self.method() == "language":
-                BACKUP_DIR.mkdir(parents=True, exist_ok=True)
-                self.MANIFEST.write_text(json.dumps({"path": str(pak)}), encoding="utf-8")
             self.write_autoexec()
             stage("write", 1, "Mod file written")
 
             stage("register", 0, "Registering in gameinfo")
-            if self.method() == "custom":
-                if not self.gameinfo.inject_vpk():
-                    say("Error: could not patch gameinfo_branchspecific.gi")
-                    return False
-            else:
-                self.gameinfo.remove_vpk()                  # language folder needs no gameinfo edit (and no signature line)
+            if not self.gameinfo.inject_vpk():
+                say("Error: could not patch gameinfo_branchspecific.gi")
+                return False
             self.last_report["total_files"] = len(builder._path_index)
             if self.river_color_builder.color:
                 self.last_report["river"] = self.river_color_builder.color
@@ -825,8 +884,6 @@ class SkinApplier:
         self._packed_resources.clear()
         self.gameinfo.remove_vpk()
         self.remove_autoexec_block()
-        self.remove_installed_pak()
-        custom = self.dota_path / "game" / self.custom_folder_name()
-        if custom.exists():
-            shutil.rmtree(custom, ignore_errors=True)
+        if self.mod_dir.exists():
+            shutil.rmtree(self.mod_dir, ignore_errors=True)
         return True

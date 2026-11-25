@@ -87,14 +87,6 @@ class BackgroundVPKBuilder:
     them from the author's repository to a local cache, from where they are added to the mod.
     Only .webm (VP8/VP9) is accepted.
     """
-    REPO_RAW = "https://raw.githubusercontent.com/h6rd/BackgroundChanger/main/full/"
-    LAYOUT_FILES = (
-        "panorama/layout/dashboard.vxml_c", "panorama/layout/dashboard_background_last_match.vxml_c",
-        "panorama/layout/dashboard_background_manager.vxml_c", "panorama/layout/dashboard_page_home.vxml_c",
-        "panorama/layout/hero_loadout_background_images.vxml_c", "panorama/styles/dashboard_background_last_match.vcss_c",
-        "panorama/styles/hero_loadout_background_images.vcss_c", "panorama/styles/dashboard_background_manager.vcss_c",
-    )
-    VIDEO_TARGET = "panorama/videos/zxc/zxc.webm"
     MAX_BYTES = 200 * 1024 * 1024
 
     def __init__(self, vpk_readers: List[VPKReader], cache_dir: Optional[Path] = None):
@@ -113,32 +105,8 @@ class BackgroundVPKBuilder:
         self.last_error = ""
         self.last_replaced = []
 
-    def layout_installed(self) -> bool:
-        return all((self.cache / f).exists() and (self.cache / f).stat().st_size > 100 for f in self.LAYOUT_FILES)
-
-    def install_layout(self) -> Tuple[bool, str]:
-        """Download the layout set once. Needs internet; returns (ok, message)."""
-        try:
-            import requests
-        except ImportError:
-            return False, "the 'requests' package is missing"
-        for f in self.LAYOUT_FILES:
-            dst = self.cache / f
-            if dst.exists() and dst.stat().st_size > 100:
-                continue
-            try:
-                r = requests.get(self.REPO_RAW + f, timeout=30)
-            except Exception as ex:
-                return False, f"download failed: {ex}"
-            if r.status_code != 200 or len(r.content) < 100:
-                return False, f"download failed for {f} (HTTP {r.status_code})"
-            dst.parent.mkdir(parents=True, exist_ok=True)
-            dst.write_bytes(r.content)
-        return True, "layout files installed"
-
     VIDEO_EXTS = (".webm", ".mp4", ".mov", ".mkv", ".avi", ".gif", ".m4v")
     IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tga")
-    BG_HINTS = ("background", "dashboard", "_bg", "bg_", "menu", "home", "main_menu", "backdrop")
     # even width/height (yuv420p needs it), at most 1080p, 30 fps: odd sizes / 4K / 60 fps are classic "black screen" causes
     SCALE = "scale='trunc(min(1920,iw)/2)*2':'trunc(min(1080,ih)/2)*2':force_original_aspect_ratio=decrease:force_divisible_by=2"
 
@@ -222,54 +190,14 @@ class BackgroundVPKBuilder:
         self.last_error = "The video stays above 14 MB even after compression - use a shorter one."
         return None
 
-    def _game_file(self, path: str) -> Optional[bytes]:
-        for r in self.vpk_readers:
-            if path in r.files:
-                return r.extract_to_bytes(path)
-        return None
-
-    def _add_menu(self, builder: 'VPKBuilder', video: bytes) -> int:
-        """
-        Native method: Valve's own dashboard layout is read from the game, its background manager is pointed at a layout of ours
-        that plays the video full screen, and everything is written back as Panorama resources. Nothing is downloaded.
-        """
+    def _add_menu(self, builder: 'VPKBuilder', video: bytes, blur: int = 0, dim: int = 10) -> int:
         from . import panorama as pa
-        dash = self._game_file("panorama/layout/dashboard.vxml_c")
-        tpl_css = self._game_file("panorama/styles/dotastyles.vcss_c")
-        if not dash or not tpl_css:
-            self.last_error = "The game's menu files were not found (dashboard layout)."
-            return 0
-        try:
-            src = pa.get_source(dash)
-            pat = re.compile(r'(<DOTADashboardBackgroundManager\b[^>]*\boverride-background=")[^"]*(")')
-            if len(pat.findall(src)) != 1:
-                self.last_error = "This Dota version changed the menu background layout - use the other method for now."
-                return 0
-            patched = pat.sub(lambda m: m.group(1) + "s2r://" + pa.MENU_LAYOUT + m.group(2), src)
-            files = {"panorama/layout/dashboard.vxml_c": pa.set_source(dash, patched),
-                     pa.MENU_LAYOUT: pa.set_source(dash, pa.LAYOUT_XML),
-                     pa.MENU_STYLE: pa.set_source(tpl_css, pa.STYLE_CSS)}
-        except (pa.PanoramaError, UnicodeDecodeError, struct.error) as ex:
-            self.last_error = f"Could not read the game's menu layout ({ex})."
-            return 0
-        for path, data in files.items():
+        for path, data in pa.menu_files(blur, dim).items():
             builder.add_data(data, path)
             self.last_replaced.append(path)
         builder.add_data(video, pa.MENU_VIDEO)
         self.last_replaced.append(pa.MENU_VIDEO)
         return len(self.last_replaced)
-
-    # ---- the game's own menu background videos (used by the "files" method)
-    def all_videos(self) -> List[str]:
-        found = set()
-        for reader in self.vpk_readers:
-            for fp in reader.files:
-                if fp.startswith("panorama/videos/") and fp.endswith(".webm"):
-                    found.add(fp)
-        return sorted(found)
-
-    def targets(self) -> List[str]:
-        return [v for v in self.all_videos() if any(h in v for h in self.BG_HINTS)]
 
     def _read_video(self, progress=None) -> Optional[bytes]:
         f = Path(self.background_path)
@@ -308,39 +236,15 @@ class BackgroundVPKBuilder:
             return None
         return f.read_bytes()
 
-    def add_to(self, builder: 'VPKBuilder', progress=None, method: str = "layout") -> int:
-        """
-        method "layout": BackgroundChanger's compiled menu layouts + your clip at panorama/videos/zxc/zxc.webm.
-        method "files" : your clip replaces the game's own menu background videos (no layout files needed).
-        """
+    def add_to(self, builder: 'VPKBuilder', progress=None, blur: int = 0, dim: int = 10) -> int:
+        """Menu background: your clip behind the main menu (blur / dim), written the way the d2mm menu mod does it."""
         self.last_replaced = []
         if not self.background_path:
             return 0
         data = self._read_video(progress)
         if data is None:
             return 0
-        if method == "menu":
-            return self._add_menu(builder, data)
-        if method == "files":
-            targets = self.targets()
-            if not targets:
-                self.last_error = f"No menu-background video found in the game files ({len(self.all_videos())} videos)."
-                return 0
-            for t in targets:
-                builder.add_data(data, t)
-                self.last_replaced.append(t)
-            return len(targets)
-        if not self.layout_installed():
-            ok, msg = self.install_layout()
-            if not ok:
-                self.last_error = "Menu layout files are not installed: " + msg
-                return 0
-        for f in self.LAYOUT_FILES:
-            builder.add_data((self.cache / f).read_bytes(), f)
-            self.last_replaced.append(f)
-        builder.add_data(data, self.VIDEO_TARGET)
-        self.last_replaced.append(self.VIDEO_TARGET)
-        return len(self.last_replaced)
+        return self._add_menu(builder, data, blur, dim)
 
 
 # ==============================================================================

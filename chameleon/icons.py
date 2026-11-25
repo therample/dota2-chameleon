@@ -3,6 +3,7 @@ from .common import *
 from .vpk_io import *
 from .models import *
 from .iconsrc import IconSource
+from .webicons import MarketIcons
 
 # ==============================================================================
 # ICON MANAGER
@@ -17,6 +18,9 @@ from .iconsrc import IconSource
 # The disk cache file name contains the profile, so changing a setting never shows icons made under another one.
 # ==============================================================================
 
+ITEM_CDN = ["https://cdn.cloudflare.steamstatic.com/apps/570/icons/{path}.png",
+            "https://steamcdn-a.akamaihd.net/apps/570/icons/{path}.png",
+            "https://cdn.akamai.steamstatic.com/apps/570/icons/{path}.png"]
 HERO_CDN = ["https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/{short}.png",
             "https://cdn.akamai.steamstatic.com/apps/dota2/images/dota_react/heroes/{short}.png"]
 
@@ -27,6 +31,7 @@ class _Worker(QThread):
     def __init__(self, readers):
         super().__init__()
         self.source = IconSource(readers)
+        self.market = MarketIcons(ICONS_DIR / "market_urls.json")
         self.queue: List[tuple] = []
         self.mutex = QMutex()
         self.cond = QWaitCondition()
@@ -58,7 +63,10 @@ class _Worker(QThread):
                 continue
             kind, key, a, b, cast = task
             try:
-                png = self.source.hero_icon(a, cast) if kind == "hero" else self.source.item_icon(a, b, False)
+                if kind == "web":
+                    png = self.market.image_for(a)
+                else:
+                    png = self.source.hero_icon(a, cast) if kind == "hero" else self.source.item_icon(a, b, False)
             except Exception as e:
                 log.error("icon worker %s: %s", key, e)
                 png = None
@@ -79,10 +87,12 @@ class _Hub(QObject):
         self.replies: List[QNetworkReply] = []
         self.source = "auto"
         self.cast = True
+        self.item_source = "game"
+        self.web_names: Dict[str, str] = {}
 
     @property
     def profile(self) -> str:
-        return f"{self.source}{int(self.cast)}"
+        return f"{self.source}{int(self.cast)}{self.item_source[0]}"
 
     def reset(self):
         self.cache.clear()
@@ -137,8 +147,13 @@ class _Hub(QObject):
         if data and self._store(key, data):
             self.stats["from_vpk"] += 1
             return
+        if key.startswith("hero_") and self.source == "auto":      # game files had nothing: Steam as the backup
+            return self.cdn_for(key)
+        if not key.startswith("hero_") and self.item_source == "auto" and self.web_names.get(key) and self.worker:
+            name = self.web_names.pop(key)                           # game files had no picture: ask the web
+            return self.worker.add(("web", key, name, "", False))
         self.stats["missing"] += 1
-        self.pending.discard(key)          # nothing found: the page shows its own placeholder
+        self.pending.discard(key)
 
     def cdn_for(self, key: str, then_game=None):
         """Hero portraits only. `then_game` is called when the CDN has nothing (or is unreachable)."""
@@ -186,12 +201,13 @@ class IconManager:
         return cls.hub
 
     @classmethod
-    def configure(cls, source: str = "auto", cast: bool = True) -> bool:
+    def configure(cls, source: str = "auto", cast: bool = True, item_source: str = "game") -> bool:
         """Apply the icon settings. Returns True when they changed (the page must re-request its icons)."""
         hub = cls._hub()
         source = source if source in ("auto", "game", "cdn") else "auto"
-        changed = (source != hub.source) or (bool(cast) != hub.cast)
-        hub.source, hub.cast = source, bool(cast)
+        item_source = item_source if item_source in ("game", "web", "auto") else "game"
+        changed = (source != hub.source) or (bool(cast) != hub.cast) or (item_source != hub.item_source)
+        hub.source, hub.cast, hub.item_source = source, bool(cast), item_source
         if changed:
             hub.reset()
         return changed
@@ -232,7 +248,7 @@ class IconManager:
             cls.hub.worker.wait(2000)
 
     @classmethod
-    def request(cls, kind: str, name: str, icon_path: str = "", size: int = 128, key: Optional[str] = None) -> Tuple[str, str]:
+    def request(cls, kind: str, name: str, icon_path: str = "", size: int = 128, key: Optional[str] = None, web_name: str = "") -> Tuple[str, str]:
         """Returns (cache_key, base64 or ''). When '' is returned the icon arrives later via icon_ready."""
         hub = cls._hub()
         if kind == "hero":
@@ -247,13 +263,20 @@ class IconManager:
             hub.stats["from_disk"] += 1
             return key, hub.to_b64(pm, size)
         hub.stats["requested"] += 1
+        if icon_path:
+            hub.paths[key] = icon_path
         if key in hub.pending:
             return key, ""
         hub.pending.add(key)
-        send_to_game = lambda: hub.worker.add(task) if hub.worker else (hub.stats.__setitem__("missing", hub.stats["missing"] + 1), hub.pending.discard(key))
-        if kind == "hero" and hub.source in ("auto", "cdn"):
-            # portraits: Steam CDN first (always the right picture), game files only as the fallback
-            hub.cdn_for(key, send_to_game if hub.source == "auto" else None)
+        if kind == "hero" and hub.source == "cdn":
+            hub.cdn_for(key)                                  # Steam only
+        elif kind != "hero" and hub.item_source == "web" and hub.worker is not None:
+            hub.worker.add(("web", key, web_name or name, "", False))
+        elif hub.worker is not None:
+            if kind != "hero" and hub.item_source == "auto":
+                hub.web_names[key] = web_name or name
+            hub.worker.add(task)                              # game files first (heroes: Steam is the backup in "auto")
         else:
-            send_to_game()
+            hub.stats["missing"] += 1
+            hub.pending.discard(key)
         return key, ""

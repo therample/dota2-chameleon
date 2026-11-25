@@ -29,7 +29,7 @@ class ChameleonWindow(QMainWindow):
         self.bridge.config = self.config
         self.bridge.rpc.configure(self.config.get('discord_rpc', True), self.config.get('language', 'en'))
         IconManager._hub()                       # QObjects for icons must be created in the GUI thread
-        IconManager.configure(self.config.get('icon_source', 'auto'), self.config.get('icon_fix_cast', True))
+        IconManager.configure(self.config.get('icon_source', 'auto'), self.config.get('icon_fix_cast', True), self.config.get('icon_item_source', 'game'))
         self.bridge._connect_icons()
         self.setup_ui()
         self.db_loaded_signal.connect(self._on_db_loaded)

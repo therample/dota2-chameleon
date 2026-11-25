@@ -6,9 +6,10 @@ from .common import *
 class PresetManager:
     def __init__(self):
         PRESETS_DIR.mkdir(parents=True, exist_ok=True)
-    def save_preset(self, name, overrides, gems, settings=None, frostbloom=None, river_color="", background_path=""):
-        preset = {"name": name, "overrides": overrides, "gems": gems, "settings": settings or {}, "frostbloom": frostbloom or {}, "river_color": river_color, "background_path": background_path, "created": datetime.now().isoformat()}
-        (PRESETS_DIR / f"{name}.json").write_text(json.dumps(preset, indent=2), encoding="utf-8")
+    def save_preset(self, name, overrides, settings=None, river_color="", background=None):
+        preset = {"name": name, "version": 2, "overrides": overrides, "settings": settings or {}, "river_color": river_color,
+                  "background": background or {}, "created": datetime.now().isoformat()}
+        (PRESETS_DIR / f"{name}.json").write_text(json.dumps(preset, indent=2, ensure_ascii=False), encoding="utf-8")
         return True
     def load_preset(self, name):
         p = PRESETS_DIR / f"{name}.json"
