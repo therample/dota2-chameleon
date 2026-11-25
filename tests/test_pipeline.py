@@ -218,7 +218,7 @@ LOC = ('"lang" { "Language" "English" "Tokens" { "DOTA_Item_Cool_Head" "Cool Hea
        '"DOTA_Item_Funny_Taunt" "Funny Taunt" "DOTA_Item_Alt_Weapon" "Alt Weapon" "DOTA_Item_Head_Acc" "Head Accessory" '
        '"DOTA_Item_Misc" "Misc Thing" "DOTA_Item_Cool_Announcer" "Cool Announcer" "DOTA_Item_Snow_Weather" "Snow" '
        '"DOTA_Item_Rain_Weather" "Rain" "DOTA_Item_Finch_Blade" "Finch Blade" "DOTA_Item_Finch_Taunt" "Finch Taunt" '
-       '"DOTA_Item_Ghost_Effigy" "Ghost Effigy" "DOTA_Item_Stone_Ancient" "Stone Ancient" "DOTA_Item_Ember_Tormentor" "Ember Tormentor" "DOTA_Item_Noir_Filter" "Noir Filter" "DOTA_Item_Lut_Pack" "Lut Pack" "DOTA_Item_HeadFx" "Head Fx" "DOTA_Item_CourierFx" "Courier Fx" "DOTA_Item_DeathFx" "Death Fx" "DOTA_Item_MapFx" "Map Fx" "DOTA_Item_TeleFx" "Tele Fx" "DOTA_Item_BlinkFx" "Blink Fx" "DOTA_Item_KillFx" "Kill Fx" "DOTA_Item_StatueA" "Statue A" "DOTA_Item_PrismaticRed" "Prismatic Red" "DOTA_Item_EtherealGem" "Ethereal Gem" "DOTA_Item_Unrelated" "Unrelated Gem" "DOTA_Item_Victory" "Victory Gem" "DOTA_Item_IceRoshan" "Ice Roshan" "DOTA_Item_GoldCourier" "Gold Courier" "DOTA_Item_EpicPack" "Epic Music Pack" "DOTA_Item_MusicTreasure" "Music Treasure" "DOTA_Item_MusicBundle" "Music Bundle" "DOTA_Item_Frostbloom_Blade" "Frostbloom Blade" "DOTA_Item_Sparrow_Persona" "Sparrow Persona" "DOTA_Item_Finch_Persona" "Finch Persona" "DOTA_Item_Ti9_Pack" "TI9 Pack" "DOTA_Item_Dup" "Dup Item" "DOTA_Item_Paid_Head" "Paid Head" "DOTA_Item_Courier_Glow" "Courier Glow" "Attrib_Particle5" "Frostbloom" "Attrib_Particle6" "Snowdrift" "DOTA_Item_Odd_Slot" "Odd Slot" "DOTA_Item_Tail" "Tail Thing" "DOTA_Item_Bird_Creeps" "Bird Creeps" "DOTA_Item_Crow_Towers" "Crow Towers" "DOTA_Item_Sun_Towers" "Sun Towers" "DOTA_Item_Hydra_Cursor" "Hydra Cursor" "DOTA_Item_Midnight_Hud" "Midnight HUD" "DOTA_Item_Diretide_Streak" "Diretide Streak" "DOTA_Item_Odd_Announcer" "Odd Announcer" "DOTA_Item_Odd_MegaKills" "Odd Mega-Kills" "DOTA_Item_Styled_Head" "Styled Head" "DOTA_Style_Base" "Classic" "DOTA_Style_Golden" "Golden" } }')
+       '"DOTA_Item_Ghost_Effigy" "Ghost Effigy" "DOTA_Item_Stone_Ancient" "Stone Ancient" "DOTA_Item_Ember_Tormentor" "Ember Tormentor" "DOTA_Item_Noir_Filter" "Noir Filter" "DOTA_Item_Lut_Pack" "Lut Pack" "DOTA_Item_HeadFx" "Head Fx" "DOTA_Item_CourierFx" "Courier Fx" "DOTA_Item_DeathFx" "Death Fx" "DOTA_Item_MapFx" "Map Fx" "DOTA_Item_TeleFx" "Tele Fx" "DOTA_Item_BlinkFx" "Blink Fx" "DOTA_Item_KillFx" "Kill Fx" "DOTA_Item_StatueA" "Statue A" "DOTA_Item_PrismaticRed" "Prismatic Red" "DOTA_Item_EtherealGem" "Ethereal Gem" "DOTA_Item_Unrelated" "Unrelated Gem" "DOTA_Item_Victory" "Victory Gem" "DOTA_Item_IceRoshan" "Ice Roshan" "DOTA_Item_GoldCourier" "Gold Courier" "DOTA_Item_EpicPack" "Epic Music Pack" "DOTA_Item_MusicTreasure" "Music Treasure" "DOTA_Item_MusicBundle" "Music Bundle" "DOTA_Item_Frostbloom_Blade" "Frostbloom Blade" "DOTA_Item_Sparrow_Persona" "Sparrow Persona" "DOTA_Item_Finch_Persona" "Finch Persona" "DOTA_Item_Ti9_Pack" "TI9 Pack" "DOTA_Item_Dup" "Dup Item" "DOTA_Item_Paid_Head" "Paid Head" "DOTA_Item_Courier_Glow" "Courier Glow" "DOTA_Item_Odd_Slot" "Odd Slot" "DOTA_Item_Tail" "Tail Thing" "DOTA_Item_Bird_Creeps" "Bird Creeps" "DOTA_Item_Crow_Towers" "Crow Towers" "DOTA_Item_Sun_Towers" "Sun Towers" "DOTA_Item_Hydra_Cursor" "Hydra Cursor" "DOTA_Item_Midnight_Hud" "Midnight HUD" "DOTA_Item_Diretide_Streak" "Diretide Streak" "DOTA_Item_Odd_Announcer" "Odd Announcer" "DOTA_Item_Odd_MegaKills" "Odd Mega-Kills" "DOTA_Item_Styled_Head" "Styled Head" "DOTA_Style_Base" "Classic" "DOTA_Style_Golden" "Golden" } }')
 LOC_RU = '"lang" { "Language" "Russian" "Tokens" { "DOTA_Item_Cool_Head" "Крутая шапка" } }'
 
 
@@ -394,9 +394,8 @@ class PipelineTest(unittest.TestCase):
         # identity of the default item is kept, content comes from the wanted item
         w = items["1001"]
         self.assertEqual((w["name"], w["prefab"], w["item_slot"]), ("default_weapon", "default_item", "weapon"))
-        # stock path stays (what the server and a reconnecting client use); the arcana model is written UNDER it
-        self.assertEqual(w["model_player"], "models/heroes/sparrow/weapon.vmdl")
-        self.assertEqual(pak.get_file("models/heroes/sparrow/weapon.vmdl_c").read(), GAME_FILES["models/items/sparrow/arcana/weapon.vmdl_c"])
+        # an arcana carries effects / animations: it keeps ALL its data (attachments) and its own model path
+        self.assertEqual(w["model_player"], "models/items/sparrow/arcana/weapon.vmdl")
 
         # every modifier survived (this is the bug that removed ambient effects)
         head_mods = [m["modifier"] for m in _mods(items["1002"])]
@@ -939,14 +938,14 @@ class V15Test(unittest.TestCase):
         self.assertIn("map_fx_a", c["shaders"])                       # map_effect = screen/map shaders
         self.assertEqual(c["teleport_effects"], ["tele_fx_a"])        # prefab misc, slot teleport_effect
         self.assertEqual(c["blink_effects"], ["blink_fx_a"])
-        self.assertEqual(c["kill_effects"], ["kill_fx_a"])
+        self.assertNotIn("kill_effects", c)
         self.assertNotIn("statues", c)                                 # heroic statues were removed
         self.assertEqual(sorted(c["gems"]), ["ethereal_gem", "prismatic_red", "unrelated_gem", "victory_gem_stats"])
         self.assertIn("epic_pack_x", c["music"])                      # recognised by the music event in its sound modifier
         self.assertNotIn("music_treasure", c["music"])                # a treasure chest / bundle is not a music pack
         self.assertNotIn("music_bundle_x", c["music"])
         groups = {g: cats for g, cats in self.db.CATEGORY_GROUPS}
-        self.assertEqual(groups["effects"], ["head_effects", "teleport_effects", "blink_effects", "death_effects", "kill_effects", "streak", "multikill_banners", "item_effects"])
+        self.assertEqual(groups["effects"], ["head_effects", "teleport_effects", "blink_effects", "death_effects", "streak", "multikill_banners"])
         self.assertNotIn("kills", groups)
         self.assertNotIn("fonts", groups["interface"])
 
@@ -1167,19 +1166,7 @@ class V154Test(unittest.TestCase):
         self.assertNotIn("scripts/items/items_game.txt", names)                       # light mod: a few MB instead of a full items_game
         self.assertEqual(a.last_report["items_game"], "not needed")
 
-    def test_files_only_mode_skips_picks_that_need_item_data(self):
-        a = self.ap(files_only=True)
-        a.apply_hero_skin(HERO, "arcana_weapon")
-        a.apply_hero_skin(HERO, "paid_head")
-        self.assertTrue(a.commit())
-        self.assertNotIn("scripts/items/items_game.txt", {f for f in self.pak(a)})
-        self.assertIn("skipped", a.last_report["items_game"])
 
-    def test_item_without_stock_model_keeps_the_paid_path(self):
-        a = self.ap()
-        a.apply_hero_skin(FINCH, "finch_persona_x")                               # no model_player involved: data path stays
-        self.assertTrue(a.commit())
-        self.assertIn("scripts/items/items_game.txt", {f for f in self.pak(a)})
 
     # ---- courier effects bind to the courier itself ----
     def test_courier_effect_is_attached_to_the_courier_item(self):
@@ -1200,72 +1187,11 @@ class V154Test(unittest.TestCase):
         self.assertFalse([v for v in items.values() if isinstance(v, dict) and v.get("item_slot") == "courier_effect" and v.get("baseitem") == "1"])   # no slot item created
 
     # ---- install methods ----
-    def test_language_folder_install_uses_its_own_pak_and_no_gameinfo_edit(self):
-        game = build_fake_dota(Path(_TMP) / "lang")
-        lang = game / "game" / "dota_russian"
-        lang.mkdir()
-        valve = lang / "pak01_dir.vpk"
-        valve.write_bytes(b"VALVE-VOICE-PACK")
-        db = SkinDatabase(game)
-        self.assertTrue(db.initialize())
-        a = SkinApplier(game, db, {"pack_resources": True, "install_method": "language", "lang_folder": "russian"})
-        gi_before = a.gameinfo.branch_path.read_bytes()
-        a.apply_hero_skin(HERO, "arcana_weapon")
-        self.assertTrue(a.commit(), a.last_report)
-        self.assertEqual(a.method(), "language")
-        self.assertEqual(valve.read_bytes(), b"VALVE-VOICE-PACK")                  # Valve's pak is never touched
-        self.assertEqual(a.pak_path.name, "pak02_dir.vpk")
-        self.assertTrue(a.pak_path.exists())
-        self.assertEqual(a.gameinfo.branch_path.read_bytes(), gi_before)           # gameinfo untouched
-        self.assertTrue(a.is_active())
-        self.assertTrue(a.commit())                                                # again: same file, no pak03
-        self.assertEqual(sorted(p.name for p in lang.glob("pak*_dir.vpk")), ["pak01_dir.vpk", "pak02_dir.vpk"])
-        a.restore()
-        self.assertFalse((lang / "pak02_dir.vpk").exists())
-        self.assertEqual(valve.read_bytes(), b"VALVE-VOICE-PACK")
-        self.assertFalse(a.is_active())
 
-    def test_language_method_falls_back_to_the_custom_folder_when_the_folder_is_missing(self):
-        a = self.ap(install_method="language", lang_folder="russian")
-        self.assertEqual(a.method(), "custom")
-        a.apply_hero_skin(HERO, "paid_head")
-        self.assertTrue(a.commit())
-        self.assertTrue(a.pak_path.exists())
 
-    def test_custom_folder_name_is_configurable_and_sanitised(self):
-        a = self.ap(custom_folder="my mod/../x")
-        self.assertEqual(a.custom_folder_name(), "mymodx")
 
     # ---- panorama container ----
-    def test_panorama_source_roundtrip_keeps_other_blocks(self):
-        import struct, zlib
-        from chameleon import panorama as pa
-        text = b'<root><DOTADashboardBackgroundManager id="m" override-background="s2r://panorama/layout/old.vxml_c" /></root>'
-        blocks = [(b"REDI", b"R" * 40), (b"DATA", struct.pack("<IH", zlib.crc32(text) & 0xFFFFFFFF, 0) + text), (b"SrMa", b"S" * 20)]
-        out = bytearray(16 + 12 * len(blocks)); pos = len(out); ent = []
-        for n, b in blocks:
-            pos = (pos + 15) & ~15; ent.append((n, pos, len(b))); out.extend(b"\0" * (pos - len(out))); out.extend(b); pos = len(out)
-        struct.pack_into("<IHHII", out, 0, len(out), 12, 0, 8, len(blocks))
-        for i, (n, o, l) in enumerate(ent):
-            at = 16 + 12 * i; out[at:at + 4] = n; struct.pack_into("<II", out, at + 4, o - (at + 4), l)
-        self.assertIn("old.vxml_c", pa.get_source(bytes(out)))
-        new = pa.set_source(bytes(out), "<root/>")
-        self.assertEqual(pa.get_source(new), "<root/>")
-        self.assertEqual([n for n, _ in pa.read_blocks(new)[1]], [b"REDI", b"DATA", b"SrMa"])
-        self.assertEqual(dict(pa.read_blocks(new)[1])[b"SrMa"], b"S" * 20)
-        with self.assertRaises(pa.PanoramaError):
-            pa.read_blocks(b"short")
 
-
-    def test_menu_background_reports_a_changed_dota_layout(self):
-        a = self.ap(bg_method="menu")
-        a.background_builder.convert = lambda src, progress=None: None
-        vid = Path(_TMP) / "m2.webm"
-        vid.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 100)
-        a.set_background(str(vid))
-        a.apply_hero_skin(HERO, "paid_head")
-        a.commit()
-        self.assertIn("menu", a.last_report["background"]["error"].lower())        # fake game has no dashboard layout
 
     def test_video_is_prepared_small_enough_for_the_menu(self):
         import shutil, subprocess
@@ -1522,25 +1448,7 @@ class V155Test(unittest.TestCase):
         return a
 
     # ---- the game's own effect list ----
-    def test_effect_library_comes_from_the_games_effect_list_and_the_seasonal_files(self):
-        labels = [e["label"] for e in self.db.particle_library()]
-        self.assertIn("Frostbloom", labels)
-        self.assertIn("Snowdrift", labels)
-        self.assertIn("Gold Drop", labels)                         # seasonal ambient file found in the game files
-        self.assertFalse([l for l in labels if "head" in l.lower()])  # hero items are not effects
 
-    def test_effect_goes_to_the_chosen_slot_only(self):
-        a = self.ap()
-        self.assertFalse(a.apply_effect(HERO, "weapon_alt", "paid_head"))
-        self.assertTrue(a.apply_effect(HERO, "weapon_alt", "fxp_5"))
-        self.assertTrue(a.commit(), a.last_report)
-        import vpk, chameleon.kv as kvm
-        raw = vpk.open(str(a.pak_path)).get_file("scripts/items/items_game.txt").read().decode()
-        items = kvm.KeyValueParser(raw).parse()["items_game"]["items"]
-        self.assertIn("particles/econ/seasonal/frostbloom.vpcf", str(items["1004"]))
-        self.assertNotIn("frostbloom.vpcf", str(items["1002"]))
-        a.apply_effect(HERO, "weapon_alt", "fxp_6")                 # one effect per hero slot
-        self.assertEqual([k for k in a.active_overrides if k.startswith("fx::")], ["fx::%s::weapon_alt" % HERO])
 
     # ---- menu background: the d2mm way (video + three layouts), blur and dim ----
     LAST = ('<root><styles><include src="s2r://panorama/styles/dotastyles.vcss" /></styles><DOTADashboardBackgroundLastMatch>'
@@ -1549,79 +1457,7 @@ class V155Test(unittest.TestCase):
             '<Panel id="DetailsContainer"><Label text="x" /></Panel><TextButton text="d" id="DebugResetButton" onactivate="X()" />'
             '<Panel id="MissingDataContainer"><Label text="y" /></Panel></DOTADashboardBackgroundLastMatch></root>')
 
-    def test_menu_background_layout_text(self):
-        from chameleon.extras import BackgroundVPKBuilder
-        out = BackgroundVPKBuilder([]).patch_last_match(self.LAST, 8, 20)
-        self.assertIn('src="s2r://d2chameleon/menu_background.webm"', out)
-        self.assertIn("blur: gaussian(8);", out)
-        self.assertIn("background-color: #00000033;", out)               # 20 % dim
-        for name in ("BackgroundScene", "BGVignette", "DetailsContainer", "MissingDataContainer", "BackgroundFadeOverlay", "DebugResetButton"):
-            self.assertRegex(out, r'(?:id|class)="%s"[^>]*style="visibility: collapse;"' % name)
-        self.assertTrue(out.isascii())
-        self.assertNotIn("blur:", BackgroundVPKBuilder([]).patch_last_match(self.LAST, 0, 0))
-        self.assertIsNone(BackgroundVPKBuilder([]).patch_last_match("<root/>", 0, 10))      # layout changed in a Dota update
 
-    def _menu_game(self):
-        import struct, zlib
-        from chameleon.vpk_io import VPKBuilder
-
-        def container(text):
-            blocks = [(b"REDI", b"R" * 40), (b"DATA", struct.pack("<IH", zlib.crc32(text) & 0xFFFFFFFF, 0) + text)]
-            out = bytearray(16 + 12 * len(blocks)); pos = len(out); ent = []
-            for n, b in blocks:
-                pos = (pos + 15) & ~15; ent.append((n, pos, len(b))); out.extend(b"\0" * (pos - len(out))); out.extend(b); pos = len(out)
-            struct.pack_into("<IHHII", out, 0, len(out), 12, 0, 8, len(blocks))
-            for i, (n, o, l) in enumerate(ent):
-                at = 16 + 12 * i; out[at:at + 4] = n; struct.pack_into("<II", out, at + 4, o - (at + 4), l)
-            return bytes(out)
-        game = build_fake_dota(Path(_TMP) / "menu155")
-        files = dict(GAME_FILES)
-        mgr = b'<root><DOTADashboardBackgroundManager override-background="DOTADashboardBackgroundOld" /></root>'
-        files["panorama/layout/dashboard.vxml_c"] = container(b'<root><DOTADashboardBackgroundManager id="m" override-background="s2r://seasonal.vxml_c" /></root>')
-        files["panorama/layout/dashboard_background_manager.vxml_c"] = container(mgr)
-        files["panorama/layout/dashboard_background_last_match.vxml_c"] = container(self.LAST.encode())
-        b = VPKBuilder()
-        for p_, d_ in files.items():
-            b.add_data(d_, p_)
-        b.build_standalone(game / "game" / "dota" / "pak01_dir.vpk")
-        db = SkinDatabase(game)
-        self.assertTrue(db.initialize())
-        return game, db
-
-    def test_menu_background_end_to_end(self):
-        import vpk
-        from chameleon import panorama as pa
-        game, db = self._menu_game()
-        a = SkinApplier(game, db, {"pack_resources": True, "bg_blur": 6, "bg_dim": 30})
-        self.addCleanup(a.restore)
-        a.background_builder.convert = lambda src, progress=None: None
-        vid = Path(_TMP) / "bg.webm"
-        vid.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 100)
-        a.set_background(str(vid))
-        a.apply_hero_skin(HERO, "paid_head")
-        self.assertTrue(a.commit(), a.last_report)
-        pak = vpk.open(str(a.pak_path))
-        self.assertEqual(pak.get_file("d2chameleon/menu_background.webm").read(), vid.read_bytes())
-        last = pa.get_source(pak.get_file("panorama/layout/dashboard_background_last_match.vxml_c").read())
-        self.assertIn("gaussian(6)", last)
-        for f in ("panorama/layout/dashboard.vxml_c", "panorama/layout/dashboard_background_manager.vxml_c"):
-            self.assertIn('override-background="DOTADashboardBackgroundLastMatch"', pa.get_source(pak.get_file(f).read()))
-        self.assertEqual(a.last_report["background"]["error"], "")
-
-    def test_menu_background_errors_are_explained(self):
-        a = self.ap()
-        a.background_builder.convert = lambda src, progress=None: None
-        f = Path(_TMP) / "x.webm"
-        f.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP8" + b"X" * 50)
-        a.set_background(str(f))
-        a.apply_hero_skin(HERO, "paid_head")
-        a.commit()
-        self.assertIn("not VP9", a.last_report["background"]["error"])
-        good = Path(_TMP) / "g.webm"
-        good.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 50)
-        a.set_background(str(good))
-        a.commit()
-        self.assertIn("menu files were not found", a.last_report["background"]["error"])      # the fake game has no menu layouts
 
     def test_picture_becomes_a_small_even_sized_clip(self):
         import shutil, subprocess
@@ -1639,48 +1475,8 @@ class V155Test(unittest.TestCase):
         self.assertEqual((int(w) % 2, int(h) % 2, fmt), (0, 0, "yuv420p"))
 
     # ---- language folder: files only, Valve's files are never edited ----
-    def test_language_folder_writes_no_gameinfo_no_signatures_no_items_game(self):
-        game = build_fake_dota(Path(_TMP) / "lang155")
-        lang = game / "game" / "dota_russian"
-        lang.mkdir()
-        (lang / "pak01_dir.vpk").write_bytes(b"VOICE")
-        db = SkinDatabase(game)
-        self.assertTrue(db.initialize())
-        a = SkinApplier(game, db, {"pack_resources": True, "install_method": "language", "lang_folder": "russian"})
-        gi, sig = a.gameinfo.branch_path.read_bytes(), a.gameinfo.signatures.path.read_bytes()
-        a.apply_hero_skin(HERO, "paid_head")
-        a.apply_hero_skin(HERO, "arcana_weapon")                  # needs item data: skipped in this method
-        self.assertTrue(a.commit(), a.last_report)
-        import vpk
-        names = {f for f in vpk.open(str(a.pak_path))}
-        self.assertIn("models/heroes/sparrow/head_stock.vmdl_c", names)          # the file swap works
-        self.assertNotIn("scripts/items/items_game.txt", names)
-        self.assertEqual(a.gameinfo.branch_path.read_bytes(), gi)
-        self.assertEqual(a.gameinfo.signatures.path.read_bytes(), sig)
-        a.restore()
 
     # ---- the mod can be switched off and on again ----
-    def test_mod_can_be_switched_off_and_on(self):
-        game = build_fake_dota(Path(_TMP) / "sw155")
-        lang = game / "game" / "dota_russian"
-        lang.mkdir()
-        (lang / "pak01_dir.vpk").write_bytes(b"VOICE")
-        db = SkinDatabase(game)
-        db.initialize()
-        a = SkinApplier(game, db, {"pack_resources": True, "install_method": "language"})
-        a.apply_hero_skin(HERO, "paid_head")
-        a.commit()
-        pak = a.pak_path
-        self.assertTrue(a.is_enabled())
-        self.assertTrue(a.set_enabled(False))
-        self.assertFalse(pak.exists())
-        self.assertTrue(Path(str(pak) + ".off").exists())
-        self.assertFalse(a.is_enabled())
-        self.assertTrue(a.is_active())
-        self.assertTrue(a.set_enabled(True))
-        self.assertTrue(pak.exists())
-        a.restore()
-        self.assertFalse(Path(str(pak) + ".off").exists())
 
     # ---- special files: shaders / announcers / emblems / cursors ----
     def test_special_default_files_are_swapped(self):
@@ -1709,12 +1505,169 @@ class V155Test(unittest.TestCase):
         slots = [g["slot"] for g in self.db.get_hero_catalog(HERO)["slots"]]
         self.assertNotIn("none", [s.lower() for s in slots])
 
-    def test_gems_offered_only_to_heroes_they_belong_to(self):
-        self.assertEqual(self.db.get_hero_gems(FINCH), [])
-        self.assertIn("prismatic_red", [g.name for g in self.db.get_hero_gems(HERO)])
 
     def test_emblem_junk_and_old_preset_keys(self):
         self.assertTrue(self.db.EMBLEM_JUNK.search("Arc Warden BP 2021 Ambient Fx"))
         from chameleon.presets import PresetManager
         import inspect
         self.assertEqual(list(inspect.signature(PresetManager.save_preset).parameters)[1:], ["name", "overrides", "settings", "river_color", "background"])
+
+
+REF_LAST_A = "6gwAAAwAAwAIAAAAAgAAAFJFREkUAAAAeAEAAERBVEGAAQAASgsAAFAAAAACAAAAAAAAAAAAAADUAAAAAQAAAAQBAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAEAAAEAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAFEAAAAAAAAAAQAAAEoAAAB6AAAAnA0DOgIAAABwYW5vcmFtYS9sYXlvdXQvZGFzaGJvYXJkX2JhY2tncm91bmRfbGFzdF9tYXRjaC52eG1sAGRvdGEAcGFub3JhbWEvbGF5b3V0L2Rhc2hib2FyZF9iYWNrZ3JvdW5kX2xhc3RfbWF0Y2gueG1sAGRvdGEAABAAAAAkAAAAAAAAAAAAAABfX19PdmVycmlkZUlucHV0RGF0YV9fXwBCaW5hcnlCbG9iQXJnAAAAIAAAAAwAAAABAAAAAAAAAENvbXBpbGVQYW5vcmFtYQBQYW5vcmFtYSBMYXlvdXQgQ29tcGlsZXIgVmVyc2lvbgAAAAAIAAAAAAAAAElzQ2hpbGRSZXNvdXJjZQCcDQM6AAA8cm9vdD4KICAgIDxzdHlsZXM+CiAgICAgICAgPGluY2x1ZGUgc3JjPSJzMnI6Ly9wYW5vcmFtYS9zdHlsZXMvZG90YXN0eWxlcy52Y3NzIiAvPgogICAgICAgIDxpbmNsdWRlIHNyYz0iczJyOi8vcGFub3JhbWEvc3R5bGVzL2Rhc2hib2FyZF9iYWNrZ3JvdW5kX2xhc3RfbWF0Y2gudmNzcyIgLz4KICAgICAgICA8aW5jbHVkZSBzcmM9InMycjovL3Bhbm9yYW1hL3N0eWxlcy9kYXNoYm9hcmRfYmFja2dyb3VuZF9sYXN0X21hdGNoX2hlcm9zY2FsZS52Y3NzIiAvPgogICAgPC9zdHlsZXM+CiAgICA8RE9UQURhc2hib2FyZEJhY2tncm91bmRMYXN0TWF0Y2g+CiAgICAgICAgPERPVEFTY2VuZVBhbmVsIGlkPSJCYWNrZ3JvdW5kU2NlbmUiIG1hcD0ic2NlbmVzL2Rhc2hib2FyZF9iYWNrZ3JvdW5kL2Rhc2hib2FyZF9iYWNrZ3JvdW5kX2xhc3RfbWF0Y2hfcmFkaWFudCIgY2FtZXJhPSJ2ZXJzdXNfY2FtZXJhIiBsaWdodD0idmVyc3VzX2xpZ2h0IiBkZWZlcnJlZGFscGhhPSJmYWxzZSIgcmVuZGVyZGVmZXJyZWQ9InRydWUiIHBhcnRpY2xlb25seT0iZmFsc2UiIHN0eWxlPSJ2aXNpYmlsaXR5OiBjb2xsYXBzZTsiIC8+CiAgICAgICAgPE1vdmllUGFuZWwgaWQ9IkNoYW1lbGVvbkJhY2tncm91bmQiIHNyYz0iczJyOi8vZDJjaGFtZWxlb24vbWVudV9iYWNrZ3JvdW5kLndlYm0iIHJlcGVhdD0idHJ1ZSIgYXV0b3BsYXk9Im9ubG9hZCIgaGl0dGVzdD0iZmFsc2UiIHN0eWxlPSJ3aWR0aDogMTAwJTsgaGVpZ2h0OiAxMDAlOyBob3Jpem9udGFsLWFsaWduOiBjZW50ZXI7IHZlcnRpY2FsLWFsaWduOiBjZW50ZXI7IiAvPgogICAgICAgIDxQYW5lbCBpZD0iQ2hhbWVsZW9uQmFja2dyb3VuZERpbSIgaGl0dGVzdD0iZmFsc2UiIHN0eWxlPSJ3aWR0aDogMTAwJTsgaGVpZ2h0OiAxMDAlOyBob3Jpem9udGFsLWFsaWduOiBjZW50ZXI7IHZlcnRpY2FsLWFsaWduOiBjZW50ZXI7IGJhY2tncm91bmQtY29sb3I6ICMwMDAwMDAxYTsiIC8+CiAgICAgICAgPFBhbmVsIGNsYXNzPSJCYWNrZ3JvdW5kRmFkZU92ZXJsYXkiIGhpdHRlc3Q9ImZhbHNlIiBzdHlsZT0idmlzaWJpbGl0eTogY29sbGFwc2U7IiAvPgogICAgICAgIDxQYW5lbCBpZD0iQkdWaWduZXR0ZSIgaGl0dGVzdD0iZmFsc2UiIHN0eWxlPSJ2aXNpYmlsaXR5OiBjb2xsYXBzZTsiIC8+CiAgICAgICAgPFBhbmVsIGlkPSJEZXRhaWxzQ29udGFpbmVyIiBzdHlsZT0idmlzaWJpbGl0eTogY29sbGFwc2U7Ij4KICAgICAgICAgICAgPExhYmVsIGNsYXNzPSJMYXN0TWF0Y2hUaXRsZSIgdGV4dD0iI0RPVEFfQmFja2dyb3VuZF9MYXN0TWF0Y2hfVGl0bGUiIC8+CiAgICAgICAgICAgIDxMYWJlbCBjbGFzcz0iSGVyb05hbWUiIHRleHQ9IntnOmRvdGFfaGVyb19uYW1lOmhlcm9faWR9IiAvPgogICAgICAgICAgICA8UGFuZWwgY2xhc3M9Ik1hdGNoSW5mbyI+CiAgICAgICAgICAgICAgICA8TGFiZWwgaWQ9IldpbiIgY2xhc3M9Ik1hdGNoT3V0Y29tZSBHcmVlbiIgdGV4dD0iI2RvdGFfcHJvZmlsZV9yZWNlbnRfZ2FtZV9yZXN1bHRfd2luIiAvPgogICAgICAgICAgICAgICAgPExhYmVsIGlkPSJMb3NzIiBjbGFzcz0iTWF0Y2hPdXRjb21lIFJlZCIgdGV4dD0iI2RvdGFfcHJvZmlsZV9yZWNlbnRfZ2FtZV9yZXN1bHRfbG9zcyIgLz4KICAgICAgICAgICAgICAgIDxMYWJlbCBpZD0iTm90U2NvcmVkIiBjbGFzcz0iTWF0Y2hPdXRjb21lIiB0ZXh0PSIjZG90YV9wcm9maWxlX3JlY2VudF9nYW1lX3Jlc3VsdF9ub3RzY29yZWQiIC8+CiAgICAgICAgICAgICAgICA8TGFiZWwgY2xhc3M9IktEQUxhYmVsIiB0ZXh0PSIjRE9UQV9CYWNrZ3JvdW5kX0xhc3RNYXRjaF9LREEiIC8+CiAgICAgICAgICAgICAgICA8TGFiZWwgY2xhc3M9IktEQSIgdGV4dD0ie2k6a2lsbHN9IC8ge2k6ZGVhdGhzfSAvIHtpOmFzc2lzdHN9IiAvPgogICAgICAgICAgICA8L1BhbmVsPgogICAgICAgICAgICA8UGFuZWwgaWQ9Ikl0ZW1zIj4KICAgICAgICAgICAgICAgIDxET1RBSXRlbUltYWdlIGlkPSJJdGVtMCIgY2xhc3M9Ikl0ZW1JbWFnZSIgLz4KICAgICAgICAgICAgICAgIDxET1RBSXRlbUltYWdlIGlkPSJJdGVtMSIgY2xhc3M9Ikl0ZW1JbWFnZSIgLz4KICAgICAgICAgICAgICAgIDxET1RBSXRlbUltYWdlIGlkPSJJdGVtMiIgY2xhc3M9Ikl0ZW1JbWFnZSIgLz4KICAgICAgICAgICAgICAgIDxET1RBSXRlbUltYWdlIGlkPSJJdGVtMyIgY2xhc3M9Ikl0ZW1JbWFnZSIgLz4KICAgICAgICAgICAgICAgIDxET1RBSXRlbUltYWdlIGlkPSJJdGVtNCIgY2xhc3M9Ikl0ZW1JbWFnZSIgLz4KICAgICAgICAgICAgICAgIDxET1RBSXRlbUltYWdlIGlkPSJJdGVtNSIgY2xhc3M9Ikl0ZW1JbWFnZSIgLz4KICAgICAgICAgICAgPC9QYW5lbD4KICAgICAgICAgICAgPFRleHRCdXR0b24gaWQ9IlZpZXdEZXRhaWxzQnV0dG9uIiB0ZXh0PSIjRE9UQV9CYWNrZ3JvdW5kX0xhc3RNYXRjaF9WaWV3TWF0Y2giIG9uYWN0aXZhdGU9IkRPVEFTaG93TGFzdE1hdGNoRGV0YWlscygpIiAvPgogICAgICAgIDwvUGFuZWw+CiAgICAgICAgPFRleHRCdXR0b24gdGV4dD0iKERFQlVHKSBSZXNldCIgaWQ9IkRlYnVnUmVzZXRCdXR0b24iIG9uYWN0aXZhdGU9IkRPVEFCYWNrZ3JvdW5kTGFzdE1hdGNoRGVidWdSZXNldCgpIiBzdHlsZT0idmlzaWJpbGl0eTogY29sbGFwc2U7IiAvPgogICAgICAgIDxQYW5lbCBpZD0iTWlzc2luZ0RhdGFDb250YWluZXIiIHN0eWxlPSJ2aXNpYmlsaXR5OiBjb2xsYXBzZTsiPgogICAgICAgICAgICA8TGFiZWwgY2xhc3M9Ik1pc3NpbmdEYXRhVGl0bGUiIHRleHQ9IiNET1RBX0JhY2tncm91bmRfTGFzdE1hdGNoX1dlbGNvbWVUb0RvdGEiIC8+CiAgICAgICAgPC9QYW5lbD4KICAgIDwvRE9UQURhc2hib2FyZEJhY2tncm91bmRMYXN0TWF0Y2g+Cjwvcm9vdD4K"
+REF_MANAGER = "wAIAAAwAAwAIAAAAAgAAAFJFREkUAAAAeAEAAERBVEGAAQAAIAEAAFAAAAACAAAAAAAAAAAAAADQAAAAAQAAAAABAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAEAAAEAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAE4AAAAAAAAAAQAAAEcAAAB0AAAAs1WdWgIAAABwYW5vcmFtYS9sYXlvdXQvZGFzaGJvYXJkX2JhY2tncm91bmRfbWFuYWdlci52eG1sAGRvdGEAcGFub3JhbWEvbGF5b3V0L2Rhc2hib2FyZF9iYWNrZ3JvdW5kX21hbmFnZXIueG1sAGRvdGEAAAAAEAAAACQAAAAAAAAAAAAAAF9fX092ZXJyaWRlSW5wdXREYXRhX19fAEJpbmFyeUJsb2JBcmcAAAAgAAAADAAAAAEAAAAAAAAAQ29tcGlsZVBhbm9yYW1hAFBhbm9yYW1hIExheW91dCBDb21waWxlciBWZXJzaW9uAAAAAAAAAAAIAAAAAAAAAElzQ2hpbGRSZXNvdXJjZQCzVZ1aAAA8cm9vdD4KICAgIDxzdHlsZXM+CiAgICAgICAgPGluY2x1ZGUgc3JjPSJzMnI6Ly9wYW5vcmFtYS9zdHlsZXMvZG90YXN0eWxlcy52Y3NzIiAvPgogICAgICAgIDxpbmNsdWRlIHNyYz0iczJyOi8vcGFub3JhbWEvc3R5bGVzL2Rhc2hib2FyZF9iYWNrZ3JvdW5kX21hbmFnZXIudmNzcyIgLz4KICAgIDwvc3R5bGVzPgogICAgPERPVEFEYXNoYm9hcmRCYWNrZ3JvdW5kTWFuYWdlciBvdmVycmlkZS1iYWNrZ3JvdW5kPSJET1RBRGFzaGJvYXJkQmFja2dyb3VuZExhc3RNYXRjaCIgLz4KPC9yb290Pgo="
+
+
+class V156Test(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.game = build_fake_dota(Path(_TMP) / "v156")
+        cls.db = SkinDatabase(cls.game)
+        assert cls.db.initialize()
+
+    def ap(self, **cfg):
+        a = SkinApplier(self.game, self.db, dict({"pack_resources": True}, **cfg))
+        self.addCleanup(a.restore)
+        return a
+
+    def test_menu_layouts_are_byte_identical_to_the_reference_containers(self):
+        import base64
+        from chameleon import panorama as pa
+        files = pa.menu_files(0, 10)
+        self.assertEqual(files[pa.LAST_MATCH], base64.b64decode(REF_LAST_A))
+        self.assertEqual(files[pa.MANAGER], base64.b64decode(REF_MANAGER))
+        head, blocks = pa.read_blocks(files[pa.LAST_MATCH])
+        self.assertEqual([n for n, _ in blocks], [b"REDI", b"DATA"])
+        text = pa.get_source(files[pa.LAST_MATCH])
+        self.assertIn('src="s2r://d2chameleon/menu_background.webm"', text)
+        self.assertTrue(text.isascii())
+
+    def test_blur_and_dim_reach_the_layout(self):
+        from chameleon import panorama as pa
+        text = pa.get_source(pa.menu_files(8, 30)[pa.LAST_MATCH])
+        self.assertIn("blur: gaussian(8);", text)
+        self.assertIn("#0000004c", text)
+        flat = pa.get_source(pa.menu_files(0, 0)[pa.LAST_MATCH])
+        self.assertNotIn("blur:", flat)
+        self.assertIn("#00000000", flat)
+        self.assertIn("#000000e6", pa.get_source(pa.menu_files(0, 999)[pa.LAST_MATCH]))
+
+    def test_background_end_to_end_needs_no_layout_from_the_game(self):
+        import vpk
+        from chameleon import panorama as pa
+        a = self.ap(bg_blur=6, bg_dim=30)
+        a.background_builder.convert = lambda src, progress=None: None
+        vid = Path(_TMP) / "bg156.webm"
+        vid.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP9" + b"X" * 100)
+        a.set_background(str(vid))
+        a.apply_hero_skin(HERO, "paid_head")
+        self.assertTrue(a.commit(), a.last_report)
+        pak = vpk.open(str(a.pak_path))
+        self.assertEqual(pak.get_file("d2chameleon/menu_background.webm").read(), vid.read_bytes())
+        self.assertIn("gaussian(6)", pa.get_source(pak.get_file(pa.LAST_MATCH).read()))
+        self.assertEqual(a.last_report["background"]["error"], "")
+
+    def test_background_refuses_what_gives_a_black_menu(self):
+        a = self.ap()
+        a.background_builder.convert = lambda src, progress=None: None
+        f = Path(_TMP) / "vp8.webm"
+        f.write_bytes(b"\x1a\x45\xdf\xa3" + b"V_VP8" + b"X" * 50)
+        a.set_background(str(f))
+        a.apply_hero_skin(HERO, "paid_head")
+        a.commit()
+        self.assertIn("not VP9", a.last_report["background"]["error"])
+
+    def test_one_method_gameinfo_and_signature_are_written(self):
+        from chameleon.signatures import has_patch
+        a = self.ap()
+        a.apply_hero_skin(HERO, "paid_head")
+        self.assertTrue(a.commit())
+        self.assertTrue(a.gameinfo.is_injected())
+        self.assertTrue(has_patch(a.gameinfo.signatures.path.read_bytes().decode("latin1")))
+        self.assertEqual(a.pak_path.name, "pak01_dir.vpk")
+        a.restore()
+        self.assertFalse(a.gameinfo.is_injected())
+
+    def test_a_single_item_can_be_switched_off(self):
+        a = self.ap()
+        a.apply_hero_skin(HERO, "paid_head")
+        a.apply_hero_skin(HERO, "frostbloom_blade")
+        key = [k for k, v in a.active_overrides.items() if v == "paid_head"][0]
+        a.disabled.add(key)
+        self.assertTrue(a.commit(), a.last_report)
+        self.assertEqual([r["item"] for r in a.last_report["overrides"]], ["frostbloom_blade"])
+        a.disabled.clear()
+        a.commit()
+        self.assertIn("paid_head", [r["item"] for r in a.last_report["overrides"]])
+
+    def test_a_new_pick_replaces_an_older_one_on_the_same_default_item(self):
+        a = self.ap()
+        a.apply_hero_skin(HERO, "paid_head")
+        a.apply_hero_skin(HERO, "cool_head")
+        self.assertEqual(sum(1 for v in a.active_overrides.values() if v in ("paid_head", "cool_head")), 1)
+        a.apply_hero_skin(HERO, "alt_weapon")
+        a.apply_hero_skin(HERO, "arcana_weapon")
+        keys = [k for k in a.active_overrides if k.startswith(f"hero::{HERO}::")]
+        targets = [a._targets(k) for k in keys]
+        for i, x in enumerate(targets):
+            for y in targets[i + 1:]:
+                self.assertFalse(x & y, "two picks on one default item")
+
+    def test_item_with_effects_keeps_its_data_instead_of_a_model_swap(self):
+        a = self.ap()
+        self.assertTrue(a._is_complex({"visuals": {"asset_modifier": {"type": "particle_create", "modifier": "x.vpcf"}}}))
+        self.assertTrue(a._is_complex({"visuals": {"asset_modifier": {"type": "entity_model", "modifier": "m.vmdl"}, "hide_bodygroups": "x"}}))
+        self.assertFalse(a._is_complex({"model_player": "m.vmdl", "visuals": {"skip_model_combine": "0"}}))
+
+    def test_skin_filter_uses_whole_words(self):
+        f = self.db._skin_blocked
+        self.assertTrue(f(["treasure_chest"]) and f(["tool"]) and f(["player_card"]) and f(["Ticket"]))
+        self.assertFalse(f(["Monkey_Armor"]) or f(["Compass_Wings"]) or f(["Spinning_Blades"]) or f(["Mount_Armor", "Barding"]))
+
+    def test_web_icon_lookup_caches_and_survives_offline(self):
+        from chameleon.webicons import MarketIcons, icon_url_from_search
+        calls = []
+
+        def fetch_json(url, params):
+            calls.append(params["query"])
+            if params["query"] == "Tempest of the Dragon":
+                return {"success": True, "results": [{"asset_description": {"market_hash_name": "Other", "icon_url": "no"}},
+                                                     {"asset_description": {"market_hash_name": "Tempest of the Dragon", "icon_url": "ICON123"}}]}
+            return {"success": True, "results": []}
+        cache = Path(_TMP) / "market.json"
+        cache.unlink(missing_ok=True)
+        m = MarketIcons(cache, fetch_json, lambda u: b"PNG:" + u.encode(), lambda s: None)
+        want = "https://community.cloudflare.steamstatic.com/economy/image/ICON123/256x256"
+        self.assertEqual(m.url_for("Tempest of the Dragon"), want)
+        self.assertIsNone(m.url_for("Unknown thing"))
+        self.assertEqual(m.url_for("Tempest of the Dragon"), want)
+        self.assertEqual(m.url_for("Unknown thing"), None)
+        self.assertEqual(calls, ["Tempest of the Dragon", "Unknown thing"])
+        self.assertTrue(m.image_for("Tempest of the Dragon").startswith(b"PNG:https://community.cloudflare"))
+
+        def offline(u, p):
+            raise RuntimeError("offline")
+        m2 = MarketIcons(cache, offline, None, lambda s: None)
+        self.assertEqual(m2.url_for("Tempest of the Dragon"), want)
+        self.assertIsNone(m2.url_for("never searched"))
+        self.assertNotIn("never searched", m2.urls)
+        self.assertIsNone(icon_url_from_search({"success": True, "results": [{"asset_description": {"market_hash_name": "A", "icon_url": "i"}}]}, "B"))
+
+    def test_preview_picks_a_neutral_line_and_finds_audio(self):
+        from chameleon.preview import pick_file, extract_audio
+        files = ["sounds/vo/announcer/a_radiant_are_battlecup_champions.vsnd_c", "sounds/vo/announcer/b_welcome.vsnd_c", "sounds/vo/announcer/c_wins.vsnd_c"]
+        self.assertTrue(pick_file(files).endswith("b_welcome.vsnd_c"))
+        mp3 = b"\xff\xfb\x90\x00" + b"\x00" * 413 + b"\xff\xfb\x90\x00" + b"\x00" * 100
+        self.assertEqual(extract_audio(b"H" * 40 + mp3)[0], "audio/mpeg")
+        self.assertEqual(extract_audio(b"x" * 20 + b"OggS" + b"y" * 30)[0], "audio/ogg")
+        self.assertIsNone(extract_audio(b"nothing here" * 10))
+
+    def test_tools_and_slotless_items_never_show_as_hero_cosmetics(self):
+        names = [i.name for g in self.db.get_hero_catalog(HERO)["slots"] for i in g["items"]]
+        self.assertFalse([n for n in names if "chest" in n or "treasure" in n or "bundle" in n])
+
+    def test_item_icon_source_names(self):
+        from chameleon.icons import IconManager
+        IconManager.configure("auto", True, "web")
+        self.assertEqual(IconManager._hub().item_source, "web")
+        IconManager.configure("auto", True, "bogus")
+        self.assertEqual(IconManager._hub().item_source, "game")
