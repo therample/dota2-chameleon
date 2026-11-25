@@ -1,6 +1,6 @@
 [project]
 name = "chameleon-dota2"
-version = "15.4.0"
+version = "15.6.0"
 description = "Dota 2 cosmetic mod builder: one small VPK, fully reversible"
 readme = "README.md"
 requires-python = ">=3.10"
