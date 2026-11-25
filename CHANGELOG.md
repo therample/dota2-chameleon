@@ -1,5 +1,61 @@
 # Changelog
 
+## 15.6
+
+### Changed
+- **One install method again**: the stable one (own folder + gameinfo + signatures). The language-folder method, its folder setting and the
+  files-only experiment are removed.
+- **Settings controls**: choices (language, icon sources, special items, effects …) are animated segmented controls with a sliding highlight;
+  sliders have a filled track and react when you press and drag them.
+- **Selected tab**: every item has its own on/off switch (off = left out of the next build, not removed) and there is a clear
+  "Remove the mod from the game" button. The status pill at the top is a plain label again.
+- Music preview and the favorite star are always visible, in one stable row on the card. Tab changes slide by a distance that follows how far
+  the tabs are from each other. The sort "selected first" and the "selected only" filter are removed.
+- Removed: *Item effects* tab, item-ability effects and the separate kill-effects category (kill-streak effects stay in *Effects*).
+
+### Fixed
+- **Menu background**: the layouts are now written from classic Panorama containers that are byte-identical to a reference writer; nothing is
+  read from Dota's own (newer, unreadable) files, so the "layout changed" error is gone. Blur and darkening still work.
+- **Items with attachments** (an immortal with a bird on the shoulder, hidden body groups, animations, effects) keep ALL their data instead of
+  a model-only file swap, so they stay attached to the hero.
+- **Skins stacking** on the same default item: a new pick now replaces an older one that lands on the same item.
+- **Skin filter** works on whole words (no more "key" in "Monkey").
+- **Gems**: a chosen gem's colour is passed on to the hero's chosen items (the style that matches the gem: Abysm, Summer Warmth …).
+- Audio preview: a neutral announcer line instead of "… are battlecup champions", more tolerant audio detection.
+
+### New
+- **Item pictures source**: game files, Steam's web servers (searched by the item's name), or both. Web lookups are cached and spaced out.
+- A friendly request for a **GitHub star** after a few successful builds (can be dismissed for good).
+
+## 15.5
+
+### New
+- **Menu background is back** (the way the d2mm menu mod does it): your video or picture plays behind the main menu, with **blur** and
+  **darkening** sliders. Dota's own layouts are read from your game, so it follows updates. Video is cut to 30 s / about 12 MB.
+- **Language folder is now files only**: nothing of Valve's files is edited (no gameinfo, no signatures, no items_game). Chosen models
+  replace the default ones. Real language folders only (`russian`, `koreana`, `schinese`; `lv`, `addons`, `english` are not offered).
+  The **custom folder** method stays the stable way for everything else (gameinfo + signatures).
+- **Mod switch**: pause the mod without removing it (the pak is renamed to `*.vpk.off`). Click the status pill at the top.
+- **Effects**: the list is now the game's own effect list (Frostbloom, Snowdrift, Gold Drop, Ethereal Flame …) plus seasonal / courier ambient
+  effect files. New: **multikill banners**, **item ability effects**; kill-streak effects moved into *Effects*.
+- **Listen** button on music packs and announcers (when the game has a readable sound file).
+- **Special file swaps**: announcer script, post-processing material (shaders), selection ring (emblems), cursor files.
+- **Update check** (`version` file in the repository root vs GitHub) with a download link. Optional **web pictures for items**.
+- Discord status has more lively texts ("Dressing Phantom Lancer", "Looking at 25 mods").
+
+### Fixed
+- Hero pictures: the previous order is back (game files first, Steam as the backup).
+- Chests, tools, style unlocks and other items without a slot (the "None" cases, e.g. Juggernaut) are not shown as cosmetics; taunt items are
+  filtered by their data, not only by slot. Arcanas without a picture are no longer listed as arcanas.
+- "Arc Warden BP 2021 Ambient Fx" and other hero ambients are not emblems.
+- Gems: offered only for heroes they belong to (tied by id / particle path, or the hero has items that change with that gem); colour tags like
+  244,31,42 are shown on the card. Applying a gem switches on the hero's own gem-dependent modifiers.
+- Presets no longer contain `gems` / `frostbloom` / `background_path`; old files still load.
+
+### Not done yet
+- Choosing the colour of a Prismatic gem, HUD size, rank medal and hero level visuals (they need Valve's resource compiler or knowledge of
+  files that could not be checked here).
+
 ## 15.4
 
 ### New
